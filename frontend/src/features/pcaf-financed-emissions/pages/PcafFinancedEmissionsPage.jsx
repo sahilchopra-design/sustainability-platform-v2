@@ -1,9 +1,9 @@
 /**
  * PcafFinancedEmissionsPage.jsx
  * ═══════════════════════════════════════════════════════════════════════════════
- * PCAF Standard v2 (3rd Edition) — Parts A, B, C
- * 7 Tabs | 28 useState hooks | 60 pre-loaded holdings | 12 asset classes
- * Framework citations: PCAF Standard v2, Chapters 3-6
+ * PCAF Standard, 2nd Edition (December 2022) — Part A (financed emissions, Ch.5); PCAF IAE Standard (Nov 2022, separate publication); PCAF Standard Part B — Facilitated Emissions (Dec 2023, separate publication)
+ * 7 Tabs | 28 useState hooks | 60 pre-loaded holdings | 7 core PCAF asset classes + 5 platform extensions
+ * Framework citations: PCAF Standard, 2nd Ed. (Dec 2022), Chapters 3–5
  * ═══════════════════════════════════════════════════════════════════════════════
  */
 import React, { useState, useCallback, useMemo, useEffect } from 'react';
@@ -61,12 +61,12 @@ function fmtNum(n){if(n==null)return '\u2014';return n.toLocaleString('en-US',{m
 function fmtCcy(n,ccy='$'){return n==null?'\u2014':ccy+fmtNum(n);}
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   PCAF ASSET CLASS DEFINITIONS — Chapter 4, Table 4.1
+   PCAF ASSET CLASS DEFINITIONS — Chapter 5 (core classes); extension classes are platform-only
    Each entry maps to a specific PCAF chapter and attribution methodology.
    ═══════════════════════════════════════════════════════════════════════════════ */
 const ASSET_CLASS_DEFS=[
   {
-    ac:'Listed Equity',ch:'4.2',
+    ac:'Listed Equity',ch:'5',
     formula:'FE_i = (Outstanding_i / EVIC_i) \u00d7 Company_Emissions_i',
     denom:'Enterprise Value Including Cash (EVIC)',
     note:'EVIC = Market Cap + Total Debt + Preferred Stock + Minority Interest. Attribution factor is proportional to ownership share. Use period-end EVIC.',
@@ -75,7 +75,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Verified reported (CDP/GRI) 2. Unverified reported 3. Physical activity 4. Economic activity 5. Proxy estimation',
   },
   {
-    ac:'Corporate Bonds',ch:'4.3',
+    ac:'Corporate Bonds',ch:'5',
     formula:'FE_i = (Outstanding_i / EVIC_i) \u00d7 Company_Emissions_i',
     denom:'Enterprise Value Including Cash (EVIC)',
     note:'Same attribution as listed equity. Bond outstanding amount as numerator, not notional. Use market value for fair-value portfolios.',
@@ -84,7 +84,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Issuer CDP/GRI 2. Annual report 3. Sector average 4. Revenue proxy 5. Headcount proxy',
   },
   {
-    ac:'Business Loans',ch:'4.4',
+    ac:'Business Loans',ch:'5',
     formula:'FE_i = (Outstanding_i / (EVIC_i or Total_E+D_i)) \u00d7 Company_Emissions_i',
     denom:'EVIC (if listed) or Total Equity + Debt (if unlisted)',
     note:'For unlisted borrowers: use total equity + total debt from most recent audited financial statements. If unavailable, use total assets.',
@@ -93,7 +93,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Company GHG inventory 2. Physical activity data 3. Sector EF \u00d7 revenue 4. Sector EF \u00d7 assets 5. Headcount proxy',
   },
   {
-    ac:'Project Finance',ch:'4.5',
+    ac:'Project Finance',ch:'5',
     formula:'FE_i = (Outstanding_i / Total_Project_Cost_i) \u00d7 Project_Emissions_i',
     denom:'Total project cost (equity + debt financing)',
     note:'Attribution = outstanding loan / total project cost. Use project-level emissions from monitoring reports. For construction phase, include embodied emissions.',
@@ -102,7 +102,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Direct monitoring 2. Modelled from activity data 3. Grid EF \u00d7 capacity 4. Sector proxy 5. Revenue proxy',
   },
   {
-    ac:'Commercial Real Estate',ch:'4.6',
+    ac:'Commercial Real Estate',ch:'5',
     formula:'FE_i = (Outstanding_i / Property_Value_i) \u00d7 Building_Emissions_i',
     denom:'Property value (current appraisal or purchase price)',
     note:'Building emissions from EPC ratings, energy audits, or benchmarks. Include Scope 1 (on-site combustion) and Scope 2 (purchased electricity/heating).',
@@ -111,7 +111,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Metered energy consumption 2. EPC + floor area 3. Building type benchmark 4. National average 5. Floor area proxy',
   },
   {
-    ac:'Mortgages',ch:'4.7',
+    ac:'Mortgages',ch:'5',
     formula:'FE_i = (Outstanding_i / Property_Value_i) \u00d7 Building_Emissions_i',
     denom:'Property value at origination (or latest valuation)',
     note:'EPC to emissions: use national avg kWh/m\u00b2 by rating band \u00d7 floor area \u00d7 grid emission factor. For portfolios, use distribution of EPC ratings.',
@@ -120,7 +120,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Smart meter data 2. EPC + floor area 3. Postcode-level proxy 4. National avg by type 5. National average',
   },
   {
-    ac:'Vehicle Loans',ch:'4.8',
+    ac:'Vehicle Loans',ch:'5',
     formula:'FE_i = (Outstanding_i / Vehicle_Value_i) \u00d7 (CO2_per_km \u00d7 Annual_km)',
     denom:'Vehicle value at origination',
     note:'For ICE: use WLTP CO2/km. For EVs: Scope 1 = 0; Scope 2 = grid EF \u00d7 kWh/km \u00d7 annual km. Default 15,000 km/year.',
@@ -129,7 +129,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Telematics data 2. Manufacturer CO2/km + annual mileage 3. Vehicle class average 4. National fleet average 5. Proxy',
   },
   {
-    ac:'Sovereign Debt',ch:'4.9',
+    ac:'Sovereign Debt',ch:'5 (Sovereign Debt Standard, separate publication)',
     formula:'FE_i = (Outstanding_i / PPP_GDP_i) \u00d7 Sovereign_Emissions_i',
     denom:'Purchasing Power Parity adjusted GDP',
     note:'Use production-based accounting (territory principle). Source: UNFCCC National Inventory Reports or World Bank WDI.',
@@ -138,7 +138,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. UNFCCC NIR 2. National report 3. WB/IMF estimates',
   },
   {
-    ac:'Use-of-Proceeds',ch:'4.10',
+    ac:'Use-of-Proceeds',ch:'ext',
     formula:'FE_i = (Outstanding_i / Total_Bond_Issuance_i) \u00d7 Proceeds_Emissions_i',
     denom:'Total bond issuance amount',
     note:'Green/social/sustainability bonds. Track use of proceeds allocation. Apply emissions per project category.',
@@ -147,7 +147,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Issuer impact report 2. Project monitoring 3. Sector average 4. Proxy 5. No data',
   },
   {
-    ac:'Securitisations',ch:'4.11',
+    ac:'Securitisations',ch:'ext',
     formula:'FE_i = (Tranche_Outstanding / Pool_Value) \u00d7 Pool_Emissions',
     denom:'Total securitisation pool value',
     note:'Look through to underlying assets where possible. For RMBS: use mortgage methodology. For ABS: use relevant asset class.',
@@ -156,7 +156,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Full look-through 2. Pool-level average 3. Sector proxy 4. National average 5. No data',
   },
   {
-    ac:'Sub-Sovereign',ch:'4.12',
+    ac:'Sub-Sovereign',ch:'ext',
     formula:'FE_i = (Outstanding / Total_Entity_Debt) \u00d7 Entity_Emissions',
     denom:'Total debt of sub-sovereign entity',
     note:'Municipal/state bonds. Use entity-level GHG data where available, or pro-rata from national.',
@@ -165,7 +165,7 @@ const ASSET_CLASS_DEFS=[
     dataHierarchy:'1. Entity GHG report 2. State/regional inventory 3. Pro-rata national 4. Proxy 5. No data',
   },
   {
-    ac:'Undrawn Commitments',ch:'4.13',
+    ac:'Undrawn Commitments',ch:'ext',
     formula:'FE_undrawn = CCF \u00d7 Committed_Amount \u00d7 (1/EVIC) \u00d7 Emissions',
     denom:'Credit Conversion Factor \u00d7 Commitment',
     note:'CCF typically 0-100% based on facility type (revolving, term). PCAF recommends reporting undrawn separately from drawn. CCF reflects expected drawdown probability.',
@@ -201,11 +201,11 @@ const COUNTRY_EMISSIONS={
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    60-POSITION PORTFOLIO — 12 Asset Classes
-   PCAF Standard v2, Chapter 4 — representative multi-asset FI portfolio
+   PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5 — representative multi-asset FI portfolio
    UNIT CONVENTION: evic=$Bn, outstanding=$M, scope1/2/3 in tCO2e
    ═══════════════════════════════════════════════════════════════════════════════ */
 const BASE_POSITIONS=[
-  // ── Listed Equity (20 positions) ── PCAF Ch.4.2 ──
+  // ── Listed Equity (20 positions) ── PCAF Ch.5 ──
   {id:1,name:'Apple Inc',ticker:'AAPL',country:'US',geo:'Americas',assetClass:'Listed Equity',sector:'Technology',evic:2740,outstanding:18.4,scope1:22100,scope2:11800,scope3:28400000,dqs:2,source:'CDP A-List 2023',currency:'USD'},
   {id:2,name:'Microsoft Corp',ticker:'MSFT',country:'US',geo:'Americas',assetClass:'Listed Equity',sector:'Technology',evic:2910,outstanding:22.1,scope1:14200,scope2:8400,scope3:14000000,dqs:2,source:'CDP A-List 2023',currency:'USD'},
   {id:3,name:'Shell plc',ticker:'SHEL',country:'GB',geo:'EMEA',assetClass:'Listed Equity',sector:'Oil & Gas',evic:245,outstanding:31.2,scope1:48200000,scope2:20200000,scope3:1200000000,dqs:1,source:'Shell Annual Report 2023',currency:'GBP'},
@@ -226,7 +226,7 @@ const BASE_POSITIONS=[
   {id:18,name:'Samsung Electronics',ticker:'005930',country:'KR',geo:'APAC',assetClass:'Listed Equity',sector:'Technology',evic:276,outstanding:16.4,scope1:9800000,scope2:5000000,scope3:42000000,dqs:2,source:'Samsung CDP 2023',currency:'KRW'},
   {id:19,name:'BP plc',ticker:'BP',country:'GB',geo:'EMEA',assetClass:'Listed Equity',sector:'Oil & Gas',evic:134,outstanding:18.9,scope1:31200000,scope2:13600000,scope3:820000000,dqs:1,source:'BP Sustainability 2023',currency:'GBP'},
   {id:20,name:'Equinor ASA',ticker:'EQNR',country:'NO',geo:'EMEA',assetClass:'Listed Equity',sector:'Oil & Gas',evic:102,outstanding:14.6,scope1:21800000,scope2:9800000,scope3:640000000,dqs:1,source:'Equinor CDP 2023',currency:'NOK'},
-  // ── Corporate Bonds (12 positions) ── PCAF Ch.4.3 ──
+  // ── Corporate Bonds (12 positions) ── PCAF Ch.5 ──
   {id:21,name:'Ford Motor 7.45% 2031',ticker:'F',country:'US',geo:'Americas',assetClass:'Corporate Bonds',sector:'Automotive',evic:54,outstanding:14.2,scope1:4200000,scope2:2140000,scope3:180000000,dqs:3,source:'Ford CDP 2023',currency:'USD'},
   {id:22,name:'EDF Green Bond 1.625% 2030',ticker:'EDF',country:'FR',geo:'EMEA',assetClass:'Corporate Bonds',sector:'Electric Utilities',evic:89,outstanding:20.4,scope1:28400000,scope2:14300000,scope3:32000000,dqs:2,source:'EDF Sustainability 2023',currency:'EUR'},
   {id:23,name:'Petrobras 6.9% 2049',ticker:'PBR',country:'BR',geo:'Americas',assetClass:'Corporate Bonds',sector:'Oil & Gas',evic:115,outstanding:9.8,scope1:16200000,scope2:8400000,scope3:420000000,dqs:3,source:'Petrobras CDP 2023',currency:'USD'},
@@ -239,7 +239,7 @@ const BASE_POSITIONS=[
   {id:30,name:'Tata Steel 5.45% 2028',ticker:'TATASTEEL',country:'IN',geo:'APAC',assetClass:'Corporate Bonds',sector:'Steel',evic:16,outstanding:8.7,scope1:28400000,scope2:10700000,scope3:42000000,dqs:4,source:'Revenue proxy \u2014 Trucost',currency:'INR'},
   {id:31,name:'IKEA bonds 1.5% 2027',ticker:'IKEA',country:'SE',geo:'EMEA',assetClass:'Corporate Bonds',sector:'Retail',evic:null,outstanding:9.2,scope1:820000,scope2:420000,scope3:6400000,dqs:4,source:'Revenue proxy \u2014 EF database',currency:'SEK'},
   {id:32,name:'H&M bonds 0.25% 2024',ticker:'HMB',country:'SE',geo:'EMEA',assetClass:'Corporate Bonds',sector:'Retail',evic:null,outstanding:6.4,scope1:540000,scope2:240000,scope3:4200000,dqs:4,source:'Revenue proxy \u2014 EF database',currency:'SEK'},
-  // ── Project Finance (8 positions) ── PCAF Ch.4.5 ──
+  // ── Project Finance (8 positions) ── PCAF Ch.5 ──
   {id:33,name:'North Sea Wind Farm (1.2 GW)',ticker:null,country:'GB',geo:'EMEA',assetClass:'Project Finance',sector:'Renewables',evic:null,outstanding:480,scope1:8400,scope2:4000,scope3:62000,dqs:3,source:'Project monitoring report 2023',currency:'GBP',projectCost:1200},
   {id:34,name:'Solar Farm \u2014 Vietnam (320 MW)',ticker:null,country:'VN',geo:'APAC',assetClass:'Project Finance',sector:'Renewables',evic:null,outstanding:210,scope1:4200,scope2:2600,scope3:28000,dqs:4,source:'Physical proxy \u2014 GEF grid factor',currency:'USD',projectCost:580},
   {id:35,name:'Coal-to-Gas Transition \u2014 Indonesia',ticker:null,country:'ID',geo:'APAC',assetClass:'Project Finance',sector:'Electric Utilities',evic:null,outstanding:340,scope1:2840000,scope2:1440000,scope3:4200000,dqs:4,source:'Physical proxy \u2014 IEA EF',currency:'USD',projectCost:920},
@@ -248,32 +248,32 @@ const BASE_POSITIONS=[
   {id:38,name:'Hydro Dam \u2014 Ethiopia (2 GW)',ticker:null,country:'ET',geo:'EMEA',assetClass:'Project Finance',sector:'Renewables',evic:null,outstanding:680,scope1:2200,scope2:1000,scope3:8400,dqs:5,source:'Headcount proxy \u2014 limited data',currency:'USD',projectCost:4800},
   {id:39,name:'Gas Pipeline \u2014 Kazakhstan',ticker:null,country:'KZ',geo:'EMEA',assetClass:'Project Finance',sector:'Oil & Gas',evic:null,outstanding:430,scope1:1940000,scope2:1000000,scope3:6200000,dqs:5,source:'Revenue proxy \u2014 IEA EF',currency:'USD',projectCost:1800},
   {id:40,name:'Solar + Storage \u2014 Chile (600 MW)',ticker:null,country:'CL',geo:'Americas',assetClass:'Project Finance',sector:'Renewables',evic:null,outstanding:390,scope1:9200,scope2:5000,scope3:52000,dqs:3,source:'Project monitoring report 2023',currency:'USD',projectCost:1100},
-  // ── Commercial Real Estate (5 positions) ── PCAF Ch.4.6 ──
+  // ── Commercial Real Estate (5 positions) ── PCAF Ch.5 ──
   {id:41,name:'Canary Wharf Office Complex, London',ticker:null,country:'GB',geo:'EMEA',assetClass:'Commercial Real Estate',sector:'Real Estate',evic:null,outstanding:620,scope1:12400,scope2:6000,scope3:84000,dqs:3,source:'EPC + energy audit 2023',currency:'GBP',propertyValue:900,sqm:42000,epcRating:'B'},
   {id:42,name:'Schiphol Logistics Hub, Amsterdam',ticker:null,country:'NL',geo:'EMEA',assetClass:'Commercial Real Estate',sector:'Real Estate',evic:null,outstanding:310,scope1:6200,scope2:3000,scope3:42000,dqs:4,source:'CRREM physical proxy',currency:'EUR',propertyValue:480,sqm:28000,epcRating:'C'},
   {id:43,name:'La D\u00e9fense Mixed-Use, Paris',ticker:null,country:'FR',geo:'EMEA',assetClass:'Commercial Real Estate',sector:'Real Estate',evic:null,outstanding:480,scope1:9800,scope2:4800,scope3:68000,dqs:3,source:'DPE audit 2023',currency:'EUR',propertyValue:720,sqm:35000,epcRating:'B'},
   {id:44,name:'Midtown Manhattan Office Tower, NYC',ticker:null,country:'US',geo:'Americas',assetClass:'Commercial Real Estate',sector:'Real Estate',evic:null,outstanding:740,scope1:14800,scope2:7300,scope3:102000,dqs:3,source:'LL97 disclosure 2023',currency:'USD',propertyValue:1200,sqm:55000,epcRating:'A'},
   {id:45,name:'Tokyo Grade-A Office, Shinjuku',ticker:null,country:'JP',geo:'APAC',assetClass:'Commercial Real Estate',sector:'Real Estate',evic:null,outstanding:560,scope1:11200,scope2:5600,scope3:78000,dqs:4,source:'CASBEE proxy estimate',currency:'JPY',propertyValue:840,sqm:38000,epcRating:'B'},
-  // ── Mortgages (5 positions) ── PCAF Ch.4.7 ──
+  // ── Mortgages (5 positions) ── PCAF Ch.5 ──
   {id:46,name:'UK Residential Mortgage Portfolio',ticker:null,country:'GB',geo:'EMEA',assetClass:'Mortgages',sector:'Residential',evic:null,outstanding:2400,scope1:128000,scope2:61000,scope3:0,dqs:4,source:'EPC distribution proxy',currency:'GBP',avgPropertyValue:380,loanCount:8200,avgEPC:'D'},
   {id:47,name:'Dutch Mortgage Book (NHG-backed)',ticker:null,country:'NL',geo:'EMEA',assetClass:'Mortgages',sector:'Residential',evic:null,outstanding:1840,scope1:92000,scope2:42000,scope3:0,dqs:4,source:'RVO NL EPC proxy 2023',currency:'EUR',avgPropertyValue:420,loanCount:5400,avgEPC:'C'},
   {id:48,name:'French Immobilier Portfolio',ticker:null,country:'FR',geo:'EMEA',assetClass:'Mortgages',sector:'Residential',evic:null,outstanding:1210,scope1:64000,scope2:34600,scope3:0,dqs:5,source:'DPE distribution proxy',currency:'EUR',avgPropertyValue:310,loanCount:4200,avgEPC:'D'},
   {id:49,name:'US Conforming Mortgage Pool (GSE)',ticker:null,country:'US',geo:'Americas',assetClass:'Mortgages',sector:'Residential',evic:null,outstanding:3800,scope1:192000,scope2:92000,scope3:0,dqs:5,source:'ENERGY STAR proxy \u2014 headcount',currency:'USD',avgPropertyValue:440,loanCount:9800,avgEPC:'N/A'},
   {id:50,name:'Australian Residential Book',ticker:null,country:'AU',geo:'APAC',assetClass:'Mortgages',sector:'Residential',evic:null,outstanding:920,scope1:48200,scope2:24200,scope3:0,dqs:4,source:'NatHERS rating proxy',currency:'AUD',avgPropertyValue:580,loanCount:2100,avgEPC:'5-star'},
-  // ── Vehicle Loans (3 positions) ── PCAF Ch.4.8 ──
-  {id:51,name:'UK Auto Loan Pool \u2014 ICE Fleet',ticker:null,country:'GB',geo:'EMEA',assetClass:'Vehicle Loans',sector:'Automotive',evic:null,outstanding:420,scope1:184000,scope2:0,scope3:0,dqs:4,source:'DVLA avg CO2/km \u00d7 15k km/yr',currency:'GBP',vehicleCount:14200,avgCO2km:142,avgMileage:15000},
-  {id:52,name:'EU EV Financing Portfolio',ticker:null,country:'DE',geo:'EMEA',assetClass:'Vehicle Loans',sector:'Automotive',evic:null,outstanding:280,scope1:0,scope2:42000,scope3:0,dqs:3,source:'Manufacturer CO2/km = 0; grid EF',currency:'EUR',vehicleCount:8400,avgCO2km:0,avgMileage:12000},
-  {id:53,name:'US Light-Truck Loan Pool',ticker:null,country:'US',geo:'Americas',assetClass:'Vehicle Loans',sector:'Automotive',evic:null,outstanding:640,scope1:312000,scope2:0,scope3:0,dqs:4,source:'EPA avg 242 gCO2/mi \u00d7 12k mi/yr',currency:'USD',vehicleCount:18600,avgCO2km:150,avgMileage:19200},
-  // ── Sovereign Debt (3 positions) ── PCAF Ch.4.9 ──
+  // ── Vehicle Loans (3 positions) ── PCAF Ch.5 ──
+  {id:51,name:'UK Auto Loan Pool \u2014 ICE Fleet',ticker:null,country:'GB',geo:'EMEA',assetClass:'Vehicle Loans',sector:'Automotive',evic:null,outstanding:420,scope1:184000,scope2:0,scope3:0,dqs:4,source:'DVLA avg CO2/km \u00d7 15k km/yr',currency:'GBP',vehicleCount:14200,avgCO2km:142,avgMileage:15000,avgVehicleValue:35},
+  {id:52,name:'EU EV Financing Portfolio',ticker:null,country:'DE',geo:'EMEA',assetClass:'Vehicle Loans',sector:'Automotive',evic:null,outstanding:280,scope1:0,scope2:42000,scope3:0,dqs:3,source:'Manufacturer CO2/km = 0; grid EF',currency:'EUR',vehicleCount:8400,avgCO2km:0,avgMileage:12000,avgVehicleValue:42},
+  {id:53,name:'US Light-Truck Loan Pool',ticker:null,country:'US',geo:'Americas',assetClass:'Vehicle Loans',sector:'Automotive',evic:null,outstanding:640,scope1:312000,scope2:0,scope3:0,dqs:4,source:'EPA avg 242 gCO2/mi \u00d7 12k mi/yr',currency:'USD',vehicleCount:18600,avgCO2km:150,avgMileage:19200,avgVehicleValue:42},
+  // ── Sovereign Debt (3 positions) ── PCAF Ch.5 (Sovereign Debt Standard) ──
   {id:54,name:'UK Gilt 1.5% 2047',ticker:null,country:'GB',geo:'EMEA',assetClass:'Sovereign Debt',sector:'Sovereign',evic:null,outstanding:180,scope1:326000000,scope2:0,scope3:0,dqs:2,source:'UNFCCC NIR 2023',currency:'GBP'},
   {id:55,name:'US Treasury 4.25% 2034',ticker:null,country:'US',geo:'Americas',assetClass:'Sovereign Debt',sector:'Sovereign',evic:null,outstanding:240,scope1:5222000000,scope2:0,scope3:0,dqs:2,source:'EPA GHG Inventory 2023',currency:'USD'},
   {id:56,name:'German Bund 0.5% 2030',ticker:null,country:'DE',geo:'EMEA',assetClass:'Sovereign Debt',sector:'Sovereign',evic:null,outstanding:160,scope1:674000000,scope2:0,scope3:0,dqs:2,source:'UBA Germany NIR 2023',currency:'EUR'},
-  // ── Use-of-Proceeds (2 positions) ── PCAF Ch.4.10 ──
+  // ── Use-of-Proceeds (2 positions) ── Platform extension ──
   {id:57,name:'World Bank Green Bond 2.5% 2028',ticker:null,country:'US',geo:'Americas',assetClass:'Use-of-Proceeds',sector:'Infrastructure',evic:null,outstanding:120,scope1:42000,scope2:18000,scope3:0,dqs:3,source:'World Bank Green Bond Impact Report 2023',currency:'USD',totalBondSize:2000},
   {id:58,name:'EIB Climate Awareness Bond 0.5% 2029',ticker:null,country:'LU',geo:'EMEA',assetClass:'Use-of-Proceeds',sector:'Renewables',evic:null,outstanding:95,scope1:28000,scope2:12000,scope3:0,dqs:3,source:'EIB CAB Impact Report 2023',currency:'EUR',totalBondSize:1500},
-  // ── Securitisations (1 position) ── PCAF Ch.4.11 ──
+  // ── Securitisations (1 position) ── Platform extension ──
   {id:59,name:'RMBS Pool \u2014 UK Prime Mortgages',ticker:null,country:'GB',geo:'EMEA',assetClass:'Securitisations',sector:'Residential',evic:null,outstanding:340,scope1:68000,scope2:32000,scope3:0,dqs:5,source:'Look-through to underlying EPC data',currency:'GBP',poolValue:1800},
-  // ── Undrawn Commitments (1 position) ── PCAF Ch.4.13 ──
+  // ── Undrawn Commitments (1 position) ── Platform extension ──
   {id:60,name:'Revolving Credit Facility \u2014 Diversified Ind.',ticker:null,country:'US',geo:'Americas',assetClass:'Undrawn Commitments',sector:'Industrials',evic:65,outstanding:200,scope1:1420000,scope2:680000,scope3:12000000,dqs:4,source:'Sector-avg EF; CCF=75%',currency:'USD',ccf:0.75,committedAmount:800},
 ];
 // ── Wire real CDP emissions for PCAF calculations (GAP-001) ──────────────
@@ -308,42 +308,42 @@ if (_INDIA_PCAF) BASE_POSITIONS.splice(0, 20, ..._INDIA_PCAF);
    ═══════════════════════════════════════════════════════════════════════════════ */
 const INSURANCE_LOB=[
   {id:1,lob:'Motor',subLob:'Private & Commercial Motor',premiumM:1420,claimsM:980,exposureM:8400,
-   efPerPremium:0.42,efSource:'PCAF v2 Ch.5 Table 5.2',dqs:3,
+   efPerPremium:0.42,efSource:'Platform methodology (not PCAF-defined) \u2014 fleet-premium proxy',dqs:3,
    notes:'Direct auto insurance; fleet avg 165 gCO2/km \u00d7 15k km; DQS 3 via fleet-level data',
    methodology:'Attribution = GWP proportion. EF derived from UK motor fleet avg emissions per unit premium (DEFRA 2023 + Lloyd\'s analysis).',
    riskFactors:'Physical risk: flood/hail damage increasing claims frequency. Transition risk: ICE fleet depreciation as EV adoption accelerates.'},
   {id:2,lob:'Property',subLob:'Residential & SME Property',premiumM:2100,claimsM:1340,exposureM:14200,
-   efPerPremium:0.28,efSource:'PCAF v2 Ch.5 \u2014 residential buildings avg',dqs:4,
+   efPerPremium:0.28,efSource:'Platform methodology (not PCAF-defined) \u2014 residential buildings avg',dqs:4,
    notes:'Home & commercial property; EPC-based proxy for building emissions per premium unit',
    methodology:'Attribution = GWP proportion. EF from UK building stock energy intensity (BRE/DEFRA) mapped to premium volume.',
    riskFactors:'Physical risk: increasing flood, windstorm, wildfire losses. Transition risk: EPC min standards may reduce insurable stock.'},
   {id:3,lob:'Commercial',subLob:'General Liability & PI',premiumM:3400,claimsM:1820,exposureM:22000,
-   efPerPremium:0.61,efSource:'PCAF v2 Ch.5 \u2014 commercial multi-sector avg',dqs:4,
+   efPerPremium:0.61,efSource:'Platform methodology (not PCAF-defined) \u2014 commercial multi-sector avg',dqs:4,
    notes:'General liability, workers comp, professional indemnity across multiple sectors',
    methodology:'Attribution = GWP proportion. Weighted sector EF based on insured industry mix.',
    riskFactors:'Liability risk: increasing climate litigation. D&O exposure for greenwashing and climate disclosure failures.'},
   {id:4,lob:'Life',subLob:'Term & Whole Life',premiumM:4800,claimsM:2100,exposureM:42000,
-   efPerPremium:0.08,efSource:'PCAF v2 Ch.5 \u2014 life insurance low-intensity proxy',dqs:5,
+   efPerPremium:0.08,efSource:'Out of PCAF IAE scope \u2014 illustrative proxy only',dqs:5,
    notes:'Term & whole life; minimal direct emissions link; mainly investment portfolio emissions',
    methodology:'Low EF reflects weak causal link between life insurance and GHG emissions. Investment-side emissions reported separately under Part A.',
    riskFactors:'Mortality risk from extreme heat events. Longevity risk changes from climate-driven health impacts.'},
   {id:5,lob:'Health',subLob:'Medical & Dental',premiumM:2200,claimsM:1640,exposureM:12000,
-   efPerPremium:0.05,efSource:'PCAF v2 Ch.5 \u2014 health sector proxy',dqs:5,
+   efPerPremium:0.05,efSource:'Out of PCAF IAE scope \u2014 illustrative proxy only',dqs:5,
    notes:'Medical & dental insurance; healthcare sector has low-to-moderate direct emissions',
    methodology:'EF from healthcare sector energy intensity. Primarily Scope 2 (hospital electricity).',
    riskFactors:'Climate-driven health impacts: heat stress, vector-borne diseases, air quality.'},
   {id:6,lob:'Reinsurance',subLob:'Property Cat & Specialty',premiumM:1800,claimsM:1200,exposureM:18000,
-   efPerPremium:0.35,efSource:'PCAF v2 Ch.5 \u2014 reinsurance composite',dqs:4,
+   efPerPremium:0.35,efSource:'Platform methodology (not PCAF-defined) \u2014 reinsurance composite',dqs:4,
    notes:'Property cat & specialty reinsurance; composite EF weighted by underlying LoB mix',
    methodology:'Attribution follows ceded premium. EF is composite of underlying primary insurance mix, weighted by reinsured exposure.',
    riskFactors:'Nat cat severity increasing: Swiss Re estimates 5-7% annual loss trend increase from climate change.'},
   {id:7,lob:'Project Insurance',subLob:'Construction All-Risk & DSU',premiumM:680,claimsM:340,exposureM:6200,
-   efPerPremium:0.74,efSource:'PCAF v2 Ch.5 \u2014 construction/infrastructure',dqs:4,
+   efPerPremium:0.74,efSource:'Platform methodology (not PCAF-defined) \u2014 construction/infrastructure',dqs:4,
    notes:'Construction all-risk, delay in start-up, PI for infrastructure and energy projects',
    methodology:'High EF reflects construction sector emission intensity. Project-level monitoring where available.',
    riskFactors:'Physical risk during construction: extreme weather delays. Stranded asset risk for fossil fuel projects.'},
   {id:8,lob:'Marine',subLob:'Hull, Cargo & P&I',premiumM:920,claimsM:580,exposureM:8400,
-   efPerPremium:0.89,efSource:'PCAF v2 Ch.5 Table 5.3 \u2014 IMO shipping avg',dqs:3,
+   efPerPremium:0.89,efSource:'Platform methodology (not PCAF-defined) \u2014 IMO shipping avg',dqs:3,
    notes:'Hull & cargo; IMO MEPC.352(78) CII reference; highest EF of all LOBs',
    methodology:'EF derived from IMO Fourth GHG Study (2020). Marine sector avg tCO2e per premium dollar based on global fleet fuel consumption.',
    riskFactors:'Regulatory risk: IMO decarbonisation targets (50% by 2050). Fuel transition costs: LNG/methanol/ammonia.'},
@@ -354,13 +354,13 @@ const INSURANCE_LOB=[
    7 Deal Types with full attribution methodology
    ═══════════════════════════════════════════════════════════════════════════════ */
 const FACILITATED_DEALS=[
-  {id:1,type:'Bond Underwriting',client:'TotalEnergies SE',sector:'Oil & Gas',dealSizeM:4200,underwrittenM:840,clientScope1:33100000,clientScope2:20100000,clientScope3:950000000,attrFormula:'Underwritten / Deal Size',citation:'PCAF v2, Ch.6, \u00a76.2',dqs:2,year:2023,bookRunner:'Joint',peerGroup:'Bulge bracket syndicate of 6 banks'},
-  {id:2,type:'IPO',client:'Acme Renewables Ltd',sector:'Renewables',dealSizeM:1800,underwrittenM:360,clientScope1:28000,clientScope2:14000,clientScope3:42000,attrFormula:'Underwritten / Deal Size',citation:'PCAF v2, Ch.6, \u00a76.3',dqs:3,year:2024,bookRunner:'Lead',peerGroup:'Lead left + 2 co-managers'},
-  {id:3,type:'Equity Placement',client:'BHP Group',sector:'Mining',dealSizeM:2400,underwrittenM:600,clientScope1:28100000,clientScope2:14200000,clientScope3:320000000,attrFormula:'Placed / Deal Size',citation:'PCAF v2, Ch.6, \u00a76.4',dqs:2,year:2023,bookRunner:'Joint',peerGroup:'3-bank syndicate'},
-  {id:4,type:'Syndicated Loan',client:'ArcelorMittal SA',sector:'Steel',dealSizeM:3600,underwrittenM:720,clientScope1:58400000,clientScope2:14500000,clientScope3:62000000,attrFormula:'Committed / Total Facility',citation:'PCAF v2, Ch.6, \u00a76.5',dqs:3,year:2023,bookRunner:'MLA',peerGroup:'Syndicate of 8 banks'},
-  {id:5,type:'Securitisation',client:'UK RMBS Originator',sector:'Real Estate',dealSizeM:2800,underwrittenM:560,clientScope1:840000,clientScope2:400000,clientScope3:0,attrFormula:'Tranche / Pool Value',citation:'PCAF v2, Ch.6, \u00a76.6',dqs:4,year:2024,bookRunner:'Structuring Agent',peerGroup:'Sole arranger'},
-  {id:6,type:'Convertible Bond',client:'Volkswagen AG',sector:'Automotive',dealSizeM:1400,underwrittenM:420,clientScope1:16200000,clientScope2:7900000,clientScope3:520000000,attrFormula:'Underwritten / Deal Size',citation:'PCAF v2, Ch.6, \u00a76.7',dqs:2,year:2023,bookRunner:'Joint',peerGroup:'2-bank syndicate'},
-  {id:7,type:'Advisory M&A',client:'Mining Target Co.',sector:'Mining',dealSizeM:6800,underwrittenM:0,clientScope1:10200000,clientScope2:5200000,clientScope3:82000000,attrFormula:'Advisory fee / Deal Size (capped 10%)',citation:'PCAF v2, Ch.6, \u00a76.8',dqs:4,year:2024,bookRunner:'Sole Advisor',peerGroup:'Financial advisor (no underwriting)'},
+  {id:1,type:'Bond Underwriting',client:'TotalEnergies SE',sector:'Oil & Gas',dealSizeM:4200,underwrittenM:840,clientScope1:33100000,clientScope2:20100000,clientScope3:950000000,attrFormula:'Underwritten / Deal Size',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:2,year:2023,bookRunner:'Joint',peerGroup:'Bulge bracket syndicate of 6 banks'},
+  {id:2,type:'IPO',client:'Acme Renewables Ltd',sector:'Renewables',dealSizeM:1800,underwrittenM:360,clientScope1:28000,clientScope2:14000,clientScope3:42000,attrFormula:'Underwritten / Deal Size',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:3,year:2024,bookRunner:'Lead',peerGroup:'Lead left + 2 co-managers'},
+  {id:3,type:'Equity Placement',client:'BHP Group',sector:'Mining',dealSizeM:2400,underwrittenM:600,clientScope1:28100000,clientScope2:14200000,clientScope3:320000000,attrFormula:'Placed / Deal Size',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:2,year:2023,bookRunner:'Joint',peerGroup:'3-bank syndicate'},
+  {id:4,type:'Syndicated Loan',client:'ArcelorMittal SA',sector:'Steel',dealSizeM:3600,underwrittenM:720,clientScope1:58400000,clientScope2:14500000,clientScope3:62000000,attrFormula:'Committed / Total Facility',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:3,year:2023,bookRunner:'MLA',peerGroup:'Syndicate of 8 banks'},
+  {id:5,type:'Securitisation',client:'UK RMBS Originator',sector:'Real Estate',dealSizeM:2800,underwrittenM:560,clientScope1:840000,clientScope2:400000,clientScope3:0,attrFormula:'Tranche / Pool Value',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:4,year:2024,bookRunner:'Structuring Agent',peerGroup:'Sole arranger'},
+  {id:6,type:'Convertible Bond',client:'Volkswagen AG',sector:'Automotive',dealSizeM:1400,underwrittenM:420,clientScope1:16200000,clientScope2:7900000,clientScope3:520000000,attrFormula:'Underwritten / Deal Size',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:2,year:2023,bookRunner:'Joint',peerGroup:'2-bank syndicate'},
+  {id:7,type:'Advisory M&A',client:'Mining Target Co.',sector:'Mining',dealSizeM:6800,underwrittenM:0,clientScope1:10200000,clientScope2:5200000,clientScope3:82000000,attrFormula:'Advisory fee / Deal Size (capped 10%)',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',dqs:4,year:2024,bookRunner:'Sole Advisor',peerGroup:'Financial advisor (no underwriting)'},
 ];
 
 /* ═══════════════════════════════════════════════════════════════════════════════
@@ -405,15 +405,15 @@ const QUARTERLY_DQS=Array.from({length:12},(_,i)=>({
    ALL PCAF FORMULAS — With section citations, worked examples, edge cases
    ═══════════════════════════════════════════════════════════════════════════════ */
 const PCAF_FORMULAS=[
-  {id:'F1',name:'Financed Emissions \u2014 Listed Equity & Corporate Bonds',section:'\u00a74.2-4.3',
+  {id:'F1',name:'Financed Emissions \u2014 Listed Equity & Corporate Bonds',section:'Ch.5',
    formula:'FE_i = (Outstanding_i / EVIC_i) \u00d7 Company_Emissions_i',
    latex:'FE_i = \\frac{O_i}{EVIC_i} \\times E_i',
    variables:['Outstanding_i = current exposure in reporting currency ($M)','EVIC_i = Enterprise Value Including Cash = Market Cap + Total Debt + Preferred Stock + Minority Interest ($Bn)','Company_Emissions_i = Scope 1 + Scope 2 emissions (tCO2e)'],
-   notes:'EVIC is the standard denominator per PCAF v2 \u00a74.2.1. If EVIC unavailable for listed companies, use market cap \u00d7 sector leverage ratio (DQS auto-downgrades). For unlisted, see Business Loans methodology.',
+   notes:'EVIC is the standard denominator per the PCAF Standard, 2nd Edition (Dec 2022), Chapter 5. If EVIC unavailable for listed companies, use market cap \u00d7 sector leverage ratio (DQS auto-downgrades). For unlisted, see Business Loans methodology.',
    example:'Shell plc: FE = ($31.2M / $245Bn) \u00d7 68,400,000 tCO2e = 8,709 tCO2e. Attribution factor = 0.01274%.',
-   edgeCases:['Null EVIC: use sector-median proxy from S&P Capital IQ; DQS auto-downgrades to min(current, 4)','Multi-currency: convert all to reporting currency at period-end FX rate per PCAF \u00a73.2.4','Negative EVIC (distressed companies): use total assets as denominator; flag as DQS 5','Dual-listed securities: use primary listing EVIC to avoid double-counting'],
+   edgeCases:['Null EVIC: use sector-median proxy from S&P Capital IQ; DQS auto-downgrades to min(current, 4)','Multi-currency: convert all to reporting currency at period-end FX rate per PCAF guidance','Negative EVIC (distressed companies): use total assets as denominator; flag as DQS 5','Dual-listed securities: use primary listing EVIC to avoid double-counting'],
    validation:['Outstanding must be > 0 and \u2264 EVIC','EVIC should be period-end (matching emissions reporting period)','Emissions must match most recent 12-month reporting period']},
-  {id:'F2',name:'Financed Emissions \u2014 Business Loans',section:'\u00a74.4',
+  {id:'F2',name:'Financed Emissions \u2014 Business Loans',section:'Ch.5',
    formula:'FE_i = (Outstanding_i / (EVIC_i or E+D_i)) \u00d7 Company_Emissions_i',
    latex:'FE_i = \\frac{O_i}{EVIC_i \\text{ or } (E_i + D_i)} \\times E_i',
    variables:['Outstanding_i = drawn loan amount ($M)','E+D_i = Total Equity + Total Debt from most recent audited financials ($M)','Company_Emissions_i = Scope 1 + Scope 2 (tCO2e)'],
@@ -421,7 +421,7 @@ const PCAF_FORMULAS=[
    example:'SME Loan: FE = ($8M / $25M E+D) \u00d7 420,000 tCO2e = 134,400 tCO2e. Attribution factor = 32.0%.',
    edgeCases:['No financials: use revenue \u00d7 sector EF; DQS = 4 minimum','Negative equity (insolvent): use total assets; flag for review','Revolving facilities: use average drawn balance over period'],
    validation:['E+D should be from audited financials within 18 months of reporting date','Outstanding must reflect drawn balance, not commitment']},
-  {id:'F3',name:'Financed Emissions \u2014 Project Finance',section:'\u00a74.5',
+  {id:'F3',name:'Financed Emissions \u2014 Project Finance',section:'Ch.5',
    formula:'FE_i = (Outstanding_i / Total_Project_Cost_i) \u00d7 Project_Emissions_i',
    latex:'FE_i = \\frac{O_i}{TPC_i} \\times PE_i',
    variables:['Outstanding_i = current loan balance ($M)','Total_Project_Cost_i = total equity + debt financing for the project ($M)','Project_Emissions_i = annual project-level emissions (tCO2e)'],
@@ -429,7 +429,7 @@ const PCAF_FORMULAS=[
    example:'Wind Farm: FE = ($480M / $1,200M) \u00d7 12,400 tCO2e = 4,960 tCO2e. Attribution = 40%.',
    edgeCases:['Multiple tranches with different seniority: use pro-rata attribution','JV structures: attribute based on equity share, not debt share','Construction phase: use expected operational emissions if not yet operational'],
    validation:['Outstanding must not exceed total project cost','Project emissions should be forward-looking for new projects']},
-  {id:'F4',name:'Financed Emissions \u2014 Commercial Real Estate',section:'\u00a74.6',
+  {id:'F4',name:'Financed Emissions \u2014 Commercial Real Estate',section:'Ch.5',
    formula:'FE_i = (Outstanding_i / Property_Value_i) \u00d7 Building_Emissions_i',
    latex:'FE_i = \\frac{O_i}{PV_i} \\times BE_i',
    variables:['Outstanding_i = mortgage/loan balance ($M)','Property_Value_i = current appraisal or purchase price ($M)','Building_Emissions_i = annual energy-related Scope 1+2 emissions (tCO2e)'],
@@ -437,7 +437,7 @@ const PCAF_FORMULAS=[
    example:'Canary Wharf: FE = ($620M / $900M) \u00d7 18,400 tCO2e = 12,676 tCO2e. Attribution = 68.9%.',
    edgeCases:['Mixed-use buildings: allocate by gross lettable area per use type','Vacant properties: use design energy consumption at full occupancy','Refurbishment: update emissions post-renovation; may trigger DQS upgrade'],
    validation:['Property value must be recent (within 3 years or latest appraisal)','Building emissions should include common areas and landlord-controlled spaces']},
-  {id:'F5',name:'Financed Emissions \u2014 Mortgages',section:'\u00a74.7',
+  {id:'F5',name:'Financed Emissions \u2014 Mortgages',section:'Ch.5',
    formula:'FE_i = (Outstanding_i / Property_Value_i) \u00d7 Building_Emissions_i',
    latex:'FE_i = \\frac{O_i}{PV_i} \\times BE_i',
    variables:['Outstanding_i = current mortgage balance ($M)','Property_Value_i = value at origination or latest valuation ($M)','Building_Emissions_i = annual emissions from EPC/floor area \u00d7 grid EF (tCO2e)'],
@@ -445,7 +445,7 @@ const PCAF_FORMULAS=[
    example:'UK Mortgage: FE = (\u00a3250K / \u00a3400K) \u00d7 4.2 tCO2e = 2.625 tCO2e per mortgage. Portfolio: 8,200 mortgages \u00d7 avg 23.0 tCO2e attribution = 189,000 tCO2e.',
    edgeCases:['Properties without EPC: use postcode-level proxy or national average; DQS = 5','Buy-to-let: emissions still attributed to mortgage holder, not tenant','Partial repayments: update outstanding balance for accurate attribution'],
    validation:['Property value should be at origination for LTV consistency','EPC rating must be current (within 10 years in UK)']},
-  {id:'F6',name:'Financed Emissions \u2014 Vehicle Loans',section:'\u00a74.8',
+  {id:'F6',name:'Financed Emissions \u2014 Vehicle Loans',section:'Ch.5',
    formula:'FE_i = (Outstanding_i / Vehicle_Value_i) \u00d7 (CO2_per_km \u00d7 Annual_km)',
    latex:'FE_i = \\frac{O_i}{VV_i} \\times (\\frac{gCO2}{km} \\times km_{annual})',
    variables:['Outstanding_i = loan balance ($)','Vehicle_Value_i = purchase price ($)','CO2_per_km = manufacturer WLTP test-cycle gCO2/km','Annual_km = estimated annual mileage (default 15,000 km EU / 19,200 km US)'],
@@ -453,7 +453,7 @@ const PCAF_FORMULAS=[
    example:'UK ICE: FE = (\u00a318K / \u00a335K) \u00d7 (142 gCO2/km \u00d7 15,000 km) = 1,097 kgCO2e per vehicle.',
    edgeCases:['Hybrid vehicles: use combined (electric + ICE) weighted by electric-mode proportion','Commercial vehicles: use VECTO declared value for HDV','Fleet financing: aggregate by vehicle category'],
    validation:['CO2/km must be WLTP (not NEDC) for EU vehicles post-2018','Annual mileage assumption should match national statistics']},
-  {id:'F7',name:'Financed Emissions \u2014 Sovereign Debt',section:'\u00a74.9',
+  {id:'F7',name:'Financed Emissions \u2014 Sovereign Debt',section:'Ch.5 (Sovereign Debt Standard)',
    formula:'FE_i = (Outstanding_i / PPP_GDP_i) \u00d7 Sovereign_Emissions_i',
    latex:'FE_i = \\frac{O_i}{GDP_{PPP,i}} \\times SE_i',
    variables:['Outstanding_i = sovereign bond holding ($M)','PPP_GDP_i = purchasing power parity GDP of the sovereign ($Bn)','Sovereign_Emissions_i = national GHG inventory total (tCO2e)'],
@@ -461,7 +461,7 @@ const PCAF_FORMULAS=[
    example:'UK Gilt: FE = ($180M / $3,340Bn) \u00d7 326,000,000 tCO2e = 17,569 tCO2e.',
    edgeCases:['Sub-sovereign: use regional emissions if available; otherwise pro-rata from national','Inflation-linked bonds: use nominal outstanding for attribution','Multi-currency sovereign bonds: convert to USD at IMF period-end rate'],
    validation:['PPP GDP must be from same year as emissions data','National emissions should be latest available UNFCCC submission']},
-  {id:'F8',name:'Financed Emissions \u2014 Use-of-Proceeds Instruments',section:'\u00a74.10',
+  {id:'F8',name:'Financed Emissions \u2014 Use-of-Proceeds Instruments',section:'Platform extension',
    formula:'FE_i = (Outstanding_i / Total_Bond_Issuance_i) \u00d7 Proceeds_Emissions_i',
    latex:'FE_i = \\frac{O_i}{TBI_i} \\times PE_i',
    variables:['Outstanding_i = holding amount ($M)','Total_Bond_Issuance_i = total issuance amount of the bond ($M)','Proceeds_Emissions_i = emissions from projects financed by proceeds (tCO2e)'],
@@ -469,21 +469,21 @@ const PCAF_FORMULAS=[
    example:'World Bank Green Bond: FE = ($120M / $2,000M) \u00d7 42,000 tCO2e = 2,520 tCO2e.',
    edgeCases:['Unallocated proceeds: apply issuer-level EF to unallocated portion','Multi-project bonds: weight by allocation percentage per project','Refinancing: use current project emissions, not original'],
    validation:['Proceeds allocation should be from most recent impact report','Total bond size must match issuance amount']},
-  {id:'F9',name:'Insurance-Associated Emissions',section:'\u00a75.1',
+  {id:'F9',name:'Insurance-Associated Emissions',section:'IAE Standard (Nov 2022)',
    formula:'FE_ins = GWP_lob \u00d7 Sector_EF_per_Premium_lob',
    latex:'FE_{ins} = GWP_{lob} \\times EF_{sector,lob}',
    variables:['GWP_lob = gross written premium for line of business ($M)','Sector_EF_per_Premium_lob = tCO2e per $M premium by LoB'],
-   notes:'Part B methodology per PCAF v2 Chapter 5. Attribution based on premium volume, not claims paid. Use sector-specific emission factors from Table 5.2-5.3.',
+   notes:'Platform methodology (not the official PCAF IAE formula) — attribution based on premium volume, not claims paid, using platform-derived sector emission factors. The PCAF Insurance-Associated Emissions Standard (Nov 2022) instead attributes via premium ÷ customer revenue × customer emissions.',
    example:'Motor: FE = $1,420M \u00d7 0.42 tCO2e/$M = 596,400 tCO2e.',
    edgeCases:['Multi-year policies: use annualised premium','Reinsurance: net of retrocession','Coinsurance: use share of premium'],
    validation:['Premium must be gross written (not net of reinsurance for primary)','EF should be periodically updated as sector decarbonises']},
-  {id:'F10',name:'Facilitated Emissions',section:'\u00a76.1',
-   formula:'FE_fac = (Underwritten_i / Deal_Size_i) \u00d7 Client_Emissions_i',
-   latex:'FE_{fac} = \\frac{UW_i}{DS_i} \\times CE_i',
-   variables:['Underwritten_i = bank committed/underwritten amount ($M)','Deal_Size_i = total deal size ($M)','Client_Emissions_i = issuer/client Scope 1+2 emissions (tCO2e)'],
-   notes:'Part C methodology per PCAF v2 Chapter 6. Capital markets transactions including bond underwriting, IPO, equity placements, syndicated loans, securitisation structuring.',
-   example:'TotalEnergies Bond: FE = ($840M / $4,200M) \u00d7 53,200,000 tCO2e = 10,640,000 tCO2e.',
-   edgeCases:['Advisory-only mandates: cap at advisory fee / deal size (max 10%) per \u00a76.8','Multiple bookrunners: each reports based on their underwriting commitment','Green bond underwriting: use project emissions, not issuer-level'],
+  {id:'F10',name:'Facilitated Emissions',section:'Part B (Dec 2023)',
+   formula:'FE_fac = (Underwritten_i / Issuer_EVIC_i) \u00d7 33% \u00d7 Client_Emissions_i',
+   latex:'FE_{fac} = \\frac{UW_i}{EVIC_i} \\times 0.33 \\times CE_i',
+   variables:['Underwritten_i = bank committed/underwritten amount ($M)','Issuer_EVIC_i = issuer Enterprise Value Including Cash ($Bn)','33% = PCAF facilitated-emissions weighting factor','Client_Emissions_i = issuer/client Scope 1+2 emissions (tCO2e)'],
+   notes:'PCAF Standard, Part B — Facilitated Emissions (Dec 2023). Capital markets transactions including bond underwriting, IPO, equity placements, syndicated loans, securitisation structuring. Attribution = (Underwritten / Issuer EVIC) × 33% weighting factor; advisory-only mandates are out of scope. Deal Size is used as a fallback denominator only when issuer EVIC is unavailable.',
+   example:'TotalEnergies Bond: FE = (($840M / 1000) / $178Bn EVIC) \u00d7 0.33 \u00d7 53,200,000 tCO2e ≈ 82,849 tCO2e.',
+   edgeCases:['Advisory-only mandates (e.g. M&A advisory): out of scope of PCAF Part B (capital-markets issuance only) \u2014 excluded from the PCAF total, not capped and included','Multiple bookrunners: each reports based on their underwriting commitment','Green bond underwriting: use project emissions, not issuer-level'],
    validation:['Underwritten must not exceed deal size','Client emissions should be from same reporting period as deal']},
 ];
 
@@ -504,43 +504,72 @@ const DOWNSTREAM_MODULES=[
 /* ═══════════════════════════════════════════════════════════════════════════════
    COMPUTATION FUNCTIONS
    ═══════════════════════════════════════════════════════════════════════════════ */
+// UNIT CONVENTION (see BASE_POSITIONS comment above): evic/se/gdp = $Bn,
+// outstanding/propertyValue/projectCost/etc. = $M. Every EVIC-denominator
+// branch below must convert one side before dividing (se/evic/gdp * 1000)
+// — this file previously divided $M outstanding directly by $Bn EVIC with no
+// conversion, overstating every listed-equity/bond/loan attribution factor
+// ~1,000x (GAP-004; e.g. Shell $31.2M / $245Bn rendered as 12.73% instead of
+// the correct 0.0127%).
 function computeAttrFactor(p){
-  // Project Finance: Outstanding / Total Project Cost (Ch.4.5)
+  // Project Finance: Outstanding / Total Project Cost (Ch.5)
   if(p.assetClass==='Project Finance'){
     const tpc=p.projectCost||p.outstanding*2.5;
     return Math.min(1.0,p.outstanding/tpc);
   }
-  // CRE: Outstanding / Property Value (Ch.4.6)
+  // CRE: Outstanding / Property Value (Ch.5)
   if(p.assetClass==='Commercial Real Estate'){
     const pv=p.propertyValue||p.outstanding*1.5;
     return Math.min(1.0,p.outstanding/pv);
   }
-  // Mortgages, Vehicle Loans, Securitisations: typically 1.0 (full attribution)
-  if(['Mortgages','Vehicle Loans','Securitisations'].includes(p.assetClass))return 1.0;
-  // Sovereign Debt: Outstanding / PPP GDP (Ch.4.9)
+  // Mortgages: Outstanding / (avg property value x loan count) — pool-level
+  // LTV (Ch.5). Previously hardcoded to 1.0 (100% attribution) regardless of
+  // the pool's actual property values, which the data already carries
+  // (GAP-014).
+  if(p.assetClass==='Mortgages'){
+    const totalPropertyValueM=(p.avgPropertyValue&&p.loanCount)?(p.avgPropertyValue*p.loanCount/1000):p.outstanding*1.25;
+    return Math.min(1.0,p.outstanding/totalPropertyValueM);
+  }
+  // Vehicle Loans: Outstanding / (avg vehicle value x vehicle count) —
+  // pool-level LTV (Ch.5). Previously hardcoded to 1.0 (GAP-014).
+  if(p.assetClass==='Vehicle Loans'){
+    const totalVehicleValueM=(p.avgVehicleValue&&p.vehicleCount)?(p.avgVehicleValue*p.vehicleCount/1000):p.outstanding*1.15;
+    return Math.min(1.0,p.outstanding/totalVehicleValueM);
+  }
+  // Securitisations: Tranche Outstanding / Pool Value (Ch.5). Previously
+  // hardcoded to 1.0 even though the data already carries poolValue (GAP-014).
+  if(p.assetClass==='Securitisations'){
+    const pool=p.poolValue||p.outstanding*5;
+    return Math.min(1.0,p.outstanding/pool);
+  }
+  // Sovereign Debt: Outstanding / PPP GDP (Ch.5)
   if(p.assetClass==='Sovereign Debt'){
     const gdp=COUNTRY_PPP_GDP[p.country]||COUNTRY_PPP_GDP.default;
     return Math.min(1.0,(p.outstanding/(gdp*1000)));
   }
-  // Use-of-Proceeds: Outstanding / Total Bond Size (Ch.4.10)
+  // Use-of-Proceeds (platform extension, not a core PCAF asset class):
+  // Outstanding / Total Bond Size
   if(p.assetClass==='Use-of-Proceeds'){
     const tbs=p.totalBondSize||p.outstanding*10;
     return Math.min(1.0,p.outstanding/tbs);
   }
-  // Sub-Sovereign: Outstanding / Total Entity Debt
+  // Sub-Sovereign (platform extension, not a core PCAF asset class): no
+  // sub-sovereign holdings currently exist in this demo portfolio to
+  // attribute; flat placeholder retained.
   if(p.assetClass==='Sub-Sovereign')return 0.10;
-  // Undrawn Commitments: CCF x (Outstanding / EVIC) (Ch.4.13)
+  // Undrawn Commitments (platform extension, not a core PCAF asset class):
+  // CCF x (Outstanding / EVIC)
   if(p.assetClass==='Undrawn Commitments'){
     const ccf=p.ccf||0.75;
-    if(!p.evic){const se=SECTOR_MEDIAN_EVIC[p.sector]||SECTOR_MEDIAN_EVIC.default;return ccf*(se?Math.min(1.0,p.outstanding/se):0.5);}
-    return ccf*Math.min(1.0,p.outstanding/p.evic);
+    if(!p.evic){const se=SECTOR_MEDIAN_EVIC[p.sector]||SECTOR_MEDIAN_EVIC.default;return ccf*(se?Math.min(1.0,p.outstanding/(se*1000)):0.5);}
+    return ccf*Math.min(1.0,p.outstanding/(p.evic*1000));
   }
-  // Listed Equity, Corporate Bonds, Business Loans: Outstanding / EVIC (Ch.4.2-4.4)
+  // Listed Equity, Corporate Bonds, Business Loans: Outstanding / EVIC (Ch.5)
   if(!p.evic){
     const se=SECTOR_MEDIAN_EVIC[p.sector]||SECTOR_MEDIAN_EVIC.default;
-    return se?Math.min(1.0,p.outstanding/se):1.0;
+    return se?Math.min(1.0,p.outstanding/(se*1000)):1.0;
   }
-  return Math.min(1.0,p.outstanding/p.evic);
+  return Math.min(1.0,p.outstanding/(p.evic*1000));
 }
 
 function computeRow(p){
@@ -551,10 +580,15 @@ function computeRow(p){
   const financedScope3=+(attrFactor*(p.scope3||0)).toFixed(0);
   const evicWarning=(!p.evic&&['Listed Equity','Corporate Bonds','Business Loans'].includes(p.assetClass))?'NULL_EVIC \u2014 sector proxy used':null;
   const adjustedDqs=evicWarning?Math.max(p.dqs,4):p.dqs;
-  // Revenue proxy: sector-specific Revenue/EVIC ratios (PCAF data quality hierarchy)
+  // Revenue proxy: sector-specific Revenue/EVIC ratios (PCAF data quality hierarchy).
+  // p.evic (and the SECTOR_MEDIAN_EVIC fallback) are in $Bn; revenueM must be
+  // in $M to match financedEmissions' units, so convert Bn->M (x1000) before
+  // applying the ratio — this was previously missing, inflating WACI ~1,000x
+  // (GAP-020, e.g. header showed 606,192.9 tCO2e/$M against a status-bar
+  // figure of 312 for the same portfolio).
   const SECTOR_REV_EVIC = { 'Technology': 8, 'Software': 10, 'Financials': 3, 'Energy': 0.8, 'Mining': 1.2, 'Utilities': 1.5, 'Real Estate': 0.6, 'Healthcare': 5, 'Consumer': 4, 'Industrials': 2.5, 'Materials': 1.8, 'Telecom': 3.5 };
   const revMultiple = SECTOR_REV_EVIC[p.sector] || 2.5;
-  const revenueM = p.evic ? p.evic * revMultiple : (SECTOR_MEDIAN_EVIC[p.sector] || 50) * revMultiple;
+  const revenueM = p.evic ? p.evic * 1000 * revMultiple : (SECTOR_MEDIAN_EVIC[p.sector] || 50) * 1000 * revMultiple;
   const waci=revenueM>0?(totalEmissions/revenueM):0;
   const carbonIntensity=p.outstanding>0?financedEmissions/p.outstanding:0;
   const scope1Pct=totalEmissions>0?(p.scope1||0)/totalEmissions:0;
@@ -648,7 +682,7 @@ function AddPositionModal({onAdd,onClose}){
     <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:9999,display:'flex',alignItems:'center',justifyContent:'center'}}>
       <div style={{background:T.surface,borderRadius:10,padding:28,width:640,maxWidth:'95vw',maxHeight:'90vh',overflowY:'auto',boxShadow:'0 12px 40px rgba(0,0,0,0.18)'}}>
         <div style={{fontSize:16,fontWeight:700,color:T.navy,marginBottom:4}}>Add New Position</div>
-        <div style={{fontSize:11,color:T.textMut,marginBottom:16}}>PCAF Standard v2 \u2014 All 12 asset classes supported. Fields adapt based on selected asset class.</div>
+        <div style={{fontSize:11,color:T.textMut,marginBottom:16}}>PCAF Standard, 2nd Ed. (Dec 2022) \u2014 7 core asset classes + 5 platform extensions supported. Fields adapt based on selected asset class.</div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
           <div style={{gridColumn:'1/-1'}}><label style={lbl}>Company / Instrument Name *</label><input style={inp} value={form.name} onChange={set('name')} placeholder="e.g. BP plc or North Sea Wind Farm"/>{errors.name&&<div style={errS}>{errors.name}</div>}</div>
           <div><label style={lbl}>Asset Class *</label><select style={inp} value={form.assetClass} onChange={set('assetClass')}>{ALL_ASSET_CLASSES.map(a=><option key={a}>{a}</option>)}</select></div>
@@ -676,8 +710,8 @@ function AddPositionModal({onAdd,onClose}){
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   TAB 1: PART A — FINANCED EMISSIONS (12 Asset Classes)
-   PCAF Standard v2, Chapter 4
+   TAB 1: PART A — FINANCED EMISSIONS (7 core PCAF asset classes + 5 platform extensions)
+   PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5
    60 pre-loaded holdings, per holding: company, EVIC, outstanding, scope 1/2/3,
    attribution factor, DQS. Add/edit/remove functionality.
    ═══════════════════════════════════════════════════════════════════════════════ */
@@ -706,8 +740,13 @@ function PartATab({positions,setPositions}){
     return[...ps].sort((a,b)=>sortDir*(a[sortKey]>b[sortKey]?1:-1));
   },[positions,acFilter,geoFilter,dqsFilter,search,sortKey,sortDir]);
 
-  const totalFE=useMemo(()=>positions.reduce((s,p)=>s+p.financedEmissions,0),[positions]);
-  const totalFEScope3=useMemo(()=>positions.reduce((s,p)=>s+p.financedScope3,0),[positions]);
+  // PCAF: report committed-but-undrawn amounts separately from the drawn
+  // financed-emissions headline (the module's own ASSET_CLASS_DEFS note for
+  // Undrawn Commitments already says so). Previously folded straight into
+  // totalFE with no separate line (GAP-013).
+  const totalFE=useMemo(()=>positions.filter(p=>p.assetClass!=='Undrawn Commitments').reduce((s,p)=>s+p.financedEmissions,0),[positions]);
+  const totalUndrawnFE=useMemo(()=>positions.filter(p=>p.assetClass==='Undrawn Commitments').reduce((s,p)=>s+p.financedEmissions,0),[positions]);
+  const totalFEScope3=useMemo(()=>positions.filter(p=>p.assetClass!=='Undrawn Commitments').reduce((s,p)=>s+p.financedScope3,0),[positions]);
   const totalOut=useMemo(()=>positions.reduce((s,p)=>s+p.outstanding,0),[positions]);
   const avgDqs=useMemo(()=>positions.length?(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2):'—',[positions]);
   const carbonFootprint=useMemo(()=>totalOut>0?totalFE/(totalOut/1000):0,[totalFE,totalOut]);
@@ -738,18 +777,19 @@ function PartATab({positions,setPositions}){
   },[positions]);
 
   return(<div>
-    <SectionHeader title="Part A: Financed Emissions" citation="PCAF Standard v2, Chapter 4" description={`12 asset classes across ${positions.length} holdings. Attribution Factor = Outstanding / Denominator (per asset class). Financed Emissions = Attribution Factor x Scope 1+2 Emissions. All formulas per PCAF v2 Chapters 4.2-4.13.`}/>
+    <SectionHeader title="Part A: Financed Emissions" citation="PCAF Standard, 2nd Edition (Dec 2022), Chapter 5" description={`7 core PCAF asset classes + 5 platform extensions across ${positions.length} holdings. Attribution Factor = Outstanding / Denominator (per asset class). Financed Emissions = Attribution Factor x Scope 1+2 Emissions. Core formulas per PCAF Standard Chapter 5; extension classes (Use-of-Proceeds, Securitisations, Sub-Sovereign, Undrawn Commitments) are platform-only, not PCAF standard chapters.`}/>
 
     {/* KPI Row */}
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
-      <KPICard label="Total Financed Emissions" value={fmt(totalFE)+' tCO2e'} sub={`${positions.length} positions | Scope 1+2`} color={T.navy}/>
+      <KPICard label="Total Financed Emissions" value={fmt(totalFE)+' tCO2e'} sub={`${positions.length} positions | Scope 1+2 | excl. undrawn`} color={T.navy}/>
       <KPICard label="Including Scope 3" value={fmt(totalFE+totalFEScope3)+' tCO2e'} sub="All scopes attributed" color={T.navyL}/>
+      <KPICard label="Undrawn Commitments" value={fmt(totalUndrawnFE)+' tCO2e'} sub="Reported separately per PCAF" color={T.purple||'#7c3aed'}/>
       <KPICard label="Carbon Footprint" value={carbonFootprint.toFixed(0)+' tCO2e/$Bn'} sub="Total FE / AUM" color={T.gold}/>
       <KPICard label="WACI" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="Portfolio average" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
       <div style={{flex:'1 0 auto',background:T.surface,borderRadius:8,padding:'8px 12px',border:`1px solid ${T.border}`,minWidth:120}}>
         <div style={{fontSize:10,color:T.textSec,letterSpacing:0.3,marginBottom:4}}>CARBON COST</div>
-        <CurrencyToggle usdValue={totalFE*carbonPrice/1e6} size="md" />
+        <CurrencyToggle usdValue={totalFE*carbonPrice} size="md" />
         <div style={{fontSize:9,color:T.textSec,marginTop:2}}>@ ${carbonPrice}/tCO2e</div>
       </div>
       <KPICard label="CC Credits Financed" value={ccPcaf?.totalFinancedCredits?.toLocaleString() || '0'} sub="Carbon Credit Engine" color={'#059669'}/>
@@ -757,7 +797,7 @@ function PartATab({positions,setPositions}){
 
     {/* Charts */}
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:14,marginBottom:20}}>
-      <Card title="FE by Asset Class" citation="\u00a74.1 Table 4.1">
+      <Card title="FE by Asset Class" citation="PCAF Standard, Chapter 5">
         <ResponsiveContainer width="100%" height={220}>
           <PieChart><Pie data={byAC} dataKey="fe" nameKey="ac" cx="50%" cy="50%" outerRadius={80} label={e=>e.ac.split(' ')[0]+': '+fmt(e.fe)}>
             {byAC.map((d,i)=><Cell key={i} fill={AC_COLORS[d.ac]||PIE_COLORS[i%12]}/>)}
@@ -868,7 +908,7 @@ function PartATab({positions,setPositions}){
                       <button onClick={()=>applyEdit(p)} style={{padding:'5px 14px',border:'none',borderRadius:4,background:T.sage,color:'#fff',fontSize:11,fontWeight:600,cursor:'pointer'}}>Recalculate</button>
                     </div>
                     <div style={{marginTop:6,fontSize:10,color:T.textMut,fontFamily:T.mono}}>
-                      PCAF {ASSET_CLASS_DEFS.find(d=>d.ac===p.assetClass)?.ch||'Ch.4'}: FE = ({fmtPct(p.attrFactor)}) \u00d7 {fmt(p.totalEmissions)} = {fmt(p.financedEmissions)} tCO2e | Carbon cost: ${(p.financedEmissions*carbonPrice/1e6).toFixed(3)}M @ ${carbonPrice}/t | Source: {p.source}
+                      {(()=>{const _ch=ASSET_CLASS_DEFS.find(d=>d.ac===p.assetClass)?.ch;return _ch==='ext'?'Platform extension (not a PCAF standard chapter)':`PCAF Ch.${_ch||'5'}`;})()}: FE = ({fmtPct(p.attrFactor)}) \u00d7 {fmt(p.totalEmissions)} = {fmt(p.financedEmissions)} tCO2e | Carbon cost: ${(p.financedEmissions*carbonPrice/1e6).toFixed(3)}M @ ${carbonPrice}/t | Source: {p.source}
                     </div>
                   </td>
                 </tr>
@@ -880,7 +920,7 @@ function PartATab({positions,setPositions}){
     </div>
     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
       <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Showing {filtered.length} of {positions.length} positions | Scope: {scopeView} | Filtered FE: {fmt(filtered.reduce((s,p)=>s+p.financedEmissions,0))} tCO2e</div>
-      <div style={{fontSize:10,color:T.textMut}}>Total exposure: ${fmt(totalOut)}M | Positions with EVIC warning: {positions.filter(p=>p.evicWarning).length}</div>
+      <div style={{fontSize:10,color:T.textMut}}>Total exposure: ${fmt(totalOut*1e6)} | Positions with EVIC warning: {positions.filter(p=>p.evicWarning).length}</div>
     </div>
     {showAdd&&<AddPositionModal onAdd={p=>setPositions(prev=>[p,...prev])} onClose={()=>setShowAdd(false)}/>}
   </div>);
@@ -896,29 +936,39 @@ function PartBTab(){
   const[editForm,setEditForm]=useState({});
   const[showDetails,setShowDetails]=useState(null);
 
+  // Life and Health are explicitly out of scope of the PCAF Insurance-
+  // Associated Emissions standard (Nov 2022) — commercial lines and personal
+  // motor only — but were previously summed straight into the headline
+  // "Insurance FE" total with no ring-fencing (GAP-012). Exclude them from
+  // the PCAF-labeled total and report as a separate, clearly-labeled metric.
+  const inScopeLob=useMemo(()=>lobData.filter(l=>l.lob!=='Life'&&l.lob!=='Health'),[lobData]);
+  const outOfScopeLob=useMemo(()=>lobData.filter(l=>l.lob==='Life'||l.lob==='Health'),[lobData]);
   const totalPremium=useMemo(()=>lobData.reduce((s,l)=>s+l.premiumM,0),[lobData]);
-  const totalFE=useMemo(()=>lobData.reduce((s,l)=>s+Math.round(l.premiumM*l.efPerPremium),0),[lobData]);
+  const totalFE=useMemo(()=>inScopeLob.reduce((s,l)=>s+Math.round(l.premiumM*l.efPerPremium),0),[inScopeLob]);
+  const totalExtendedFE=useMemo(()=>outOfScopeLob.reduce((s,l)=>s+Math.round(l.premiumM*l.efPerPremium),0),[outOfScopeLob]);
   const totalClaims=useMemo(()=>lobData.reduce((s,l)=>s+l.claimsM,0),[lobData]);
   const totalExposure=useMemo(()=>lobData.reduce((s,l)=>s+l.exposureM,0),[lobData]);
   const avgDqs=useMemo(()=>lobData.length?(lobData.reduce((s,l)=>s+l.dqs,0)/lobData.length).toFixed(1):'—',[lobData]);
-  const lobFE=useMemo(()=>lobData.map(l=>({lob:l.lob,fe:Math.round(l.premiumM*l.efPerPremium),premium:l.premiumM,intensity:(l.efPerPremium).toFixed(2)})),[lobData]);
+  const lobFE=useMemo(()=>lobData.map(l=>({lob:l.lob,fe:Math.round(l.premiumM*l.efPerPremium),premium:l.premiumM,intensity:(l.efPerPremium).toFixed(2),outOfScope:l.lob==='Life'||l.lob==='Health'})),[lobData]);
   const lossRatio=useMemo(()=>(totalPremium ? totalClaims/totalPremium*100 : 0).toFixed(1),[totalClaims,totalPremium]);
 
   function startLobEdit(l){setEditId(l.id);setEditForm({premiumM:l.premiumM,claimsM:l.claimsM,exposureM:l.exposureM,efPerPremium:l.efPerPremium,dqs:l.dqs});}
   function applyLobEdit(id){setLobData(prev=>prev.map(l=>l.id===id?{...l,premiumM:+editForm.premiumM,claimsM:+editForm.claimsM,exposureM:+editForm.exposureM,efPerPremium:+editForm.efPerPremium,dqs:+editForm.dqs}:l));setEditId(null);}
 
   return(<div>
-    <SectionHeader title="Part B: Insurance-Associated Emissions" citation="PCAF Standard v2, Chapter 5" description={`8 lines of business. Formula: FE = Gross Written Premium x Sector Emission Factor per Premium unit. Attribution based on premium volume (not claims). Total GWP: $${fmt(totalPremium)}M across ${lobData.length} LOBs.`}/>
+    <SectionHeader title="Part B: Insurance-Associated Emissions" citation="PCAF Insurance-Associated Emissions Standard (Nov 2022) — a separate standard from PCAF Part B (Facilitated Emissions)" description={`${lobData.length} lines of business (${inScopeLob.length} in PCAF IAE scope, ${outOfScopeLob.length} extended/out-of-scope). Formula: FE = Gross Written Premium x Sector Emission Factor per Premium unit. Attribution based on premium volume (not claims). Total GWP: $${fmt(totalPremium*1e6)}.`}/>
+    {totalExtendedFE>0&&<InfoBox type="info">ℹ️ Life and Health lines ({fmt(totalExtendedFE)} tCO2e) are out of scope of the PCAF IAE standard — commercial lines and personal motor only. Shown separately below, excluded from the PCAF-labeled total.</InfoBox>}
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
       <KPICard label="Total GWP" value={'$'+fmt(totalPremium)+'M'} sub="Gross written premium" color={T.navy}/>
-      <KPICard label="Insurance FE" value={fmt(totalFE)+' tCO2e'} sub="All 8 LOBs" color={T.red}/>
+      <KPICard label="Insurance FE (PCAF-scoped)" value={fmt(totalFE)+' tCO2e'} sub={`${inScopeLob.length} in-scope LOBs`} color={T.red}/>
+      {totalExtendedFE>0&&<KPICard label="Life/Health (extended, non-PCAF)" value={fmt(totalExtendedFE)+' tCO2e'} sub="Excluded from PCAF total" color={T.textMut}/>}
       <KPICard label="Total Exposure" value={'$'+fmt(totalExposure)+'M'} sub="Sum insured" color={T.gold}/>
       <KPICard label="Loss Ratio" value={lossRatio+'%'} sub="Claims / Premium" color={+lossRatio>70?T.red:T.green}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="LOB weighted" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
-      <KPICard label="Avg Intensity" value={(totalPremium ? totalFE/totalPremium : 0).toFixed(3)} sub="tCO2e per $M GWP" color={T.sage}/>
+      <KPICard label="Avg Intensity" value={(totalPremium ? totalFE/totalPremium : 0).toFixed(3)} sub="tCO2e per $M GWP (PCAF-scoped)" color={T.sage}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
-      <Card title="FE by Line of Business" citation="Ch.5, Table 5.2-5.3">
+      <Card title="FE by Line of Business" citation="PCAF IAE Standard (Nov 2022)">
         <ResponsiveContainer width="100%" height={250}><BarChart data={lobFE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="lob" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><Tooltip {...tip}/><Bar dataKey="fe" name="FE tCO2e" radius={[4,4,0,0]}>{lobFE.map((d,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}</Bar></BarChart></ResponsiveContainer>
       </Card>
       <Card title="Premium vs Claims by LOB">
@@ -935,7 +985,7 @@ function PartBTab(){
         <tbody>{lobData.map((l,ri)=>(
           <React.Fragment key={l.id}>
             <tr style={{background:ri%2===0?T.surface:T.bg,borderBottom:`1px solid ${T.border}`}}>
-              <td style={{padding:'6px 8px',fontWeight:600,color:T.navy}}>{l.lob}</td>
+              <td style={{padding:'6px 8px',fontWeight:600,color:T.navy}}>{l.lob}{(l.lob==='Life'||l.lob==='Health')&&<span style={{marginLeft:6,background:'#fef2f2',color:'#b91c1c',border:'1px solid #fca5a5',borderRadius:10,padding:'1px 6px',fontSize:9,fontWeight:700}}>extended, non-PCAF</span>}</td>
               <td style={{padding:'6px 8px',fontSize:10,color:T.textSec}}>{l.subLob}</td>
               <td style={{padding:'6px 8px',textAlign:'right'}}>{editId===l.id?<input type="number" value={editForm.premiumM} onChange={e=>setEditForm(f=>({...f,premiumM:e.target.value}))} style={{width:80,padding:'3px 6px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:11}}/>:fmtNum(l.premiumM)}</td>
               <td style={{padding:'6px 8px',textAlign:'right'}}>{editId===l.id?<input type="number" value={editForm.claimsM} onChange={e=>setEditForm(f=>({...f,claimsM:e.target.value}))} style={{width:80,padding:'3px 6px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:11}}/>:fmtNum(l.claimsM)}</td>
@@ -961,7 +1011,7 @@ function PartBTab(){
         ))}</tbody>
       </table>
     </div>
-    <InfoBox type="info"><strong>PCAF v2 Ch.5 \u00a75.1:</strong> Insurance-associated emissions are attributed proportionally to gross written premium. This methodology captures the insurer&apos;s role in enabling economic activities that generate emissions. For investment-side emissions, see Part A (financed emissions).</InfoBox>
+    <InfoBox type="info"><strong>Platform methodology (not the PCAF IAE formula):</strong> this tab attributes insurance-associated emissions proportionally to gross written premium x a sector emission factor. The PCAF IAE Standard (Nov 2022) instead attributes via premium \u00f7 customer revenue \u00d7 customer emissions, for commercial lines and personal motor only \u2014 not yet implemented here. This methodology captures the insurer&apos;s role in enabling economic activities that generate emissions. For investment-side emissions, see Part A (financed emissions).</InfoBox>
   </div>);
 }
 
@@ -969,33 +1019,64 @@ function PartBTab(){
    TAB 3: PART C — FACILITATED EMISSIONS (Chapter 6)
    7 Deal Types with full attribution
    ═══════════════════════════════════════════════════════════════════════════════ */
+// PCAF's actual Part B (Facilitated Emissions, Dec 2023) formula is
+// (Underwritten / Issuer EVIC) x 33% weighting factor \u2014 not Underwritten /
+// Deal Size with no weighting, which is what this tab previously computed
+// (GAP-010; e.g. TotalEnergies bond showed 10.64M tCO2e with none of the
+// 33% factor applied). Cross-reference each deal's client against
+// BASE_POSITIONS (which already carries real EVIC for these same companies)
+// to get a real denominator; fall back to Deal Size when no match exists,
+// clearly flagged as a proxy. M&A advisory is out of scope of PCAF Part B
+// (capital-markets issuance only per GAP-011) and is excluded from the
+// PCAF-labeled total, shown separately instead.
+const FACILITATED_WEIGHTING_FACTOR=0.33;
+const _EVIC_BY_CLIENT=Object.fromEntries(BASE_POSITIONS.filter(p=>p.evic).map(p=>[p.name.toLowerCase(),p.evic]));
+function lookupClientEvicBn(client){
+  const key=(client||'').toLowerCase();
+  if(_EVIC_BY_CLIENT[key])return _EVIC_BY_CLIENT[key];
+  const match=Object.keys(_EVIC_BY_CLIENT).find(n=>key.includes(n.split(' ')[0])||n.includes(key.split(' ')[0]));
+  return match?_EVIC_BY_CLIENT[match]:null;
+}
+
 function PartCTab(){
   const[deals,setDeals]=useState(FACILITATED_DEALS);
   const[showForm,setShowForm]=useState(false);
   const[expandedDeal,setExpandedDeal]=useState(null);
   const[newDeal,setNewDeal]=useState({type:'Bond Underwriting',client:'',sector:'',dealSizeM:'',underwrittenM:'',clientScope1:'',clientScope2:'',dqs:'3'});
 
-  const dealData=useMemo(()=>deals.map(d=>{const attr=d.underwrittenM>0?d.underwrittenM/d.dealSizeM:(d.type==='Advisory M&A'?0.10:0);const clientEM=(d.clientScope1||0)+(d.clientScope2||0);return{...d,attrFactor:attr,clientEM,facilitatedEm:Math.round(attr*clientEM),facilitatedScope3:Math.round(attr*(d.clientScope3||0))};}),[deals]);
+  const dealData=useMemo(()=>deals.map(d=>{
+    const outOfScope=d.type==='Advisory M&A';
+    const evicBn=lookupClientEvicBn(d.client);
+    let attr=0,denomBasis='none';
+    if(!outOfScope&&d.underwrittenM>0){
+      if(evicBn){attr=((d.underwrittenM/1000)/evicBn)*FACILITATED_WEIGHTING_FACTOR;denomBasis='EVIC';}
+      else{attr=(d.underwrittenM/d.dealSizeM)*FACILITATED_WEIGHTING_FACTOR;denomBasis='Deal Size (proxy \u2014 no EVIC match)';}
+    }
+    const clientEM=(d.clientScope1||0)+(d.clientScope2||0);
+    return{...d,attrFactor:attr,clientEM,denomBasis,outOfScope,facilitatedEm:outOfScope?0:Math.round(attr*clientEM),facilitatedScope3:outOfScope?0:Math.round(attr*(d.clientScope3||0)),extendedEm:outOfScope?Math.round((d.dealSizeM>0?0.10:0)*clientEM):0};
+  }),[deals]);
   const totalFac=useMemo(()=>dealData.reduce((s,d)=>s+d.facilitatedEm,0),[dealData]);
+  const totalExtended=useMemo(()=>dealData.reduce((s,d)=>s+d.extendedEm,0),[dealData]);
   const totalDeals=useMemo(()=>deals.reduce((s,d)=>s+d.dealSizeM,0),[deals]);
   const totalUW=useMemo(()=>deals.reduce((s,d)=>s+d.underwrittenM,0),[deals]);
 
   function addDeal(){
     if(!newDeal.client||!newDeal.dealSizeM)return;
-    const d={...newDeal,id:Date.now(),dealSizeM:+newDeal.dealSizeM,underwrittenM:+(newDeal.underwrittenM||0),clientScope1:+(newDeal.clientScope1||0),clientScope2:+(newDeal.clientScope2||0),clientScope3:0,dqs:+newDeal.dqs,attrFormula:'Underwritten / Deal Size',citation:'PCAF v2, Ch.6',year:2024,bookRunner:'TBD',peerGroup:'TBD'};
+    const d={...newDeal,id:Date.now(),dealSizeM:+newDeal.dealSizeM,underwrittenM:+(newDeal.underwrittenM||0),clientScope1:+(newDeal.clientScope1||0),clientScope2:+(newDeal.clientScope2||0),clientScope3:0,dqs:+newDeal.dqs,attrFormula:'(Underwritten / EVIC) \u00d7 33%',citation:'PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)',year:2024,bookRunner:'TBD',peerGroup:'TBD'};
     setDeals(prev=>[d,...prev]);setShowForm(false);
   }
 
   return(<div>
-    <SectionHeader title="Part C: Facilitated Emissions" citation="PCAF Standard v2, Chapter 6" description={`7 deal types across ${deals.length} transactions. Attribution = Underwritten Amount / Deal Size. Capital markets facilitation captures the bank's role in enabling client financing that generates emissions.`}/>
+    <SectionHeader title="Part C: Facilitated Emissions" citation="PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)" description={`${deals.length} transactions. Attribution = (Underwritten Amount / Issuer EVIC) \u00d7 33% weighting factor. M&A/advisory mandates are out of scope (capital-markets issuance only) and shown as an extended, non-PCAF metric.`}/>
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
-      <KPICard label="Total Facilitated Em." value={fmt(totalFac)+' tCO2e'} sub={`${deals.length} transactions`} color={T.navy}/>
+      <KPICard label="Total Facilitated Em. (PCAF-scoped)" value={fmt(totalFac)+' tCO2e'} sub={`${deals.length} transactions`} color={T.navy}/>
+      {totalExtended>0&&<KPICard label="Advisory/M&A (extended, non-PCAF)" value={fmt(totalExtended)+' tCO2e'} sub="Out of PCAF Part B scope" color={T.textMut}/>}
       <KPICard label="Deal Volume" value={'$'+fmt(totalDeals)+'M'} sub="Total deal size" color={T.gold}/>
       <KPICard label="Underwritten" value={'$'+fmt(totalUW)+'M'} sub="Bank committed" color={T.sage}/>
-      <KPICard label="Avg Attribution" value={totalDeals>0?fmtPct(totalUW/totalDeals):'\u2014'} sub="UW / Deal" color={T.navyL}/>
+      <KPICard label="Avg Attribution" value={totalDeals>0?fmtPct(totalUW/totalDeals):'\u2014'} sub="UW / Deal (unweighted, informational)" color={T.navyL}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
-      <Card title="Facilitated Em. by Deal Type" citation="\u00a76.1">
+      <Card title="Facilitated Em. by Deal Type" citation="PCAF Standard, Part B (Dec 2023)">
         <ResponsiveContainer width="100%" height={230}><BarChart data={dealData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="type" tick={{fontSize:8,fill:T.textSec}} interval={0}/><YAxis tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><Tooltip {...tip}/><Bar dataKey="facilitatedEm" name="Facilitated Em." radius={[4,4,0,0]}>{dealData.map((d,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}</Bar></BarChart></ResponsiveContainer>
       </Card>
       <Card title="Deal Size vs Underwritten">
@@ -1055,7 +1136,7 @@ function DataQualityTab({positions,setPositions}){
   function markAction(id,st){setActionStatus(prev=>({...prev,[id]:st}));if(st==='complete')setPositions(prev=>prev.map(p=>p.id===id?computeRow({...p,dqs:Math.max(1,p.dqs-1)}):p));}
 
   return(<div>
-    <SectionHeader title="Data Quality Assessment" citation="PCAF Standard v2, Chapter 3" description="DQS 1-5 scoring per holding. Improvement wizard with actionable steps. Coverage analysis by scope. 12-quarter quality trend."/>
+    <SectionHeader title="Data Quality Assessment" citation="PCAF Standard, 2nd Ed. (Dec 2022), Chapter 3" description="DQS 1-5 scoring per holding. Improvement wizard with actionable steps. Coverage analysis by scope. 12-quarter quality trend."/>
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
       <KPICard label="Current Avg DQS" value={currentAvg} color={DQS_COLOR[Math.round(+currentAvg)]}/>
       <KPICard label="Target DQS" value={simulatedAvg} sub="After improvements" color={T.sage}/>
@@ -1066,7 +1147,7 @@ function DataQualityTab({positions,setPositions}){
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:14,marginBottom:20}}>
       <Card title="DQS Distribution"><ResponsiveContainer width="100%" height={200}><PieChart><Pie data={[1,2,3,4,5].map(s=>({name:`DQS ${s}`,value:byDqs[s].length}))} dataKey="value" cx="50%" cy="50%" outerRadius={75} label={e=>`${e.name}: ${e.value}`} labelLine={false}>{[1,2,3,4,5].map((s,i)=><Cell key={i} fill={DQS_COLOR[s]}/>)}</Pie><Tooltip/></PieChart></ResponsiveContainer></Card>
       <Card title="Avg DQS by Asset Class"><ResponsiveContainer width="100%" height={200}><BarChart data={dqsByAC} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" domain={[0,5]} tick={{fontSize:9}}/><YAxis type="category" dataKey="ac" tick={{fontSize:7,fill:T.textSec}} width={100}/><Tooltip {...tip}/><Bar dataKey="avg" radius={[0,4,4,0]}>{dqsByAC.map((d,i)=><Cell key={i} fill={DQS_COLOR[Math.round(d.avg)]}/>)}</Bar></BarChart></ResponsiveContainer></Card>
-      <Card title="12-Quarter DQS Trend" citation="Ch.3, \u00a73.4"><ResponsiveContainer width="100%" height={200}><LineChart data={QUARTERLY_DQS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8,fill:T.textSec}}/><YAxis domain={[1,5]} tick={{fontSize:9}}/><Tooltip {...tip}/><Line type="monotone" dataKey="avg" stroke={T.navy} strokeWidth={2} name="Avg DQS"/></LineChart></ResponsiveContainer></Card>
+      <Card title="12-Quarter DQS Trend" citation="PCAF Standard, Chapter 3"><ResponsiveContainer width="100%" height={200}><LineChart data={QUARTERLY_DQS}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="q" tick={{fontSize:8,fill:T.textSec}}/><YAxis domain={[1,5]} tick={{fontSize:9}}/><Tooltip {...tip}/><Line type="monotone" dataKey="avg" stroke={T.navy} strokeWidth={2} name="Avg DQS"/></LineChart></ResponsiveContainer></Card>
     </div>
     <Card title="DQS Target Setter" style={{marginBottom:16}}>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:8}}>{ALL_ASSET_CLASSES.filter(ac=>positions.some(p=>p.assetClass===ac)).map(ac=><div key={ac} style={{display:'flex',alignItems:'center',gap:6,padding:'5px 8px',background:T.bg,borderRadius:4}}>
@@ -1097,7 +1178,7 @@ function ReferenceDataTab(){
   const sbRows=useMemo(()=>(SECTOR_BENCHMARKS||[]).slice(0,30),[]);
 
   return(<div>
-    <SectionHeader title="Reference Data & Methodology" citation="PCAF Standard v2"/>
+    <SectionHeader title="Reference Data & Methodology" citation="PCAF Standard, 2nd Ed. (Dec 2022)"/>
     <div style={{display:'flex',gap:6,marginBottom:14}}>
       {[['ef','Emission Factors'],['sb','Sector Benchmarks'],['ac','Asset Class Defs'],['dqs','DQS Definitions'],['cp','Carbon Prices']].map(([k,l])=><button key={k} onClick={()=>setSec(k)} style={{padding:'5px 12px',border:`1px solid ${sec===k?T.navy:T.border}`,borderRadius:16,fontSize:11,fontWeight:sec===k?700:400,background:sec===k?T.navy:T.surface,color:sec===k?'#fff':T.text,cursor:'pointer'}}>{l}</button>)}
     </div>
@@ -1109,16 +1190,16 @@ function ReferenceDataTab(){
       <thead style={{position:'sticky',top:0,background:T.bg}}><tr>{['GICS','Sector','Median','Paris 2030','SBTi','Rate'].map(h=><th key={h} style={{padding:'5px 6px',fontSize:9,fontWeight:700,color:T.textSec,borderBottom:`1px solid ${T.border}`,fontFamily:T.mono}}>{h}</th>)}</tr></thead>
       <tbody>{sbRows.map((r,i)=><tr key={i} style={{background:i%2===0?T.surface:T.bg}}><td style={{padding:'4px 6px',fontFamily:T.mono}}>{r.gics}</td><td style={{padding:'4px 6px',fontWeight:600}}>{r.sector}</td><td style={{padding:'4px 6px',textAlign:'right'}}>{r.medianIntensity}</td><td style={{padding:'4px 6px',textAlign:'right',color:T.green}}>{r.parisTarget2030}</td><td style={{padding:'4px 6px'}}>{r.sbtiMethod}</td><td style={{padding:'4px 6px'}}>{r.decarbRate}%</td></tr>)}</tbody>
     </table></div></Card>}
-    {sec==='ac'&&<Card title="Asset Class Definitions" citation="Ch.4"><div style={{display:'grid',gap:10}}>{ASSET_CLASS_DEFS.map(d=><div key={d.ac} style={{padding:10,background:T.bg,borderRadius:6,border:`1px solid ${T.border}`}}>
-      <div style={{display:'flex',gap:8,alignItems:'baseline',marginBottom:4}}><strong style={{color:T.navy}}>{d.ac}</strong><span style={{fontSize:9,fontFamily:T.mono,color:T.gold}}>Ch. {d.ch}</span></div>
+    {sec==='ac'&&<Card title="Asset Class Definitions" citation="PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5"><div style={{display:'grid',gap:10}}>{ASSET_CLASS_DEFS.map(d=><div key={d.ac} style={{padding:10,background:T.bg,borderRadius:6,border:`1px solid ${T.border}`}}>
+      <div style={{display:'flex',gap:8,alignItems:'baseline',marginBottom:4}}><strong style={{color:T.navy}}>{d.ac}</strong><span style={{fontSize:9,fontFamily:T.mono,color:T.gold}}>{d.ch==='ext'?'Platform Extension':`Ch. ${d.ch}`}</span></div>
       <div style={{fontFamily:T.mono,fontSize:11,background:T.surface,padding:'3px 6px',borderRadius:3,marginBottom:4}}>{d.formula}</div>
       <div style={{fontSize:10,color:T.textSec}}>Denominator: {d.denom} | DQS: {d.dqsRange}</div>
       <div style={{fontSize:10,color:T.textMut,marginTop:2}}>{d.note}</div>
       <div style={{fontSize:10,color:T.textSec,marginTop:2}}>Scope guidance: {d.scopeGuidance}</div>
     </div>)}</div></Card>}
-    {sec==='dqs'&&<Card title="DQS Definitions" citation="Ch.3"><div style={{display:'grid',gap:8}}>{DQS_DEFINITIONS.map(d=><div key={d.score} style={{display:'flex',gap:10,padding:10,background:T.bg,borderRadius:6,border:`1px solid ${T.border}`}}>
+    {sec==='dqs'&&<Card title="DQS Definitions" citation="PCAF Standard, Chapter 3"><div style={{display:'grid',gap:8}}>{DQS_DEFINITIONS.map(d=><div key={d.score} style={{display:'flex',gap:10,padding:10,background:T.bg,borderRadius:6,border:`1px solid ${T.border}`}}>
       <div style={{width:36,height:36,borderRadius:18,background:DQS_COLOR[d.score],display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontWeight:700,fontSize:15,flexShrink:0}}>{d.score}</div>
-      <div><div style={{fontWeight:700,color:T.navy}}>{d.label}</div><div style={{fontSize:11,color:T.textSec}}>{d.description}</div><div style={{fontSize:10,color:T.textMut,marginTop:2}}>{d.method} | Uncertainty: {d.uncertainty} | Weight: {d.weight}</div></div>
+      <div><div style={{fontWeight:700,color:T.navy}}>{d.label}</div><div style={{fontSize:11,color:T.textSec}}>{d.description}</div><div style={{fontSize:10,color:T.textMut,marginTop:2}}>{d.method} | Uncertainty: {d.uncertainty} | Internal weight (not PCAF-defined): {d.weight}</div></div>
     </div>)}</div></Card>}
     {sec==='cp'&&<Card title="Carbon Prices" citation="[2][7]"><div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14}}>
       <div><div style={{fontWeight:600,color:T.navy,fontSize:12,marginBottom:6}}>Compliance Markets (2025)</div>{Object.entries(CARBON_PRICES.compliance||{}).map(([k,v])=><div key={k} style={{display:'flex',justifyContent:'space-between',padding:'3px 0',borderBottom:`1px solid ${T.border}`,fontSize:11}}><span>{k.replace(/_/g,' ')}</span><strong>{v.price} {v.currency}</strong></div>)}</div>
@@ -1133,19 +1214,35 @@ function ReferenceDataTab(){
 function FormulaEngineTab(){
   const[expanded,setExpanded]=useState(null);
   const[calc,setCalc]=useState({outstanding:'31.2',evic:'245',emissions:'68400000'});
-  const result=useMemo(()=>{const o=+calc.outstanding,e=+calc.evic,em=+calc.emissions;if(!o||!e||!em)return null;const attr=Math.min(1.0,o/e);const fe=attr*em;return{attr,fe,ci:fe/o};},[calc]);
+  // Outstanding is $M and EVIC is $Bn (per the field labels below) \u2014 must
+  // convert to a common unit before dividing, or the ratio is 1,000x too
+  // high (GAP-004: $31.2M/$245Bn previously rendered as 12.73% instead of
+  // 0.0127%; a $100M/$10Bn test case rendered as a silently-capped 100%
+  // instead of the correct 1.00%). A raw ratio above 1.0 after unit
+  // conversion is a data error, not a value to clamp away \u2014 it's surfaced
+  // as an explicit warning instead of being hidden.
+  const result=useMemo(()=>{
+    const o=+calc.outstanding,e=+calc.evic,em=+calc.emissions;
+    if(!o||!e||!em)return null;
+    const rawAttr=(o/1000)/e;
+    const invalid=rawAttr>1.0;
+    const attr=Math.min(1.0,rawAttr);
+    const fe=attr*em;
+    return{attr,fe,ci:fe/o,invalid,rawAttr};
+  },[calc]);
 
   return(<div>
     <SectionHeader title="PCAF Formula Engine" citation="Chapters 3-6" description="All PCAF formulas with section citations, worked examples, edge case handling."/>
-    <Card title="Interactive Calculator" citation="\u00a74.2" style={{marginBottom:16}}>
+    <Card title="Interactive Calculator" citation="Ch.5" style={{marginBottom:16}}>
       <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:10}}>
         <div><label style={{fontSize:10,color:T.textSec}}>Outstanding ($M)</label><input type="number" value={calc.outstanding} onChange={e=>setCalc(f=>({...f,outstanding:e.target.value}))} style={{width:'100%',padding:'6px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:12}}/></div>
         <div><label style={{fontSize:10,color:T.textSec}}>EVIC ($Bn)</label><input type="number" value={calc.evic} onChange={e=>setCalc(f=>({...f,evic:e.target.value}))} style={{width:'100%',padding:'6px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:12}}/></div>
         <div><label style={{fontSize:10,color:T.textSec}}>Scope 1+2 (tCO2e)</label><input type="number" value={calc.emissions} onChange={e=>setCalc(f=>({...f,emissions:e.target.value}))} style={{width:'100%',padding:'6px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:12}}/></div>
       </div>
       {result&&<div style={{marginTop:10,padding:10,background:T.bg,borderRadius:6,fontFamily:T.mono,fontSize:11}}>
-        Attribution = ${calc.outstanding}M / ${calc.evic}Bn = <strong>{fmtPct(result.attr)}</strong> | FE = {fmtPct(result.attr)} \u00d7 {fmt(+calc.emissions)} = <strong style={{color:T.navy}}>{fmt(result.fe)} tCO2e</strong> | Intensity = {result.ci.toFixed(1)} tCO2e/$M
+        Attribution = (${calc.outstanding}M \u00f7 1000) / ${calc.evic}Bn = <strong>{fmtPct(result.attr)}</strong> | FE = {fmtPct(result.attr)} \u00d7 {fmt(+calc.emissions)} = <strong style={{color:T.navy}}>{fmt(result.fe)} tCO2e</strong> | Intensity = {result.ci.toFixed(1)} tCO2e/$M
       </div>}
+      {result&&result.invalid&&<InfoBox type="warn"><strong>\u26a0 Invalid input:</strong> raw attribution factor is {fmtPct(result.rawAttr)} (&gt;100%) \u2014 Outstanding cannot exceed EVIC. Check units: Outstanding is $M, EVIC is $Bn. Capped at 100% for display only; this is a data error, not a valid result.</InfoBox>}
     </Card>
     <div style={{display:'grid',gap:10}}>
       {PCAF_FORMULAS.map(f=><div key={f.id} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:6,overflow:'hidden'}}>
@@ -1352,7 +1449,16 @@ function AuditTrailTab({positions}){
                     </div>
                   </div>
                   {step.checks&&<div style={{marginTop:4,display:'flex',gap:4,flexWrap:'wrap'}}>
-                    {step.checks.map((c,ci)=><span key={ci} style={{fontSize:9,padding:'1px 6px',borderRadius:10,background:'rgba(91,138,106,0.1)',color:T.sage}}>✓ {c}</span>)}
+                    {/* The check descriptions are a static checklist for this
+                        step, not individually-evaluated booleans — showing
+                        every one as a green checkmark regardless of the
+                        step's actual computed status (e.g. "✓ Validate EVIC
+                        > 0" while EVIC was $0) was the display bug in
+                        GAP-003. Icon/color now follows the step's real
+                        PASS/WARN/FAIL status instead of always claiming pass. */}
+                    {step.checks.map((c,ci)=><span key={ci} style={{fontSize:9,padding:'1px 6px',borderRadius:10,
+                      background:step.status==='FAIL'?'rgba(220,38,38,0.1)':step.status==='WARN'?'rgba(217,119,6,0.1)':'rgba(91,138,106,0.1)',
+                      color:step.status==='FAIL'?T.red:step.status==='WARN'?T.amber:T.sage}}>{step.status==='FAIL'?'✗':step.status==='WARN'?'⚠':'✓'} {c}</span>)}
                   </div>}
                 </div>
               ))}
@@ -1387,9 +1493,9 @@ export default function PcafFinancedEmissionsPage(){
       <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
         <div>
           <h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>PCAF Financed Emissions</h1>
-          <p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>PCAF Standard v2 (3rd Edition) \u2014 Parts A, B, C | {positions.length} holdings | 12 asset classes | 10 formulas with \u00a7 citations</p>
+          <p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>PCAF Standard, 2nd Ed. (Dec 2022) + IAE Standard (Nov 2022) + Part B Facilitated Emissions (Dec 2023) \u2014 {positions.length} holdings | 7 core asset classes + 5 platform extensions | 10 formulas</p>
         </div>
-        <ReportExporter title="PCAF Financed Emissions" subtitle={`${positions.length} holdings | 12 asset classes`} framework="PCAF v2" sections={[{type:'kpis',title:'Portfolio Summary',data:[{label:'Holdings',value:positions.length},{label:'Total Market Value',value:'$'+fmt(positions.reduce((s,p)=>s+p.mv,0))},{label:'Asset Classes',value:[...new Set(positions.map(p=>p.ac))].length}]}]} />
+        <ReportExporter title="PCAF Financed Emissions" subtitle={`${positions.length} holdings | 7 core PCAF asset classes + 5 platform extensions`} framework="PCAF Standard, 2nd Ed. (Dec 2022)" sections={[{type:'kpis',title:'Portfolio Summary',data:[{label:'Holdings',value:positions.length},{label:'Total Market Value',value:'$'+fmt(positions.reduce((s,p)=>s+p.mv,0))},{label:'Asset Classes',value:[...new Set(positions.map(p=>p.ac))].length}]}]} />
       </div>
       <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
         <button onClick={()=>setShowUploader(s=>!s)} style={{background:showUploader?T.red:T.navy,color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>

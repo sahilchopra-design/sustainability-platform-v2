@@ -9,16 +9,26 @@ const fmt = (n,d=1) => n==null?'--':Number(n).toFixed(d);
 const fmtPct=(n)=>n==null?'--':Number(n).toFixed(1)+'%';
 const fmtMn=(n)=>n==null?'--':'$'+Number(n).toFixed(0)+'M';
 const fmtBn=(n)=>n==null?'--':'$'+Number(n).toFixed(1)+'Bn';
+// Computed from the current date rather than hardcoded, so this doesn't go
+// stale the way "Q1 2026" did (still showing Q1 when opened well into Q3).
+const currentRegulatoryQuarter = (() => {
+  const now = new Date();
+  return `Q${Math.floor(now.getMonth() / 3) + 1} ${now.getFullYear()}`;
+})();
 
 // ============ DATA BLOCKS ============
+// `fe` (financed emissions) per class is NOT hardcoded here — it's derived
+// in assetClassBreakdown below by distributing the single headline FE total
+// (stats.fe, from LOAN_BOOK) via each class's `weight`, so it always
+// reconciles with every other FE figure on this page (see assetClassBreakdown).
 const ASSET_CLASSES = [
-  { id: 'AC1', name: 'Listed Equity', code: 'EQ', weight: 0.14, pcafCoverage: 92, taxonomyCoverage: 71, dqs: 2.1, fe: 184.2 },
-  { id: 'AC2', name: 'Corporate Bonds', code: 'CB', weight: 0.22, pcafCoverage: 88, taxonomyCoverage: 64, dqs: 2.4, fe: 312.7 },
-  { id: 'AC3', name: 'Business Loans', code: 'BL', weight: 0.28, pcafCoverage: 78, taxonomyCoverage: 58, dqs: 3.2, fe: 421.4 },
-  { id: 'AC4', name: 'Project Finance', code: 'PF', weight: 0.08, pcafCoverage: 96, taxonomyCoverage: 84, dqs: 1.8, fe: 98.3 },
-  { id: 'AC5', name: 'CRE Loans', code: 'CRE', weight: 0.11, pcafCoverage: 82, taxonomyCoverage: 69, dqs: 2.7, fe: 142.1 },
-  { id: 'AC6', name: 'Residential Mortgages', code: 'MTG', weight: 0.13, pcafCoverage: 95, taxonomyCoverage: 74, dqs: 2.2, fe: 87.6 },
-  { id: 'AC7', name: 'Motor Vehicle Loans', code: 'MV', weight: 0.04, pcafCoverage: 90, taxonomyCoverage: 52, dqs: 2.9, fe: 54.8 },
+  { id: 'AC1', name: 'Listed Equity', code: 'EQ', weight: 0.14, pcafCoverage: 92, taxonomyCoverage: 71, dqs: 2.1 },
+  { id: 'AC2', name: 'Corporate Bonds', code: 'CB', weight: 0.22, pcafCoverage: 88, taxonomyCoverage: 64, dqs: 2.4 },
+  { id: 'AC3', name: 'Business Loans', code: 'BL', weight: 0.28, pcafCoverage: 78, taxonomyCoverage: 58, dqs: 3.2 },
+  { id: 'AC4', name: 'Project Finance', code: 'PF', weight: 0.08, pcafCoverage: 96, taxonomyCoverage: 84, dqs: 1.8 },
+  { id: 'AC5', name: 'CRE Loans', code: 'CRE', weight: 0.11, pcafCoverage: 82, taxonomyCoverage: 69, dqs: 2.7 },
+  { id: 'AC6', name: 'Residential Mortgages', code: 'MTG', weight: 0.13, pcafCoverage: 95, taxonomyCoverage: 74, dqs: 2.2 },
+  { id: 'AC7', name: 'Motor Vehicle Loans', code: 'MV', weight: 0.04, pcafCoverage: 90, taxonomyCoverage: 52, dqs: 2.9 },
 ];
 
 const SECTORS = ['Energy','Utilities','Materials','Industrials','Real Estate','Transport','Agriculture','Financials'];
@@ -363,9 +373,26 @@ export default function FiTaxonomyPcafBridgePage() {
     };
   }, [filteredLoans]);
 
+  // ASSET_CLASSES previously carried its own independent, hand-typed `fe`
+  // figures that summed to ~1,301 ktCO2e — about 37% off the loan-book-derived
+  // headline total (stats.fe, ~1,791 ktCO2e), i.e. two disconnected "truths"
+  // for the same portfolio's financed emissions. Re-derive each class's FE by
+  // distributing the single headline total via its `weight` (weights already
+  // sum to 1.00 by construction) so every FE figure on this page reconciles
+  // to one number, as PCAF/GAP-006 requires.
+  const assetClassBreakdown = useMemo(
+    () => ASSET_CLASSES.map(a => ({ ...a, fe: +(a.weight * stats.fe).toFixed(1) })),
+    [stats.fe]
+  );
+
   const bankingGAR = stats.alignedPct;
-  const tradingGAR = 6.7;
-  const insuranceGF = 18.9;
+  // Trading-book GAR and the insurance Green Supporting Factor are static
+  // illustrative placeholders — this module has no trading-book or
+  // insurance-book loan data (only the banking-book LOAN_BOOK above), so
+  // these two figures cannot be computed here. Flagged as such rather than
+  // presented indistinguishably alongside the computed banking-book KPIs.
+  const tradingGAR = 6.7; // illustrative placeholder — no trading-book data source in this module
+  const insuranceGF = 18.9; // illustrative placeholder — no insurance-book data source in this module
   const pcafDqs = stats.dqsW;
   const alignCov = stats.count>0 ? (filteredLoans.filter(l=>l.alignedPct>0).length / stats.count * 100) : 0;
   const csrdReadyPct = (CSRD_DATAPOINTS.filter(d=>d.status==='Ready').length / Math.max(1,CSRD_DATAPOINTS.length)) * 100;
@@ -400,8 +427,8 @@ export default function FiTaxonomyPcafBridgePage() {
           </div>
           <div style={{textAlign:'right',fontSize:10,fontFamily:T.mono,color:T.textSec,letterSpacing:0.5}}>
             <div>EU TAXONOMY ART. 8 · DA 2021/2178</div>
-            <div style={{color:T.textMut}}>PCAF v2.2 · CSRD ESRS E1 · SOLV II 2009/138</div>
-            <div style={{marginTop:6,color:T.gold}}>LIVE · Q1 2026 REGULATORY CYCLE</div>
+            <div style={{color:T.textMut}}>PCAF Standard, 2nd Ed. (Dec 2022) · CSRD ESRS E1 · SOLV II 2009/138</div>
+            <div style={{marginTop:6,color:T.gold}}>ILLUSTRATIVE · {currentRegulatoryQuarter} REGULATORY CYCLE</div>
           </div>
         </div>
         <div style={S.accent}/>
@@ -416,8 +443,8 @@ export default function FiTaxonomyPcafBridgePage() {
           <>
             <div style={S.kpiGrid}>
               <Kpi label="Banking GAR (Stock)" value={fmtPct(bankingGAR)} sub={`Target ${garTarget}% · gap ${fmt(garTarget-bankingGAR,1)} pts`} accent={T.navy}/>
-              <Kpi label="Trading Book GAR" value={fmtPct(tradingGAR)} sub="Excl. derivs & HFT per RTS" accent={T.gold}/>
-              <Kpi label="Insurance Green Factor" value={fmtPct(insuranceGF)} sub="Solvency II KPI Art. 35a" accent={T.sage}/>
+              <Kpi label="Trading Book GAR (illustrative)" value={fmtPct(tradingGAR)} sub="No trading-book data source — placeholder, not computed" accent={T.gold}/>
+              <Kpi label="Insurance Green Factor (illustrative)" value={fmtPct(insuranceGF)} sub="No insurance-book data source — placeholder, not computed" accent={T.sage}/>
               <Kpi label="Financed Emissions" value={fmt(stats.fe/1000,2)+' MtCO₂e'} sub={`${stats.count} counterparties`} accent={T.amber}/>
               <Kpi label="PCAF DQS (Weighted)" value={fmt(pcafDqs,2)} sub="Scale 1 (best) – 5" accent={pcafDqs<=2.5?T.green:pcafDqs<=3.5?T.amber:T.red}/>
               <Kpi label="Alignment Coverage" value={fmtPct(alignCov)} sub={`${Math.round(alignCov*stats.count/100)} / ${stats.count} counterparties`} accent={T.navyL}/>
@@ -448,8 +475,8 @@ export default function FiTaxonomyPcafBridgePage() {
                 <div style={S.cardH}>Financed Emissions by Asset Class</div>
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
-                    <Pie data={ASSET_CLASSES} dataKey="fe" nameKey="name" outerRadius={100} label={(e)=>`${e.code}: ${fmt(e.fe,0)}`} labelLine={false}>
-                      {ASSET_CLASSES.map((e,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
+                    <Pie data={assetClassBreakdown} dataKey="fe" nameKey="name" outerRadius={100} label={(e)=>`${e.code}: ${fmt(e.fe,0)}`} labelLine={false}>
+                      {assetClassBreakdown.map((e,i)=><Cell key={i} fill={PIE_COLORS[i%PIE_COLORS.length]}/>)}
                     </Pie>
                     <Tooltip formatter={(v)=>[fmt(v,1)+' ktCO₂e','FE']} contentStyle={{fontSize:11,fontFamily:T.mono}}/>
                   </PieChart>
@@ -517,7 +544,7 @@ export default function FiTaxonomyPcafBridgePage() {
             </div>
 
             <div style={S.kpiGrid}>
-              <Kpi label="Banking GAR (Stock)" value={fmtPct(stats.alignedPct)} sub={`${fmtMn(stats.totalEAD)} EAD`} accent={T.navy}/>
+              <Kpi label="Banking GAR (Stock)" value={fmtPct(stats.alignedPct)} sub={`${fmtBn(stats.totalEAD/1000)} EAD`} accent={T.navy}/>
               <Kpi label="Eligible Pool %" value={fmtPct(stats.eligiblePct)} sub="Aligned ⊆ Eligible"/>
               <Kpi label="Financed Emissions" value={fmt(stats.fe,0)+' ktCO₂e'} sub="Scope 1+2 attribution"/>
               <Kpi label="Expected Wtd. Loss" value={'$'+fmt(stats.ewb,2)+'M'} sub="PD × LGD × EAD" accent={T.red}/>
@@ -681,7 +708,7 @@ export default function FiTaxonomyPcafBridgePage() {
                   <th style={S.th}>FE (ktCO₂e)</th><th style={S.th}>Attribution Basis</th>
                 </tr></thead>
                 <tbody>
-                  {ASSET_CLASSES.map((a,i)=>(
+                  {assetClassBreakdown.map((a,i)=>(
                     <tr key={a.id} style={{background:i%2?T.surfaceH:T.surface}}>
                       <td style={S.td}>{a.name}</td>
                       <td style={S.td}>{fmtPct(a.weight*100)}</td>
@@ -1200,7 +1227,7 @@ export default function FiTaxonomyPcafBridgePage() {
         {tab===10 && (
           <>
             <div style={S.alertBox}>
-              <strong>PCAF Data Quality Scoring (1=best, 5=lowest):</strong> Per PCAF Global GHG Accounting &amp; Reporting Standard v2.2, DQS governs emissions attribution confidence. FI-wide weighted DQS should trend towards 2.0 by 2030.
+              <strong>PCAF Data Quality Scoring (1=best, 5=lowest):</strong> Per the PCAF Standard, 2nd Edition (Dec 2022), DQS governs emissions attribution confidence. FI-wide weighted DQS should trend towards 2.0 by 2030.
             </div>
             <div style={S.kpiGrid}>
               <Kpi label="Wtd. Portfolio DQS" value={fmt(pcafDqs,2)} accent={pcafDqs<=2.5?T.green:pcafDqs<=3.5?T.amber:T.red}/>
@@ -1210,7 +1237,7 @@ export default function FiTaxonomyPcafBridgePage() {
             </div>
 
             <div style={S.card}>
-              <div style={S.cardH}>DQS Level Definitions (PCAF v2.2)</div>
+              <div style={S.cardH}>DQS Level Definitions (PCAF Standard, 2nd Ed. Dec 2022)</div>
               <table style={S.table}>
                 <thead><tr><th style={S.th}>Score</th><th style={S.th}>Label</th><th style={S.th}>Description</th><th style={S.th}>Portfolio Share</th></tr></thead>
                 <tbody>
@@ -2226,7 +2253,7 @@ export default function FiTaxonomyPcafBridgePage() {
 
         <div style={{marginTop:32,paddingTop:18,borderTop:`1px solid ${T.border}`,fontSize:10,color:T.textMut,fontFamily:T.mono,letterSpacing:0.4,display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
           <div>MODULE EP-Q9 · FI TAXONOMY × PCAF BRIDGE · BLOOMBERG-TIER REGULATORY ANALYTICS</div>
-          <div>DATA · DA 2021/2178 ANNEX V · PCAF v2.2 · ESRS E1 · SOLV II 2009/138/EC</div>
+          <div>DATA · DA 2021/2178 ANNEX V · PCAF Standard, 2nd Ed. (Dec 2022) · ESRS E1 · SOLV II 2009/138/EC</div>
           <div>CLASSIFICATION · INTERNAL · MODEL RISK TIER 1</div>
         </div>
 
