@@ -284,7 +284,7 @@ export const MODULE_CATALOG = [
       {
         "path": "/pcaf-india-brsr",
         "label": "PCAF India BRSR",
-        "badge": "PCAF v2",
+        "badge": "PCAF 3rd Ed. (Dec 2025)",
         "code": "E138"
       },
       {
@@ -744,7 +744,7 @@ export const MODULE_CATALOG = [
       {
         "path": "/pcaf-financed-emissions",
         "label": "PCAF Financed Emissions",
-        "badge": "PCAF Standard 2nd Ed · 7 Core + 5 Ext. Classes · DQS · Part A/B/IAE",
+        "badge": "PCAF Standard 3rd Ed · 10 Part A Classes · DQS · Part A/B/C",
         "code": "EP-AJ1"
       },
       {

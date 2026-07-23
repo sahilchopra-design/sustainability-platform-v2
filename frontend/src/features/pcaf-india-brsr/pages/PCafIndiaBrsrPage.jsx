@@ -1,6 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { requestWithTimeout } from '../../../lib/http';
+import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C } from '../../../data/pcafStandards';
 import { COMPANY_MASTER, searchCompanies } from '../../../data/companyMaster';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
@@ -308,10 +309,11 @@ const LOB_FIELDS = {
     fields: [],
   },
   'Reinsurance': {
-    // Platform extension — not a core line of business in the PCAF IAE Standard (Nov 2022)
+    // PCAF Insurance-Associated Emissions Standard, Dec 2025 update — treaty
+    // reinsurance is now a documented IAE methodology, not a platform extension.
     color: '#be185d', // rose
     lobValues: ['treaty_reinsurance'],
-    reference: 'Platform extension (not a core PCAF IAE line of business) — verify against current PCAF guidance',
+    reference: 'PCAF IAE Standard (Nov 2022, updated Dec 2025) — treaty reinsurance methodology',
     fields: [
       { key: 'line_of_business', label: 'Type', type: 'select', options: ['treaty_reinsurance'] },
       { key: 'ceded_premium_inr_cr', label: 'Ceded Premium (₹Cr)', type: 'number' },
@@ -321,10 +323,11 @@ const LOB_FIELDS = {
     ],
   },
   'Project Insurance': {
-    // Platform extension — not a core line of business in the PCAF IAE Standard (Nov 2022)
+    // PCAF Insurance-Associated Emissions Standard, Dec 2025 update — project
+    // insurance is now a documented IAE methodology, not a platform extension.
     color: '#7c3aed', // violet
     lobValues: ['project_insurance'],
-    reference: 'Platform extension (not a core PCAF IAE line of business) — verify against current PCAF guidance',
+    reference: 'PCAF IAE Standard (Nov 2022, updated Dec 2025) — project insurance methodology',
     fields: [
       { key: 'line_of_business', label: 'Type', type: 'select', options: ['project_insurance'] },
       { key: 'sum_insured_inr_cr', label: 'Sum Insured (₹Cr)', type: 'number' },
@@ -517,7 +520,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'sovereign_ghg_mtco2e', label: 'Country GHG (MtCO₂e)', type: 'number', help: 'Auto from EDGAR if blank' },
     { key: 'gdp_usd_tn', label: 'GDP (USD Tn)', type: 'number' },
   ],
-  // Platform extension (not a core PCAF asset class) — green bonds/loans with ring-fenced proceeds
+  // PCAF Part A, 3rd Edition (Dec 2025) addition — green bonds/loans with ring-fenced proceeds
   'Use of Proceeds': [
     { key: 'exposure_inr_cr', label: 'Invested Amount (₹Cr)', type: 'number' },
     { key: 'total_deal_size_inr_cr', label: 'Total Issue (₹Cr)', type: 'number' },
@@ -525,7 +528,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'project_scope1_tco2e', label: 'Project Scope 1', type: 'number', help: 'Ring-fenced project emissions' },
     { key: 'project_scope2_tco2e', label: 'Project Scope 2', type: 'number' },
   ],
-  // Platform extension (not a core PCAF asset class) — pooled asset structures
+  // PCAF Part A, 3rd Edition (Dec 2025) addition — pooled asset structures
   'Securitisation': [
     { key: 'exposure_inr_cr', label: 'Tranche Held (₹Cr)', type: 'number' },
     { key: 'total_pool_inr_cr', label: 'Total Pool (₹Cr)', type: 'number' },
@@ -533,7 +536,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'underlying_asset_count', label: 'Underlying Assets', type: 'number' },
     { key: 'weighted_avg_carbon_intensity', label: 'Avg tCO₂e/asset', type: 'number', help: 'WAC intensity of pool' },
   ],
-  // Platform extension (not a core PCAF asset class) — state/province/city bonds
+  // PCAF Part A, 3rd Edition (Dec 2025) addition — state/province/city bonds
   'Sub-sovereign Debt': [
     { key: 'exposure_inr_cr', label: 'Bond Value (₹Cr)', type: 'number' },
     { key: 'jurisdiction_name', label: 'Jurisdiction', type: 'text', help: 'State/province/city name' },
@@ -541,7 +544,7 @@ const INSTRUMENT_FIELDS = {
     { key: 'jurisdiction_ghg_tco2e', label: 'Jurisdiction GHG', type: 'number', help: 'Annual tCO₂e of jurisdiction' },
     { key: 'country_iso', label: 'Country', type: 'text' },
   ],
-  // Platform extension (not a core PCAF asset class, optional) — IFRS S1/S2 aligned
+  // PCAF Part A, 3rd Edition (Dec 2025) addition, optional — IFRS S1/S2 aligned
   'Undrawn Commitments': [
     { key: 'undrawn_amount_inr_cr', label: 'Undrawn Amount (₹Cr)', type: 'number' },
     { key: 'total_commitment_inr_cr', label: 'Total Commitment (₹Cr)', type: 'number' },
@@ -1183,7 +1186,7 @@ export default function PCafIndiaBrsrPage() {
           </span>
         </div>
         <p style={{ fontSize:13, color:T.sub, margin:0, maxWidth:700 }}>
-          PCAF Standard, 2nd Edition (December 2022), financed emissions for India-listed companies. CIN→yfinance EVIC attribution, CPCB/MoEFCC sector emission factors, SEBI BRSR Core P6 &amp; RBI TCFD pilot disclosures. SFDR PAI#1/#3 in INR. Platform extensions beyond PCAF's 7 core asset classes: Use of Proceeds, Securitisation, Sub-sovereign Debt, Undrawn Commitments &amp; Supplemental Guidance (verify against current PCAF guidance before client use).
+          {PCAF_PART_A}, financed emissions for India-listed companies. CIN→yfinance EVIC attribution, CPCB/MoEFCC sector emission factors, SEBI BRSR Core P6 &amp; RBI TCFD pilot disclosures. SFDR PAI#1/#3 in INR. Use of Proceeds, Securitisation, Sub-sovereign Debt and Undrawn Commitments are 3rd-Edition (Dec 2025) additions to Part A; Supplemental Guidance covers financed avoided emissions and forward-looking metrics per the same 3rd-Edition supplementary guidance.
         </p>
       </div>
 
@@ -1195,7 +1198,7 @@ export default function PCafIndiaBrsrPage() {
           {[
             ['SEBI BRSR Core P6 FY26', T.sage],
             ['RBI Climate Risk Circular 2023', T.navy],
-            ['PCAF Standard 2nd Ed. Dec 2022', T.teal],
+            ['PCAF Standard 3rd Ed. Dec 2025', T.teal],
             ['GHG Protocol Scope 3 Cat.15', T.blue],
             ['SFDR PAI#1 / PAI#3', T.indigo],
           ].map(([label, color]) => (
@@ -1221,7 +1224,7 @@ export default function PCafIndiaBrsrPage() {
         {[
           { n:1, title:'Select Asset Classes', desc:'Choose instrument types: Equity, Bonds, Loans, Project Finance, Insurance, Capital Markets deals' },
           { n:2, title:'Enter Holdings Data', desc:'Input CIN, EVIC, exposure, Scope 1/2 per holding. Use autocomplete for 60+ India companies.' },
-          { n:3, title:'Run PCAF Calculation', desc:'API computes AF, attributed tCO₂e, WACI and DQS score per the PCAF Standard, 2nd Edition (Dec 2022)' },
+          { n:3, title:'Run PCAF Calculation', desc:'API computes AF, attributed tCO₂e, WACI and DQS score per the PCAF Standard, 3rd Edition (Dec 2025)' },
           { n:4, title:'Review & Export', desc:'SEBI BRSR P6 disclosure figures, RBI TCFD pilot output, SFDR PAI#1/3. Export for filing.' },
         ].map((step, i) => (
           <div key={step.n} style={{ flex: 1, display: 'flex', alignItems: 'flex-start', gap: 10,
@@ -1260,7 +1263,7 @@ export default function PCafIndiaBrsrPage() {
       <div style={{ display:'flex', borderBottom:`2px solid ${T.border}`, marginBottom:24, gap:4, flexWrap:'wrap' }}>
         {[
           ['partA','📊 Part A: Financed'],
-          ['partB','🏥 Insurance (IAE Standard)'],
+          ['partB','🏥 Insurance (Part C, IAE Standard)'],
           ['partC','📈 Facilitated (Part B)'],
           ['company','🏢 Company Lookup'],
           ['ref','📋 Reference Data'],
@@ -1339,10 +1342,13 @@ export default function PCafIndiaBrsrPage() {
             // Chapter-level citations only — this platform cannot verify exact
             // table/row/section numbers against the official PCAF PDF, and
             // inventing specific-looking ones (e.g. "Table 5.1 Row 1") reads
-            // as more precise than it is. The 2nd Edition (Dec 2022) covers
-            // its 7 core asset-class methods in Chapter 5; the four classes
-            // below are platform extensions beyond that core set, not
-            // official PCAF Standard chapters — labeled as such.
+            // as more precise than it is. The original 7 core asset-class
+            // methods are in Chapter 5 (2nd Edition, Dec 2022, unchanged in
+            // the 3rd Edition); Use of Proceeds, Securitisation, Sub-sovereign
+            // Debt, and Undrawn Commitments are real 3rd-Edition (Dec 2025)
+            // additions to Part A — not platform extensions, but this
+            // platform still doesn't have their exact new chapter/section
+            // numbers verified, so cite edition/date only, not a chapter.
             const PCAF_REF = {
               'Listed Equity': 'PCAF Standard, Chapter 5 · AF = Exposure ÷ EVIC',
               'Corporate Bond': 'PCAF Standard, Chapter 5 · AF = Bond Value ÷ EVIC',
@@ -1352,10 +1358,10 @@ export default function PCafIndiaBrsrPage() {
               'Mortgage': 'PCAF Standard, Chapter 5 · AF = Mortgage ÷ Property Value',
               'Vehicle Loan': 'PCAF Standard, Chapter 5 · Emissions = Vehicles × km × EF',
               'Sovereign Bond': 'PCAF Standard, Chapter 5 · AF = Bond ÷ GDP × Country GHG',
-              'Use of Proceeds': 'Platform extension (not a core PCAF asset class) · follow-the-money to ring-fenced projects — verify against current PCAF guidance',
-              'Securitisation': 'Platform extension (not a core PCAF asset class) · look-through to underlying pool — verify against current PCAF guidance',
-              'Sub-sovereign Debt': 'Platform extension (not a core PCAF asset class) · AF = Bond ÷ jurisdiction budget × regional GHG',
-              'Undrawn Commitments': 'Platform extension (not a core PCAF asset class, optional/IFRS-adjacent) · reported separately from financed emissions',
+              'Use of Proceeds': 'PCAF Part A, 3rd Edition (Dec 2025) · follow-the-money to ring-fenced projects',
+              'Securitisation': 'PCAF Part A, 3rd Edition (Dec 2025) · look-through to underlying pool',
+              'Sub-sovereign Debt': 'PCAF Part A, 3rd Edition (Dec 2025) · AF = Bond ÷ jurisdiction budget × regional GHG',
+              'Undrawn Commitments': 'PCAF Part A, 3rd Edition (Dec 2025, optional/IFRS-adjacent) · reported separately from financed emissions',
             };
             const INST_COLORS = {
               'Listed Equity': T.navy, 'Corporate Bond': T.indigo, 'Business Loan': T.sage,
@@ -1751,7 +1757,7 @@ export default function PCafIndiaBrsrPage() {
               </Btn>
             </div>
             <div style={{ fontSize:12, color:T.sub, marginTop:8 }}>
-              Insurance-Associated Emissions Standard (Nov 2022) — a separate PCAF standard, not "Part B" of the core Financed Emissions Standard. Premium converted: 1 ₹Cr ≈ 0.12 MUSD. Life &amp; Health lines are out of scope of this standard and excluded from the PCAF-labeled total below.
+              PCAF Insurance-Associated Emissions Standard, Part C (Nov 2022, updated Dec 2025) — Facilitated Emissions is Part B, not this standard. Premium converted: 1 ₹Cr ≈ 0.12 MUSD. Life &amp; Health lines are out of scope of this standard and excluded from the PCAF-labeled total below.
             </div>
           </Card>
 
@@ -2305,7 +2311,7 @@ export default function PCafIndiaBrsrPage() {
           {/* Sub-tab navigation */}
           <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
             <button style={subTabStyle(formulaSection==='partA')} onClick={()=>setFormulaSection('partA')}>Part A: Financed Emissions</button>
-            <button style={subTabStyle(formulaSection==='partB')} onClick={()=>setFormulaSection('partB')}>Insurance (IAE Standard)</button>
+            <button style={subTabStyle(formulaSection==='partB')} onClick={()=>setFormulaSection('partB')}>Insurance (Part C, IAE Standard)</button>
             <button style={subTabStyle(formulaSection==='partC')} onClick={()=>setFormulaSection('partC')}>Facilitated (Part B)</button>
           </div>
 
@@ -2313,7 +2319,7 @@ export default function PCafIndiaBrsrPage() {
           {formulaSection === 'partA' && (
             <>
               <Card>
-                <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF Standard, 2nd Edition (Dec 2022) — Part A Attribution Formula</div>
+                <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF Standard, 3rd Edition (Dec 2025) — Part A Attribution Formula</div>
                 {[
                   { title:'Listed Equity & Corporate Bonds', formula:'Attribution Factor = Exposure (₹Cr) ÷ EVIC (₹Cr)', evic:'EVIC = Market Cap + Total Debt + Minority Interest', note:'PCAF Standard, Chapter 5 (Listed Equity & Corporate Bonds) · Source: BSE/NSE via yfinance' },
                   { title:'Financed Emissions Calculation', formula:'Financed CO₂e = Attribution Factor × (Scope 1 + Scope 2) tCO₂e', note:'Scope 3 optional — included when reported and material (>40% of total)' },
@@ -2352,7 +2358,7 @@ export default function PCafIndiaBrsrPage() {
           {/* Part B formulas */}
           {formulaSection === 'partB' && (
             <Card>
-              <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>Insurance-Associated Emissions Standard (Nov 2022) — separate from PCAF Part B</div>
+              <div style={{ fontSize:14, fontWeight:700, color:T.navy, marginBottom:16 }}>PCAF Insurance-Associated Emissions Standard, Part C (Nov 2022, updated Dec 2025)</div>
               {[
                 {
                   title:'Attribution Factor (all LOBs)',

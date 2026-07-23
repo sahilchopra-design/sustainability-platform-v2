@@ -427,7 +427,7 @@ export default function FiTaxonomyPcafBridgePage() {
           </div>
           <div style={{textAlign:'right',fontSize:10,fontFamily:T.mono,color:T.textSec,letterSpacing:0.5}}>
             <div>EU TAXONOMY ART. 8 · DA 2021/2178</div>
-            <div style={{color:T.textMut}}>PCAF Standard, 2nd Ed. (Dec 2022) · CSRD ESRS E1 · SOLV II 2009/138</div>
+            <div style={{color:T.textMut}}>PCAF Standard, 3rd Ed. (Dec 2025) · CSRD ESRS E1 · SOLV II 2009/138</div>
             <div style={{marginTop:6,color:T.gold}}>ILLUSTRATIVE · {currentRegulatoryQuarter} REGULATORY CYCLE</div>
           </div>
         </div>
@@ -1227,7 +1227,7 @@ export default function FiTaxonomyPcafBridgePage() {
         {tab===10 && (
           <>
             <div style={S.alertBox}>
-              <strong>PCAF Data Quality Scoring (1=best, 5=lowest):</strong> Per the PCAF Standard, 2nd Edition (Dec 2022), DQS governs emissions attribution confidence. FI-wide weighted DQS should trend towards 2.0 by 2030.
+              <strong>PCAF Data Quality Scoring (1=best, 5=lowest):</strong> Per the PCAF Standard (3rd Edition, Dec 2025 — the five-level data quality scale is unchanged from the 2nd Edition), DQS governs emissions attribution confidence. FI-wide weighted DQS should trend towards 2.0 by 2030.
             </div>
             <div style={S.kpiGrid}>
               <Kpi label="Wtd. Portfolio DQS" value={fmt(pcafDqs,2)} accent={pcafDqs<=2.5?T.green:pcafDqs<=3.5?T.amber:T.red}/>
@@ -1237,7 +1237,7 @@ export default function FiTaxonomyPcafBridgePage() {
             </div>
 
             <div style={S.card}>
-              <div style={S.cardH}>DQS Level Definitions (PCAF Standard, 2nd Ed. Dec 2022)</div>
+              <div style={S.cardH}>DQS Level Definitions (PCAF Standard, 3rd Ed. Dec 2025)</div>
               <table style={S.table}>
                 <thead><tr><th style={S.th}>Score</th><th style={S.th}>Label</th><th style={S.th}>Description</th><th style={S.th}>Portfolio Share</th></tr></thead>
                 <tbody>
@@ -2253,7 +2253,7 @@ export default function FiTaxonomyPcafBridgePage() {
 
         <div style={{marginTop:32,paddingTop:18,borderTop:`1px solid ${T.border}`,fontSize:10,color:T.textMut,fontFamily:T.mono,letterSpacing:0.4,display:'flex',justifyContent:'space-between',flexWrap:'wrap',gap:10}}>
           <div>MODULE EP-Q9 · FI TAXONOMY × PCAF BRIDGE · BLOOMBERG-TIER REGULATORY ANALYTICS</div>
-          <div>DATA · DA 2021/2178 ANNEX V · PCAF Standard, 2nd Ed. (Dec 2022) · ESRS E1 · SOLV II 2009/138/EC</div>
+          <div>DATA · DA 2021/2178 ANNEX V · PCAF Standard, 3rd Ed. (Dec 2025) · ESRS E1 · SOLV II 2009/138/EC</div>
           <div>CLASSIFICATION · INTERNAL · MODEL RISK TIER 1</div>
         </div>
 
