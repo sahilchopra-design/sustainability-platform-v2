@@ -61,7 +61,17 @@ function fmt(n,dec=0){
   if(Math.abs(n)>=1e3)return(n/1e3).toFixed(dec||1)+'K';
   return n.toFixed(dec);
 }
-function fmtPct(n){return n==null?'\u2014':(n*100).toFixed(2)+'%';}
+// R3 gap B-6: fixed 2-decimal-place formatting truncates any attribution
+// factor below 0.005% to a bare "0.00%" \u2014 indistinguishable from a genuine
+// zero (e.g. Apple/Microsoft listed-equity rows, sovereign debt rows).
+// Below that threshold, switch to 4 significant figures so a real non-zero
+// value (e.g. 0.00089%) stays visible instead of being rounded away.
+function fmtPct(n){
+  if(n==null)return '\u2014';
+  const pct=n*100;
+  if(pct!==0&&Math.abs(pct)<0.005)return pct.toPrecision(4)+'%';
+  return pct.toFixed(2)+'%';
+}
 function fmtNum(n){if(n==null)return '\u2014';return n.toLocaleString('en-US',{maximumFractionDigits:2});}
 function fmtCcy(n,ccy='$'){return n==null?'\u2014':ccy+fmtNum(n);}
 
@@ -621,6 +631,33 @@ function computeAttrFactor(p){
 
 const EVIC_DEPENDENT_CLASSES=['Listed Equity','Corporate Bonds','Business Loans','Undrawn Commitments'];
 
+// R3 gap B-7: data vintage & portfolio hygiene. Legal-name changes for
+// issuers already in the demo book — renamed at display time only, not in
+// BASE_POSITIONS itself, so ticker/name-keyed lookups elsewhere in this file
+// (e.g. lookupClientEvicBn, built directly off BASE_POSITIONS) are unaffected.
+const ISSUER_RENAME_MAP={
+  'LafargeHolcim Ltd':'Holcim Ltd (formerly LafargeHolcim)',
+  'HeidelbergCement AG':'Heidelberg Materials AG (formerly HeidelbergCement)',
+};
+// Bond names in this demo book embed a maturity year ("H&M bonds 0.25%
+// 2024", "Delta Air Lines 7% 2025") — a matured instrument sitting in a
+// "current" book is a genuine PCAF hygiene violation (use most recent
+// available data; a matured bond has no current outstanding exposure),
+// not just a display nit. Excluded from totals like a data gap, not zeroed.
+function parseMaturityYear(name){
+  const m=/\b(20\d{2})\s*$/.exec((name||'').trim());
+  return m?+m[1]:null;
+}
+// Most `source` strings in this book embed the vintage year of the
+// underlying data ("CDP A-List 2023", "Shell Annual Report 2023"). PCAF
+// permits lagged data if the vintage is disclosed — flag data older than 24
+// months so it doesn't silently pass as current.
+function parseSourceVintageYear(source){
+  const m=/\b(20\d{2})\b/.exec(source||'');
+  return m?+m[1]:null;
+}
+const CURRENT_REPORTING_YEAR=new Date().getFullYear();
+
 function computeRow(p){
   const totalEmissions=(p.scope1||0)+(p.scope2||0);
   const totalWithScope3=totalEmissions+(p.scope3||0);
@@ -676,7 +713,14 @@ function computeRow(p){
   const carbonIntensity=(!dataGap&&p.outstanding>0)?financedEmissions/p.outstanding:0;
   const scope1Pct=totalEmissions>0?(p.scope1||0)/totalEmissions:0;
   const scope2Pct=totalEmissions>0?(p.scope2||0)/totalEmissions:0;
-  return{...p,totalEmissions,totalWithScope3,attrFactor,financedEmissions,financedScope3,waci,waciS123,revenueProxy,carbonIntensity,evicWarning,dataGap,dataGapReason,dqs:adjustedDqs,scope1Pct,scope2Pct};
+  // R3 gap B-7: matured instruments and stale data vintage.
+  const maturityYear=parseMaturityYear(p.name);
+  const matured=maturityYear!=null&&maturityYear<CURRENT_REPORTING_YEAR;
+  const sourceVintageYear=parseSourceVintageYear(p.source);
+  const dataVintageYears=sourceVintageYear!=null?CURRENT_REPORTING_YEAR-sourceVintageYear:null;
+  const vintageWarning=dataVintageYears!=null&&dataVintageYears>2;
+  const displayName=ISSUER_RENAME_MAP[p.name]||p.name;
+  return{...p,name:displayName,totalEmissions,totalWithScope3,attrFactor,financedEmissions,financedScope3,waci,waciS123,revenueProxy,carbonIntensity,evicWarning,dataGap,dataGapReason,dqs:adjustedDqs,scope1Pct,scope2Pct,matured,maturityYear,sourceVintageYear,dataVintageYears,vintageWarning};
 }
 
 const INITIAL_POSITIONS=BASE_POSITIONS.map(computeRow);
@@ -836,8 +880,13 @@ function PartATab({positions,setPositions}){
   // must also be excluded from every sum below rather than folded in — in JS,
   // `0 + null` is 0, so an un-filtered reduce() would silently treat an
   // unresolvable EVIC as a computed zero (R3 gap A-4).
-  const computablePositions=useMemo(()=>positions.filter(p=>!p.dataGap&&p.assetClass!=='Undrawn Commitments'),[positions]);
+  // R3 gap B-7: a matured instrument (bond past its maturity year) has no
+  // current outstanding exposure and cannot sit in a "current" book —
+  // excluded from totals like a data gap, not zeroed.
+  const computablePositions=useMemo(()=>positions.filter(p=>!p.dataGap&&!p.matured&&p.assetClass!=='Undrawn Commitments'),[positions]);
   const dataGapPositions=useMemo(()=>positions.filter(p=>p.dataGap),[positions]);
+  const maturedPositions=useMemo(()=>positions.filter(p=>p.matured),[positions]);
+  const vintagePositions=useMemo(()=>positions.filter(p=>p.vintageWarning),[positions]);
   // R3 gap B-2: scope-3 is a real reporting requirement once the reporting
   // year crosses PCAF's phase-in thresholds — not a soft recommendation for a
   // couple of sectors. Flag positions that need it but don't have it.
@@ -871,11 +920,11 @@ function PartATab({positions,setPositions}){
   function removeSelected(){setPositions(prev=>prev.filter(p=>!selected.has(p.id)));setSelected(new Set());}
   function toggleSelect(id){setSelected(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n;});}
 
-  const hdr=(key,label,align)=>(<th onClick={()=>handleSort(key)} style={{padding:'8px 8px',textAlign:align||'left',fontSize:10,fontWeight:700,color:T.textSec,letterSpacing:'0.03em',textTransform:'uppercase',cursor:'pointer',userSelect:'none',whiteSpace:'nowrap',borderBottom:`1px solid ${T.border}`,background:T.bg,fontFamily:T.mono,position:'sticky',top:0,zIndex:2}}>{label}{sortKey===key?(sortDir===-1?' \u25BC':' \u25B2'):''}</th>);
+  const hdr=(key,label,align,title)=>(<th onClick={()=>handleSort(key)} title={title} style={{padding:'8px 8px',textAlign:align||'left',fontSize:10,fontWeight:700,color:T.textSec,letterSpacing:'0.03em',textTransform:'uppercase',cursor:'pointer',userSelect:'none',whiteSpace:'nowrap',borderBottom:`1px solid ${T.border}`,background:T.bg,fontFamily:T.mono,position:'sticky',top:0,zIndex:2}}>{label}{sortKey===key?(sortDir===-1?' \u25BC':' \u25B2'):''}</th>);
   const inp={width:'100%',padding:'5px 8px',border:`1px solid ${T.border}`,borderRadius:5,fontSize:12,fontFamily:T.font,color:T.text,background:T.bg};
 
   const exportCSV=useCallback(()=>{
-    const keys=['name','assetClass','sector','country','currency','outstanding','attrFactor','scope1','scope2','scope3','financedEmissions','financedScope3','waci','dqs','source'];
+    const keys=['name','assetClass','sector','country','currency','outstanding','attrFactor','scope1','scope2','scope3','financedEmissions','financedScope3','waci','dqs','source','matured','dataVintageYears'];
     const csv=[keys.join(','),...positions.map(r=>keys.map(k=>{let v=r[k];if(typeof v==='number')return v;return`"${String(v||'').replace(/"/g,'""')}"`;}).join(','))].join('\n');
     const b=new Blob([csv],{type:'text/csv'});const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download='pcaf_part_a_financed_emissions.csv';a.click();URL.revokeObjectURL(u);
   },[positions]);
@@ -890,6 +939,8 @@ function PartATab({positions,setPositions}){
       <KPICard label="Scope 3 Required / Missing" value={`${scope3RequiredPositions.length} / ${scope3MissingPositions.length}`} sub={`reporting year ${reportingYear} | all-sector since ${SCOPE3_ALL_SECTOR_YEAR}`} color={scope3MissingPositions.length>0?T.red:T.green}/>
       <KPICard label="Undrawn Commitments" value={fmt(totalUndrawnFE)+' tCO2e'} sub="Reported separately per PCAF" color={T.purple||'#7c3aed'}/>
       {dataGapPositions.length>0&&<KPICard label="Data Gaps" value={`${dataGapPositions.length} position${dataGapPositions.length===1?'':'s'}`} sub="No plausible EVIC — excluded, not zeroed" color={T.red}/>}
+      {maturedPositions.length>0&&<KPICard label="Matured Instruments" value={`${maturedPositions.length} position${maturedPositions.length===1?'':'s'}`} sub="Past maturity — excluded from totals, not zeroed" color={T.red}/>}
+      {vintagePositions.length>0&&<KPICard label="Stale Data Vintage" value={`${vintagePositions.length} position${vintagePositions.length===1?'':'s'}`} sub=">24 months old — still included, PCAF requires vintage disclosure" color={T.amber}/>}
       <KPICard label="Carbon Footprint" value={carbonFootprint.toFixed(0)+' tCO2e/$Bn'} sub="Total FE / AUM" color={T.gold}/>
       <KPICard label="WACI (S1+2)" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
       <KPICard label="WACI (S1+2+3)" value={waciS123.toFixed(1)} sub="tCO2e / $M revenue, reported separately" color={T.sageL||T.sage}/>
@@ -972,7 +1023,7 @@ function PartATab({positions,setPositions}){
           <tr>
             <th style={{padding:'6px 8px',width:28,borderBottom:`1px solid ${T.border}`,background:T.bg,position:'sticky',top:0,zIndex:2}}><input type="checkbox" onChange={e=>{if(e.target.checked)setSelected(new Set(filtered.map(p=>p.id)));else setSelected(new Set());}}/></th>
             {hdr('name','Company')}{hdr('assetClass','Asset Class')}{hdr('sector','Sector')}{hdr('country','Ctry')}
-            {hdr('outstanding','Exp $M','right')}{hdr('attrFactor','Attr%','right')}{hdr('scope1','S1 tCO2e','right')}{hdr('scope2','S2 tCO2e','right')}
+            {hdr('outstanding','Exp $M','right')}{hdr('attrFactor','Attr%','right')}{hdr('scope1','S1 tCO2e','right','For Sovereign Debt rows this is a national GHG inventory (production-based, ex-LULUCF), not a corporate Scope 1 emission')}{hdr('scope2','S2 tCO2e','right')}
             {scopeView==='1+2+3'&&hdr('scope3','S3 tCO2e','right')}
             {hdr('financedEmissions','Fin.Em.','right')}{hdr('carbonIntensity','tCO2e/$M','right')}{hdr('dqs','DQS','center')}
             <th style={{padding:'6px 8px',borderBottom:`1px solid ${T.border}`,background:T.bg,position:'sticky',top:0,zIndex:2,fontSize:10,fontFamily:T.mono,color:T.textSec}}>Act</th>
@@ -987,13 +1038,21 @@ function PartATab({positions,setPositions}){
                   {p.name}
                   {p.evicWarning&&<span title={p.evicWarning} style={{color:T.amber,marginLeft:3,fontSize:9}}>\u26a0</span>}
                   {isScope3Required(p.sector,reportingYear)&&!p.scope3&&<span title={`Scope 3 required for reporting year ${reportingYear} (PCAF all-sector requirement from ${SCOPE3_ALL_SECTOR_YEAR}) but not provided`} style={{color:T.red,marginLeft:3,fontSize:9}}>S3\u26a0</span>}
+                  {p.matured&&<span title={`Matured instrument (maturity ${p.maturityYear}) \u2014 excluded from totals, not zeroed`} style={{color:T.red,marginLeft:3,fontSize:9}}>MATURED</span>}
+                  {p.vintageWarning&&<span title={`Data vintage ${p.dataVintageYears} years old (source: ${p.source}) \u2014 PCAF permits lagged data if disclosed`} style={{color:T.amber,marginLeft:3,fontSize:9}}>\u26a0 vintage</span>}
                 </td>
                 <td style={{padding:'5px 8px'}}><Badge color={AC_COLORS[p.assetClass]||T.navy}>{p.assetClass==='Commercial Real Estate'?'CRE':p.assetClass==='Undrawn Commitments'?'Undrawn':p.assetClass.length>16?p.assetClass.slice(0,14)+'\u2026':p.assetClass}</Badge></td>
                 <td style={{padding:'5px 8px',color:T.textSec,fontSize:10}}>{p.sector}</td>
                 <td style={{padding:'5px 8px',fontFamily:T.mono,fontSize:10}}>{p.country}</td>
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmtNum(p.outstanding)}</td>
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmtPct(p.attrFactor)}</td>
-                <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(p.scope1)}</td>
+                {/* R3 gap B-6: Sovereign Debt's "Scope 1" figure is a
+                    national GHG inventory (production-based, ex-LULUCF) —
+                    not a corporate Scope 1 emission — mixing it visually
+                    into the same column style as company emissions
+                    understates that difference. Distinct color + tooltip,
+                    same column (no schema change), for Sovereign rows. */}
+                <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10,color:p.assetClass==='Sovereign Debt'?T.gold:undefined}} title={p.assetClass==='Sovereign Debt'?'National GHG inventory (production-based, ex-LULUCF) — not a corporate Scope 1 emission':undefined}>{fmt(p.scope1)}</td>
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(p.scope2)}</td>
                 {scopeView==='1+2+3'&&<td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(p.scope3)}</td>}
                 <td style={{padding:'5px 8px',textAlign:'right',fontWeight:600,color:p.dataGap?T.red:p.financedEmissions>1e6?T.red:p.financedEmissions>1e5?T.amber:T.text,fontFamily:T.mono,fontSize:10}}>
@@ -1195,12 +1254,28 @@ function PartCTab(){
       else{attr=(d.underwrittenM/d.dealSizeM)*FACILITATED_WEIGHTING_FACTOR;denomBasis='Deal Size (proxy \u2014 no EVIC match)';}
     }
     const clientEM=(d.clientScope1||0)+(d.clientScope2||0);
-    return{...d,attrFactor:attr,clientEM,denomBasis,outOfScope,facilitatedEm:outOfScope?0:Math.round(attr*clientEM),facilitatedScope3:outOfScope?0:Math.round(attr*(d.clientScope3||0)),extendedEm:outOfScope?Math.round((d.dealSizeM>0?0.10:0)*clientEM):0};
+    // R3 gap B-5: advisory/M&A's extended (non-PCAF) figure is now the
+    // deal's own visible attribution basis (advisoryShare x clientEM,
+    // advisoryShare = advisory fee share of deal size, capped at 10% per
+    // attrFormula's own documented cap) instead of a flat, undocumented 0.10
+    // constant \u2014 previously the KPI card showed a non-zero total while this
+    // same row's table cell showed a bare 0 with no way to see how the two
+    // numbers related (R3 finding: card showed 1.54M with no visible
+    // derivation).
+    const advisoryShare=outOfScope?Math.min(0.10,(d.advisoryFeeM||d.dealSizeM*0.02)/d.dealSizeM||0.10):0;
+    const extendedEm=outOfScope?Math.round(advisoryShare*clientEM):0;
+    return{...d,attrFactor:attr,clientEM,denomBasis,outOfScope,facilitatedEm:outOfScope?0:Math.round(attr*clientEM),facilitatedScope3:outOfScope?0:Math.round(attr*(d.clientScope3||0)),advisoryShare,extendedEm};
   }),[deals]);
   const totalFac=useMemo(()=>dealData.reduce((s,d)=>s+d.facilitatedEm,0),[dealData]);
   const totalExtended=useMemo(()=>dealData.reduce((s,d)=>s+d.extendedEm,0),[dealData]);
   const totalDeals=useMemo(()=>deals.reduce((s,d)=>s+d.dealSizeM,0),[deals]);
   const totalUW=useMemo(()=>deals.reduce((s,d)=>s+d.underwrittenM,0),[deals]);
+  // R3 gap B-5: PCAF's Part B standard permits an additional 100%-unweighted
+  // disclosure alongside the mandatory 33%-weighted figure, provided it is
+  // reported separately with rationale (not blended into the PCAF-labeled
+  // total above). unweightedFac = weighted total / 0.33 (the weighting
+  // factor's own inverse), so the two figures algebraically reconcile.
+  const totalFacUnweighted=useMemo(()=>totalFac/FACILITATED_WEIGHTING_FACTOR,[totalFac]);
 
   function addDeal(){
     if(!newDeal.client||!newDeal.dealSizeM)return;
@@ -1209,10 +1284,11 @@ function PartCTab(){
   }
 
   return(<div>
-    <SectionHeader title="Part B: Facilitated Emissions" citation="PCAF Standard, Part B \u2014 Facilitated Emissions (Dec 2023)" description={`${deals.length} transactions. Attribution = (Underwritten Amount / Issuer EVIC) \u00d7 33% weighting factor. M&A/advisory mandates are out of scope (capital-markets issuance only) and shown as an extended, non-PCAF metric.`}/>
+    <SectionHeader title="Part B: Facilitated Emissions" citation={PCAF_PART_B} description={`${deals.length} transactions. Attribution = (Underwritten Amount / Issuer EVIC) \u00d7 33% weighting factor (mandatory). An additional 100%-unweighted figure is permitted as an optional, separately-reported disclosure per the standard \u2014 shown below, never blended into the PCAF-scoped total. M&A/advisory mandates are out of scope (capital-markets issuance only) and shown as an extended, non-PCAF metric with its own visible derivation.`}/>
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
-      <KPICard label="Total Facilitated Em. (PCAF-scoped)" value={fmt(totalFac)+' tCO2e'} sub={`${deals.length} transactions`} color={T.navy}/>
-      {totalExtended>0&&<KPICard label="Advisory/M&A (extended, non-PCAF)" value={fmt(totalExtended)+' tCO2e'} sub="Out of PCAF Part B scope" color={T.textMut}/>}
+      <KPICard label="Total Facilitated Em. (PCAF-scoped, 33% wtd.)" value={fmt(totalFac)+' tCO2e'} sub={`${deals.length} transactions`} color={T.navy}/>
+      <KPICard label="Facilitated @100% (unweighted, per PCAF option)" value={fmt(totalFacUnweighted)+' tCO2e'} sub="= PCAF-scoped total ÷ 0.33, reported separately per Part B" color={T.navyL}/>
+      {totalExtended>0&&<KPICard label="Advisory/M&A (extended, non-PCAF)" value={fmt(totalExtended)+' tCO2e'} sub="= advisory-fee-share × client emissions, capped at 10% — out of PCAF Part B scope" color={T.textMut}/>}
       <KPICard label="Deal Volume" value={'$'+fmt(totalDeals)+'M'} sub="Total deal size" color={T.gold}/>
       <KPICard label="Underwritten" value={'$'+fmt(totalUW)+'M'} sub="Bank committed" color={T.sage}/>
       <KPICard label="Avg Attribution" value={totalDeals>0?fmtPct(totalUW/totalDeals):'\u2014'} sub="UW / Deal (unweighted, informational)" color={T.navyL}/>
@@ -1249,9 +1325,13 @@ function PartCTab(){
             <td style={{padding:'5px 8px',fontFamily:T.mono,fontSize:10}}>{d.year}</td>
             <td style={{padding:'5px 8px',textAlign:'right'}}>{fmtNum(d.dealSizeM)}</td>
             <td style={{padding:'5px 8px',textAlign:'right'}}>{fmtNum(d.underwrittenM)}</td>
-            <td style={{padding:'5px 8px',textAlign:'right'}}>{fmtPct(d.attrFactor)}</td>
+            <td style={{padding:'5px 8px',textAlign:'right'}}>{d.outOfScope?fmtPct(d.advisoryShare):fmtPct(d.attrFactor)}</td>
             <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(d.clientEM)}</td>
-            <td style={{padding:'5px 8px',textAlign:'right',fontWeight:600,color:d.facilitatedEm>5e6?T.red:T.text}}>{fmt(d.facilitatedEm)}</td>
+            <td style={{padding:'5px 8px',textAlign:'right',fontWeight:600,color:d.facilitatedEm>5e6?T.red:T.text}} title={d.outOfScope?`Out of PCAF Part B scope — extended metric = ${fmtPct(d.advisoryShare)} × ${fmt(d.clientEM)} = ${fmt(d.extendedEm)} tCO2e (not counted in the PCAF-scoped total)`:undefined}>
+              {d.outOfScope
+                ? <span style={{color:T.textMut}}>{fmt(d.extendedEm)} <Badge color={T.textMut}>extended</Badge></span>
+                : fmt(d.facilitatedEm)}
+            </td>
             <td style={{padding:'5px 8px',textAlign:'center'}}><span style={{fontWeight:700,color:DQS_COLOR[d.dqs]}}>{d.dqs}</span></td>
             <td style={{padding:'5px 8px',fontSize:9,fontFamily:T.mono,color:T.textMut}}>{d.citation}</td>
           </tr>
@@ -1437,7 +1517,14 @@ function DownstreamTab({positions}){
   },[positions,totalFE,totalOut,aumBn]);
 
   const doExport=useCallback(()=>{
-    const payload={timestamp:new Date().toISOString(),portfolio:{totalFE:totalFE,totalExposure:totalOut,count:positions.length,avgDqs:+(positions.length ? positions.reduce((s,p)=>s+p.dqs,0)/positions.length : 0).toFixed(2)},modules:Object.fromEntries(downstream.map(m=>[m.field,{value:m.value,regulation:m.regulation}])),holdings:positions.map(p=>({name:p.name,ac:p.assetClass,fe:p.financedEmissions,dqs:p.dqs,attr:p.attrFactor}))};
+    // R3 gap B-7: PCAF requires vintage disclosure for lagged data — surface
+    // it in the export rather than only in the on-screen badges.
+    const dataVintage={
+      maturedInstrumentsExcluded:positions.filter(p=>p.matured).map(p=>({name:p.name,maturityYear:p.maturityYear})),
+      staleVintagePositions:positions.filter(p=>p.vintageWarning).map(p=>({name:p.name,source:p.source,ageYears:p.dataVintageYears})),
+      exportGeneratedAt:new Date().toISOString(),
+    };
+    const payload={timestamp:new Date().toISOString(),portfolio:{totalFE:totalFE,totalExposure:totalOut,count:positions.length,avgDqs:+(positions.length ? positions.reduce((s,p)=>s+p.dqs,0)/positions.length : 0).toFixed(2)},modules:Object.fromEntries(downstream.map(m=>[m.field,{value:m.value,regulation:m.regulation}])),holdings:positions.map(p=>({name:p.name,ac:p.assetClass,fe:p.financedEmissions,dqs:p.dqs,attr:p.attrFactor})),dataVintage};
     const str=JSON.stringify(payload,null,2);
     const blob=new Blob([str],{type:'application/json'});const u=URL.createObjectURL(blob);const a=document.createElement('a');a.href=u;a.download='pcaf_downstream.json';a.click();URL.revokeObjectURL(u);
   },[positions,totalFE,totalOut,downstream]);
