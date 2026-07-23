@@ -422,7 +422,17 @@ export default function FiTaxonomyPcafBridgePage() {
         <div style={{display:'flex',justifyContent:'space-between',alignItems:'flex-start',marginBottom:6}}>
           <div>
             <div style={{fontSize:10,color:T.gold,fontFamily:T.mono,letterSpacing:2,fontWeight:700,marginBottom:6}}>MODULE EP-Q9 · REGULATORY BRIDGE</div>
-            <h1 style={S.h1}>FI Taxonomy × PCAF Bridge</h1>
+            <div style={{display:'flex',alignItems:'center',gap:10,flexWrap:'wrap'}}>
+              <h1 style={S.h1}>FI Taxonomy × PCAF Bridge</h1>
+              {/* R3 gap U-E: this module's counterparty book (stats.fe etc.)
+                  is its own separate illustrative dataset, not the editable
+                  portfolio in PcafFinancedEmissionsPage.jsx — the two won't
+                  tie out, and won't ever, until a real reconciliation is
+                  built. The top-right "ILLUSTRATIVE" tag already said as
+                  much but is easy to miss; this badge sits next to the
+                  title itself. */}
+              <span title="This module's Financed Emissions and counterparty figures are a separate, fixed illustrative dataset — they are not tied to and will not match the editable portfolio in the PCAF Financed Emissions module." style={{background:'#fef3c7',color:'#92400e',border:'1px solid #fde68a',borderRadius:12,padding:'2px 10px',fontSize:10,fontWeight:700,fontFamily:T.mono,letterSpacing:0.3,whiteSpace:'nowrap'}}>⚠ DEMO — NOT RECONCILED</span>
+            </div>
             <p style={S.sub}>Banking-book GAR · Solvency II Green Factor · PCAF × Taxonomy × CSRD triple-reporting disclosure engine</p>
           </div>
           <div style={{textAlign:'right',fontSize:10,fontFamily:T.mono,color:T.textSec,letterSpacing:0.5}}>

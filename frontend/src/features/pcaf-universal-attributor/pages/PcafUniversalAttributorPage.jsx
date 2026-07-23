@@ -117,12 +117,23 @@ export default function PcafUniversalAttributorPage() {
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 16 }}>
           <div>
             <div style={{ color: T.gold, fontFamily: T.mono, fontSize: 11, letterSpacing: 2, marginBottom: 4 }}>EP-CI6 . PCAF UNIVERSAL ATTRIBUTOR</div>
-            <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, margin: 0 }}>PCAF 8/8 Universal Financed Emissions Attributor</h1>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+              <h1 style={{ color: '#fff', fontSize: 24, fontWeight: 700, margin: 0 }}>PCAF 8/8 Universal Financed Emissions Attributor</h1>
+              {/* R3 gap U-E: this module's PCAF_CLASSES dataset is a fixed,
+                  hardcoded illustrative portfolio with no link to the
+                  editable portfolio in PcafFinancedEmissionsPage.jsx — the
+                  two will show different numbers for the same asset class
+                  and neither reconciles to the other. A persistent badge
+                  (not just the paragraph below, which is easy to skim past)
+                  flags that up front rather than letting a reader assume
+                  this is the same data as the main PCAF module. */}
+              <span title="This module's figures are a separate, fixed illustrative dataset — they are not tied to and will not match the editable portfolio in the PCAF Financed Emissions module." style={{ background: '#fef3c7', color: '#92400e', border: '1px solid #fde68a', borderRadius: 12, padding: '2px 10px', fontSize: 10, fontWeight: 700, fontFamily: T.mono, letterSpacing: 0.3, whiteSpace: 'nowrap' }}>⚠ DEMO — NOT RECONCILED</span>
+            </div>
             <p style={{ color: '#94a3b8', fontSize: 13, margin: '4px 0 0' }}>
               7 PCAF Standard Asset Classes + 1 Platform Extension . Attribution Formulas . Data Quality Heatmap . WACI . SBTi Target Tracking . Gap Analysis
             </p>
             <p style={{ color: '#d97706', fontSize: 11, margin: '4px 0 0' }}>
-              ⚠ Illustrative demo portfolio — not connected to a live data source. Class 7 (Sovereign Debt) is from a separate PCAF publication; Class 8 ("Other") is a platform extension, not a PCAF-defined asset class. PCAF Part A is now on its 3rd Edition (Dec 2025, 10 asset classes) — this module still only covers the original 6 core classes and has not yet been extended with the 4 new ones (see PCAF Financed Emissions and PCAF India BRSR for those).
+              ⚠ Illustrative demo portfolio — not connected to a live data source, and not reconciled against the PCAF Financed Emissions module's portfolio (different asset-class totals are expected, not a bug). Class 7 (Sovereign Debt) is from a separate PCAF publication; Class 8 ("Other") is a platform extension, not a PCAF-defined asset class. PCAF Part A is now on its 3rd Edition (Dec 2025, 10 asset classes) — this module still only covers the original 6 core classes and has not yet been extended with the 4 new ones (see PCAF Financed Emissions and PCAF India BRSR for those).
             </p>
           </div>
           <select value={dqFilter} onChange={e => setDqFilter(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
