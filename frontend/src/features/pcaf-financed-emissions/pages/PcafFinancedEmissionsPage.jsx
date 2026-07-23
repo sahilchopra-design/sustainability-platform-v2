@@ -763,12 +763,39 @@ function computablePcafPositions(positions){
 /* ═══════════════════════════════════════════════════════════════════════════════
    REUSABLE UI COMPONENTS
    ═══════════════════════════════════════════════════════════════════════════════ */
-function KPICard({label,value,sub,color,mono}){
-  return(<div style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:'14px 18px',flex:1,minWidth:150}}>
-    <div style={{fontSize:10,color:T.textMut,fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',marginBottom:4,fontFamily:T.mono}}>{label}</div>
-    <div style={{fontSize:21,fontWeight:700,color:color||T.navy,lineHeight:1.1,fontFamily:mono?T.mono:T.font}}>{value}</div>
+// R3 gap U-C: hero KPIs (the number a user actually came to this tab to
+// read) get a larger card and an optional scope chip; every card can carry
+// a lineage popover (methodology citation, data vintage, source count) so a
+// number is never presented without a way to see where it came from.
+function KPICard({label,value,sub,color,mono,hero,chip,lineage}){
+  return(<div style={{background:T.surface,border:`1px solid ${hero?color||T.navy:T.border}`,borderRadius:8,padding:hero?'18px 20px':'14px 18px',flex:hero?'1 1 220px':1,minWidth:hero?200:150,position:'relative'}}>
+    <div style={{display:'flex',alignItems:'center',gap:6,marginBottom:4}}>
+      <div style={{fontSize:10,color:T.textMut,fontWeight:600,letterSpacing:'0.06em',textTransform:'uppercase',fontFamily:T.mono}}>{label}</div>
+      {chip&&<span style={{fontSize:9,fontWeight:700,padding:'1px 6px',borderRadius:8,background:(color||T.navy)+'1a',color:color||T.navy,fontFamily:T.mono}}>{chip}</span>}
+      {lineage&&<LineageChip {...lineage}/>}
+    </div>
+    <div style={{fontSize:hero?28:21,fontWeight:700,color:color||T.navy,lineHeight:1.1,fontFamily:mono?T.mono:T.font}}>{value}</div>
     {sub&&<div style={{fontSize:11,color:T.textSec,marginTop:4}}>{sub}</div>}
   </div>);
+}
+
+// R3 gap U-C: on-demand "where did this number come from" popover — real,
+// derivable facts only (methodology citation, actual source-vintage range
+// and distinct-source count computed from the positions feeding the card,
+// and an honest note that this is a client-side recompute, not a tracked
+// backend run) rather than inventing a run ID or job number this platform
+// has no real concept of.
+function LineageChip({citation,vintage,sourceCount,basis}){
+  const[open,setOpen]=useState(false);
+  return(<span style={{position:'relative',display:'inline-flex'}}>
+    <button onClick={()=>setOpen(o=>!o)} title="Where does this number come from?" style={{width:16,height:16,borderRadius:'50%',border:`1px solid ${T.borderL}`,background:T.surface,color:T.textMut,fontSize:9,lineHeight:'14px',padding:0,cursor:'pointer',fontFamily:T.mono}}>i</button>
+    {open&&<div style={{position:'absolute',top:20,left:0,zIndex:20,width:220,background:T.surface,border:`1px solid ${T.border}`,borderRadius:6,padding:'10px 12px',boxShadow:'0 6px 20px rgba(0,0,0,0.12)',fontSize:10,color:T.textSec,lineHeight:1.6}}>
+      {citation&&<div><strong style={{color:T.navy}}>Methodology:</strong> {citation}</div>}
+      {vintage&&<div><strong style={{color:T.navy}}>Data vintage:</strong> {vintage}</div>}
+      {sourceCount!=null&&<div><strong style={{color:T.navy}}>Distinct sources:</strong> {sourceCount}</div>}
+      <div style={{marginTop:4,color:T.textMut}}>{basis||'Computed client-side from the current portfolio — recalculates on every edit, no separate tracked run.'}</div>
+    </div>}
+  </span>);
 }
 
 // R3 gap U-A (quick-fix half): each button gets an explicit min-height of
@@ -969,6 +996,19 @@ function PartATab({positions,setPositions}){
   // financed emissions scope separation (B-2).
   const waciS123=useMemo(()=>{let num=0,den=0;positions.forEach(p=>{num+=p.outstanding*p.waciS123;den+=p.outstanding;});return den>0?num/den:0;},[positions]);
   const revenueProxyCount=useMemo(()=>positions.filter(p=>p.revenueProxy).length,[positions]);
+  // R3 gap U-C: real, derivable lineage facts for the hero KPI cards —
+  // coverage (how much of the raw portfolio is actually in the headline
+  // total), and the source-vintage range / distinct-source count backing
+  // it, computed from the same computablePositions the total itself sums.
+  const coveragePct=useMemo(()=>positions.length?(computablePositions.length/positions.length*100):0,[computablePositions,positions]);
+  const [showMoreKpis,setShowMoreKpis]=useState(true);
+  const vintageYears=useMemo(()=>computablePositions.map(p=>p.sourceVintageYear).filter(y=>y!=null),[computablePositions]);
+  const vintageRangeLabel=useMemo(()=>{
+    if(!vintageYears.length)return null;
+    const min=Math.min(...vintageYears),max=Math.max(...vintageYears);
+    return min===max?`${min}`:`${min}–${max}`;
+  },[vintageYears]);
+  const distinctSourceCount=useMemo(()=>new Set(computablePositions.map(p=>p.source).filter(Boolean)).size,[computablePositions]);
   const carbonCostM=useMemo(()=>(totalFE*carbonPrice/1e6).toFixed(1),[totalFE,carbonPrice]);
 
   // R3 gap F-13: the scope selector (Scope 1+2 / 1+2+3) previously
@@ -1023,9 +1063,24 @@ function PartATab({positions,setPositions}){
   return(<div>
     <SectionHeader title="Part A: Financed Emissions" citation={PCAF_PART_A} description={`10 PCAF Part A asset classes across ${positions.length} holdings. Attribution Factor = Outstanding / Denominator (per asset class). Financed Emissions = Attribution Factor x Scope 1+2 Emissions. Core formulas per the 2nd-Edition Chapter 5 classes; Use-of-Proceeds, Securitisations, Sub-Sovereign Debt, and Undrawn Commitments are 3rd-Edition (Dec 2025) additions.`}/>
 
-    {/* KPI Row */}
-    <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
-      <KPICard label="Total Financed Emissions" value={fmt(totalFE)+' tCO2e'} sub={`${computablePositions.length} computable | Scope 1+2 | excl. undrawn/gaps`} color={T.navy}/>
+    {/* R3 gap U-C: hero row — the number a user actually opens this tab to
+        read (scope-aware Financed Emissions, Coverage, Avg DQS) — always
+        visible, larger cards, each with a lineage popover. Everything else
+        moves to a collapsible secondary row below (expanded by default —
+        nothing that was visible before is now hidden, just de-emphasized). */}
+    <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:10}}>
+      <KPICard hero label="Financed Emissions" chip={scopeView} value={fmt(scopeView==='1+2+3'?totalFE+totalFEScope3:totalFE)+' tCO2e'} sub={`${computablePositions.length}/${positions.length} positions in scope`} color={T.navy}
+        lineage={{citation:PCAF_PART_A,vintage:vintageRangeLabel?`source vintage ${vintageRangeLabel}`:null,sourceCount:distinctSourceCount}}/>
+      <KPICard hero label="Coverage" value={coveragePct.toFixed(0)+'%'} sub={`${positions.length-computablePositions.length} excluded (data gap / matured / undrawn)`} color={coveragePct>=90?T.green:coveragePct>=75?T.amber:T.red}
+        lineage={{citation:PCAF_PART_A,basis:'Share of the raw portfolio (by position count) included in the Financed Emissions total above — the rest is reported separately (undrawn) or excluded with a stated reason (data gap, matured).'}}/>
+      <KPICard hero label="Avg DQS" value={avgDqs} sub="Portfolio average, PCAF 1 (best) – 5 (worst)" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}
+        lineage={{citation:'PCAF Standard, Chapter 3 — Data Quality Score',basis:`Simple average across all ${positions.length} positions, including proxy-capped scores.`}}/>
+    </div>
+    {(()=>{const secondaryCount=8+(dataGapPositions.length>0?1:0)+(maturedPositions.length>0?1:0)+(vintagePositions.length>0?1:0);return(
+    <button onClick={()=>setShowMoreKpis(s=>!s)} style={{display:'flex',alignItems:'center',gap:4,padding:'4px 0',border:'none',background:'none',color:T.textSec,fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font,marginBottom:showMoreKpis?8:16}}>
+      {showMoreKpis?'▾':'▸'} {showMoreKpis?'Hide':'Show'} {secondaryCount} more metric{secondaryCount===1?'':'s'}
+    </button>);})()}
+    {showMoreKpis&&<div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
       <KPICard label="Including Scope 3" value={fmt(totalFE+totalFEScope3)+' tCO2e'} sub="Reported separately per PCAF, shown here as a labeled secondary figure" color={T.navyL}/>
       <KPICard label="Scope 3 Required / Missing" value={`${scope3RequiredPositions.length} / ${scope3MissingPositions.length}`} sub={`reporting year ${reportingYear} | all-sector since ${SCOPE3_ALL_SECTOR_YEAR}`} color={scope3MissingPositions.length>0?T.red:T.green}/>
       <KPICard label="Undrawn Commitments" value={fmt(totalUndrawnFE)+' tCO2e'} sub="Reported separately per PCAF" color={T.purple||'#7c3aed'}/>
@@ -1036,13 +1091,12 @@ function PartATab({positions,setPositions}){
       <KPICard label="WACI (S1+2)" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
       <KPICard label="WACI (S1+2+3)" value={waciS123.toFixed(1)} sub="tCO2e / $M revenue, reported separately" color={T.sageL||T.sage}/>
       <KPICard label="Revenue Proxy" value={`${revenueProxyCount}/${positions.length}`} sub="positions using a sector proxy, not reported revenue — DQS capped at 4" color={revenueProxyCount>0?T.amber:T.green}/>
-      <KPICard label="Avg DQS" value={avgDqs} sub="Portfolio average" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
       <div style={{flex:'1 0 auto',background:T.surface,borderRadius:8,padding:'8px 12px',border:`1px solid ${T.border}`,minWidth:120}}>
         <div style={{fontSize:10,color:T.textSec,letterSpacing:0.3,marginBottom:4}}>CARBON COST</div>
         <CurrencyToggle usdValue={totalFE*carbonPrice} size="md" />
         <div style={{fontSize:9,color:T.textSec,marginTop:2}}>@ ${carbonPrice}/tCO2e</div>
       </div>
-    </div>
+    </div>}
     {/* R3 gap D-4: the "CC Credits Financed" card previously rendered the
         global Carbon Credit Engine's platform-wide total credits issued
         (an unrelated, separately-tracked registry, not this portfolio's own
@@ -1868,10 +1922,11 @@ function ResultsStage({positions,lobResults,dealData,onOpenAudit}){
   return(<div>
     <SectionHeader title="Results — Cross-Asset-Class Summary" description="Financed (Part A), Insurance-Associated (Part C), and Facilitated (Part B) emissions, read from the same computations shown in the Portfolio stage's three sub-tabs. PCAF does not itself define a cross-Part aggregate — each Part must still be disclosed separately in any real filing — so the Combined figure below is this platform's own at-a-glance total, labeled as such."/>
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
+      <KPICard hero label="Combined (S1+2, platform total)" value={fmt(combinedS12)+' tCO2e'} sub="Part A + Part C + Part B — not a PCAF-defined aggregate" color={T.textMut}
+        lineage={{citation:`${PCAF_PART_A} + ${PCAF_PART_C} + ${PCAF_PART_B}`,basis:'Sum of the three cards to the right, each read live from the Portfolio stage — never independently recomputed here.'}}/>
       <KPICard label="Financed Em. (Part A, S1+2)" value={fmt(financedS12)+' tCO2e'} sub={`${computable.length} computable positions`} color={T.navy}/>
       <KPICard label="Insurance-Assoc. Em. (Part C, PCAF-scoped)" value={fmt(insuranceFE)+' tCO2e'} sub={`${inScopeLob.length} in-scope LOBs`} color={T.red}/>
       <KPICard label="Facilitated Em. (Part B, 33% wtd.)" value={fmt(facilitatedFE)+' tCO2e'} sub={`${dealData.length} transactions`} color={T.gold}/>
-      <KPICard label="Combined (S1+2, platform total)" value={fmt(combinedS12)+' tCO2e'} sub="Part A + Part C + Part B — not a PCAF-defined aggregate" color={T.textMut}/>
       <KPICard label="Financed Em. (Part A, S1+2+3)" value={fmt(financedS123)+' tCO2e'} sub="All-scope variant, reported separately per PCAF convention" color={T.navyL}/>
     </div>
     <Card title="Emissions by PCAF Part">
