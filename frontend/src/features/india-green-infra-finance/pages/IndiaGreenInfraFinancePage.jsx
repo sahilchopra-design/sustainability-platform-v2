@@ -559,7 +559,7 @@ export default function IndiaGreenInfraFinancePage() {
       </div>
 
 
-      {tab === 11 && (
+      {activeTab === 11 && (
         <IndiaGreenHybridFinance T={T} useCases={[
     {
       tag: 'UC-1', title: 'Green Infra InvIT: 3 GW RE asset monetisation',

@@ -94,8 +94,7 @@ const REAL_EVENTS=[
   {id:29,company:'Uber',event:'Systematic sexual harassment cover-up and toxic corporate culture',type:'Social labour',sector:'Technology',severity:4,subLevel:0.6,date:'2017-02-19',geo:'North America',pillar:'Governance'},
 ];
 
-const ALL_EVENTS=useMemoInit();
-function useMemoInit(){
+function buildAllEvents(){
   const combined=[...REAL_EVENTS];
   for(let i=30;i<90;i++){
     const gen=CONTROVERSY_DATA[i];
@@ -1060,7 +1059,7 @@ function PredictiveEngine({events}){
 /* ── Main Page ── */
 export default function ControversyRatingImpactPage(){
   const [tab,setTab]=useState(0);
-  const [events,setEvents]=useState(()=>ALL_EVENTS);
+  const [events,setEvents]=useState(()=>buildAllEvents());
   const tabs=['Controversy Feed','Impact Propagation','Recovery Analytics','Predictive Engine'];
 
   return <div style={{fontFamily:T.font,background:T.bg,minHeight:'100vh',padding:24,color:T.text}}>

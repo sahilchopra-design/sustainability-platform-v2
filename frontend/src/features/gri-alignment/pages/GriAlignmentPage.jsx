@@ -163,6 +163,44 @@ const Td = ({ children, w, bold }) => (
 );
 
 /* ══════════════════════════════════════════════════════════════
+   EXTRA: Holdings Detail Drill-down (own component so its
+   useState is legal — was previously an inline IIFE)
+   ══════════════════════════════════════════════════════════════ */
+const HoldingDrilldown = ({ sorted }) => {
+  const [drillIdx, setDrillIdx] = React.useState(null);
+  const drillH = drillIdx !== null ? sorted[drillIdx] : null;
+  return (
+    <Section title="Holding GRI Detail Drilldown" badge="per-standard breakdown">
+      <div style={{ display:'flex', gap:6, marginBottom:12, flexWrap:'wrap' }}>
+        {sorted.slice(0, 12).map((h, i) => (
+          <Btn key={i} small active={drillIdx === i} onClick={() => setDrillIdx(drillIdx === i ? null : i)}>{h.company_name?.slice(0, 18)}</Btn>
+        ))}
+      </div>
+      {drillH && (
+        <div style={{ background:T.surface, borderRadius:10, border:`1px solid ${T.border}`, padding:20, maxHeight:400, overflowY:'auto' }}>
+          <h4 style={{ color:T.navy, margin:'0 0 12px' }}>{drillH.company_name} &mdash; GRI Standard Breakdown</h4>
+          <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <thead><tr><Th>Standard</Th><Th>Name</Th><Th>Category</Th><Th>Total Disc</Th><Th>Available</Th><Th>Gap</Th><Th>Coverage</Th></tr></thead>
+            <tbody>
+              {drillH.stdBreakdown.map((sb, i) => (
+                <tr key={sb.id} style={{ background: i % 2 ? T.surfaceH : T.surface }}>
+                  <Td bold>{sb.id}</Td><Td>{sb.name}</Td>
+                  <Td><Badge label={sb.category} color={sb.category === 'Environmental' ? 'green' : sb.category === 'Economic' ? 'amber' : 'blue'} /></Td>
+                  <Td>{sb.disclosures}</Td>
+                  <Td><span style={{ color:T.green, fontWeight:600 }}>{sb.available}</span></Td>
+                  <Td><span style={{ color:T.red, fontWeight:600 }}>{sb.gap}</span></Td>
+                  <Td><span style={{ fontWeight:700, color:sb.pct >= 75 ? T.green : sb.pct >= 40 ? T.amber : T.red }}>{sb.pct}%</span></Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Section>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ══════════════════════════════════════════════════════════════ */
 const GriAlignmentPage = () => {
@@ -684,39 +722,7 @@ const GriAlignmentPage = () => {
       {/* ═══════════════════════════════════════════════════════
          EXTRA: Holdings Detail Drill-down
          ═══════════════════════════════════════════════════════ */}
-      {activeTab === 'table' && sorted.length > 0 && (() => {
-        const [drillIdx, setDrillIdx] = React.useState(null);
-        const drillH = drillIdx !== null ? sorted[drillIdx] : null;
-        return (
-          <Section title="Holding GRI Detail Drilldown" badge="per-standard breakdown">
-            <div style={{ display:'flex', gap:6, marginBottom:12, flexWrap:'wrap' }}>
-              {sorted.slice(0, 12).map((h, i) => (
-                <Btn key={i} small active={drillIdx === i} onClick={() => setDrillIdx(drillIdx === i ? null : i)}>{h.company_name?.slice(0, 18)}</Btn>
-              ))}
-            </div>
-            {drillH && (
-              <div style={{ background:T.surface, borderRadius:10, border:`1px solid ${T.border}`, padding:20, maxHeight:400, overflowY:'auto' }}>
-                <h4 style={{ color:T.navy, margin:'0 0 12px' }}>{drillH.company_name} &mdash; GRI Standard Breakdown</h4>
-                <table style={{ width:'100%', borderCollapse:'collapse' }}>
-                  <thead><tr><Th>Standard</Th><Th>Name</Th><Th>Category</Th><Th>Total Disc</Th><Th>Available</Th><Th>Gap</Th><Th>Coverage</Th></tr></thead>
-                  <tbody>
-                    {drillH.stdBreakdown.map((sb, i) => (
-                      <tr key={sb.id} style={{ background: i % 2 ? T.surfaceH : T.surface }}>
-                        <Td bold>{sb.id}</Td><Td>{sb.name}</Td>
-                        <Td><Badge label={sb.category} color={sb.category === 'Environmental' ? 'green' : sb.category === 'Economic' ? 'amber' : 'blue'} /></Td>
-                        <Td>{sb.disclosures}</Td>
-                        <Td><span style={{ color:T.green, fontWeight:600 }}>{sb.available}</span></Td>
-                        <Td><span style={{ color:T.red, fontWeight:600 }}>{sb.gap}</span></Td>
-                        <Td><span style={{ fontWeight:700, color:sb.pct >= 75 ? T.green : sb.pct >= 40 ? T.amber : T.red }}>{sb.pct}%</span></Td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </Section>
-        );
-      })()}
+      {activeTab === 'table' && sorted.length > 0 && <HoldingDrilldown sorted={sorted} />}
 
       {/* ═══════════════════════════════════════════════════════
          EXTRA: BRSR Coverage BarChart

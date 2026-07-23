@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   ComposedChart, Line, LineChart, ReferenceLine,
 } from 'recharts';
+import { isIndiaMode, getIndiaGreenBonds } from '../../../data/IndiaDataAdapter';
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
@@ -19,8 +20,6 @@ const VERIFIERS = ['Sustainalytics','ISS ESG','Vigeo Eiris','DNV','Bureau Verita
 const REPORTING_STATUSES = ['Reported','Pending','Missing'];
 const GB_SECTORS = ['Government','Financials','Utilities','Industrials','Real Estate','Transport','Technology','Healthcare'];
 const COUNTRIES_GB = ['US','UK','DE','FR','JP','CN','CA','AU','NL','SE','BR','SG'];
-
-import { isIndiaMode, getIndiaGreenBonds } from '../../../data/IndiaDataAdapter';
 
 const _DEFAULT_BONDS = Array.from({ length: 100 }, (_, i) => {
   const type = BOND_TYPES[Math.floor(sr(i * 7 + 1) * BOND_TYPES.length)];

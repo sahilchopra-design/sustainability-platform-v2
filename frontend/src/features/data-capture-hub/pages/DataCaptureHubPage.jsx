@@ -861,12 +861,10 @@ function PipelineTab({ allModules, pipelines, domainGroups, getEntityConsumers }
    ══════════════════════════════════════════════════════════════════════════════ */
 function SchemaTab({ selectedEntity, entitySelector, entityMap, getEntityConsumers }) {
   const entity = entityMap[selectedEntity];
-  if (!entity) return <p style={{ color: T.sub }}>Entity not found.</p>;
-
-  const consumers = getEntityConsumers(selectedEntity);
 
   /* Generate example record deterministically */
   const exampleRecord = useMemo(() => {
+    if (!entity) return {};
     const rec = {};
     entity.fields.forEach((f, i) => {
       const seed = i * 7 + 3;
@@ -886,6 +884,7 @@ function SchemaTab({ selectedEntity, entitySelector, entityMap, getEntityConsume
 
   /* Export schema as CSV */
   const handleExportSchema = useCallback(() => {
+    if (!entity) return;
     const header = 'Field Name,Type,Unit,Required,Default,Help Text';
     const rows = entity.fields.map(f => [f.key, f.type, f.unit || '', f.required ? 'Yes' : 'No', f.defaultValue !== undefined ? f.defaultValue : '', (f.help || '').replace(/,/g, ';')].join(','));
     const csv = [header, ...rows].join('\n');
@@ -897,6 +896,10 @@ function SchemaTab({ selectedEntity, entitySelector, entityMap, getEntityConsume
     a.click();
     URL.revokeObjectURL(url);
   }, [entity, selectedEntity]);
+
+  if (!entity) return <p style={{ color: T.sub }}>Entity not found.</p>;
+
+  const consumers = getEntityConsumers(selectedEntity);
 
   return (
     <div>

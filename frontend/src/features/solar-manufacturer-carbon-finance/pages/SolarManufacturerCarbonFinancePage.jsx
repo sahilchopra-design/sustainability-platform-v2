@@ -702,7 +702,7 @@ export default function SolarManufacturerCarbonFinancePage() {
       )}
 
 
-      {tab === 11 && (
+      {activeTab === 11 && (
         <IndiaGreenHybridFinance T={T} useCases={[
     {
       tag: 'UC-1', title: '10 GW integrated wafer-cell-module under PLI-II + CBAM',

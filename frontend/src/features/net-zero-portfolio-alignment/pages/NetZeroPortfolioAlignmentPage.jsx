@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import {
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
-  LineChart, Line, ComposedChart, Area, ReferenceLine,
+  LineChart, Line, ComposedChart, Area, ReferenceLine, ScatterChart, Scatter,
 } from 'recharts';
 
 const T = {

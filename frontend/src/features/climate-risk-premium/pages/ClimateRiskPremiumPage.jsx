@@ -418,7 +418,7 @@ export default function ClimateRiskPremiumPage() {
 
   // ---- Tab 4 Sector Attribution ----
   const sectorAttrib = useMemo(() => SECTORS.map(s => {
-    const sub = t4SectorFilter === 'All' || t4DrillSector === s ? ISSUERS.filter(x => x.sector === s) : ISSUERS.filter(x => x.sector === s);
+    const sub = ISSUERS.filter(x => x.sector === s);
     if (!sub.length) return null;
     const n = sub.length;
     const avgPhys = sub.reduce((a, x) => a + x.physPremium, 0) / n;

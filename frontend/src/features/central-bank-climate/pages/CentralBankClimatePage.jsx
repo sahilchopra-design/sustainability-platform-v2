@@ -63,7 +63,7 @@ const CENTRAL_BANKS=[
 
 // ── Wire real macro data (GAP-006) ────────────────────────────────────────
 const _CBC_MACRO_MAP = Object.fromEntries((SOVEREIGN_MACRO_2024||[]).map(c=>[c.country,c]));
-(typeof BANKS!=='undefined'?BANKS:typeof CENTRAL_BANKS!=='undefined'?CENTRAL_BANKS:[]).forEach(b=>{
+CENTRAL_BANKS.forEach(b=>{
   const countryName = b.country || b.name;
   const m=_CBC_MACRO_MAP[countryName];
   if(m){ b.gdp=m.gdp_usd_bn; b.inflation=m.inflation_pct; b.debtGdp=m.debt_gdp_pct; }

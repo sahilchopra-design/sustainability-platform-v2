@@ -849,7 +849,7 @@ export default function PCClimatePricingPage() {
                 { label: 'Avg ROE', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.roe, 0) / ZONES.length : 0).toFixed(1) + '%', color: T.teal },
                 { label: 'High Climate Hazard', value: ZONES.filter(z => z.climateHazardScore > 70).length + ' zones', color: T.red },
                 { label: 'Avg Loss Ratio', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.lossRatio, 0) / ZONES.length * 100 : 0).toFixed(0) + '%', color: T.orange },
-                { label: 'Active Scenario', value: CLIMATE_SCENARIOS[climateScenIdx]?.name?.slice(0, 14) || 'Base', color: T.indigo },
+                { label: 'Active Scenario', value: SCENARIOS[scenIdx]?.slice(0, 14) || 'Base', color: T.indigo },
                 { label: 'Avg Expense Ratio', value: (ZONES.length ? ZONES.reduce((s, z) => s + z.expenseRatio, 0) / Math.max(1, ZONES.length) * 100 : 0).toFixed(0) + '%', color: T.navy },
               ].map(m => (
                 <div key={m.label} style={{ background: T.sub, borderRadius: 6, padding: '8px 10px', borderLeft: `3px solid ${m.color}` }}>
