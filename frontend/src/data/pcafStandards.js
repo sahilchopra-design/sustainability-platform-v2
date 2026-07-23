@@ -63,3 +63,34 @@ export function isScope3Required(sector, reportingYear) {
   if (year >= 2021 && SCOPE3_PHASE_IN_2021_SECTORS.some(x => s.includes(x))) return true;
   return false;
 }
+
+/**
+ * R3 gap B-4: shared revenue-proxy fallback for WACI when no verified
+ * reference revenue is available (data/evicReference.js). This is a sector
+ * revenue-intensity ratio, NOT PCAF's rejected "15% of EVIC" assumption —
+ * that flat assumption caused a ~1,000x WACI inflation bug (GAP-020) in one
+ * engine while the other had already moved off it, because the two engines
+ * kept their own separate proxy logic. Shared here so the Part A engine
+ * (PcafFinancedEmissionsPage.jsx) and the audit-trail engine
+ * (pcafAuditTrail.js) can't independently drift onto two different proxy
+ * conventions again.
+ */
+export const SECTOR_REVENUE_EVIC_MULTIPLE = {
+  Technology: 8, Software: 10, Financials: 3, Energy: 0.8, Mining: 1.2,
+  Utilities: 1.5, 'Real Estate': 0.6, Healthcare: 5, Consumer: 4,
+  Industrials: 2.5, Materials: 1.8, Telecom: 3.5,
+};
+export const DEFAULT_SECTOR_REVENUE_EVIC_MULTIPLE = 2.5;
+
+/**
+ * @param {string} sector
+ * @param {number} evicBn - EVIC in $Bn, already resolved with whatever
+ *   fallback chain the caller uses (e.g. sector-median EVIC) — this
+ *   function only applies the sector revenue-intensity ratio, it does not
+ *   itself guess a default EVIC.
+ * @returns {number} proxy revenue in $M
+ */
+export function sectorRevenueProxyM(sector, evicBn) {
+  const revMultiple = SECTOR_REVENUE_EVIC_MULTIPLE[sector] || DEFAULT_SECTOR_REVENUE_EVIC_MULTIPLE;
+  return (evicBn || 0) * 1000 * revMultiple;
+}

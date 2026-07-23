@@ -20,7 +20,7 @@ import { SECURITY_UNIVERSE, MOCK_PORTFOLIO } from '../../../data/securityUnivers
 import { getEVIC } from '../../../data/evicService';
 import { getReferenceEvicBn, getReferenceRevenueM, getReferenceEntry } from '../../../data/evicReference';
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
-import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from '../../../data/pcafStandards';
+import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR, sectorRevenueProxyM } from '../../../data/pcafStandards';
 import { LOB_FIELDS, calcPolicyEmissions } from '../../../data/pcafInsuranceEngine';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
@@ -648,26 +648,35 @@ function computeRow(p){
     : (evicResolution && evicResolution.tier==='sector_proxy') ? 'SECTOR_PROXY — no direct EVIC available'
     : (evicResolution && evicResolution.tier==='unverified') ? 'UNVERIFIED_EVIC — not independently analyst-verified'
     : null;
-  const adjustedDqs=dataGap?5:evicWarning?Math.max(p.dqs,4):p.dqs;
   // Revenue proxy: prefer a genuinely verified reference-table revenue figure
   // (data/evic_reference.json revenue_usd_m — R3 gap B-4) when present;
-  // otherwise fall back to the existing sector-specific Revenue/EVIC ratio
-  // proxy. p.evic (and the SECTOR_MEDIAN_EVIC fallback) are in $Bn; revenueM
-  // must be in $M to match financedEmissions' units, so convert Bn->M
-  // (x1000) before applying the ratio — this was previously missing,
-  // inflating WACI ~1,000x (GAP-020, e.g. header showed 606,192.9 tCO2e/$M
-  // against a status-bar figure of 312 for the same portfolio).
-  const SECTOR_REV_EVIC = { 'Technology': 8, 'Software': 10, 'Financials': 3, 'Energy': 0.8, 'Mining': 1.2, 'Utilities': 1.5, 'Real Estate': 0.6, 'Healthcare': 5, 'Consumer': 4, 'Industrials': 2.5, 'Materials': 1.8, 'Telecom': 3.5 };
-  const revMultiple = SECTOR_REV_EVIC[p.sector] || 2.5;
+  // otherwise fall back to a sector revenue-intensity proxy (Revenue/EVIC
+  // ratio), never the old flat 15%xEVIC assumption. p.evic (and the
+  // SECTOR_MEDIAN_EVIC fallback) are in $Bn; revenueM must be in $M to match
+  // financedEmissions' units, so convert Bn->M (x1000) before applying the
+  // ratio — this was previously missing, inflating WACI ~1,000x (GAP-020,
+  // e.g. header showed 606,192.9 tCO2e/$M against a status-bar figure of 312
+  // for the same portfolio).
   const referenceRevenueM=getReferenceRevenueM(p.ticker);
+  const revenueProxy=referenceRevenueM==null;
   const revenueM = referenceRevenueM!=null ? referenceRevenueM
-    : p.evic ? p.evic * 1000 * revMultiple
-    : (SECTOR_MEDIAN_EVIC[p.sector] || 50) * 1000 * revMultiple;
+    : sectorRevenueProxyM(p.sector, p.evic || SECTOR_MEDIAN_EVIC[p.sector] || 50);
+  // R3 gap B-4: a revenue proxy is itself a data-quality flag, same as an
+  // EVIC proxy — cap DQS at 4 (never claim DQS 1-3 confidence off a proxy
+  // revenue denominator), same treatment as evicWarning above.
+  const adjustedDqs=dataGap?5:(evicWarning||revenueProxy)?Math.max(p.dqs,4):p.dqs;
+  // WACI is reported on Scope 1+2 by convention (waci, unchanged field name
+  // so existing portfolio-weighted aggregates keep working); waciS123 is the
+  // explicit, separately-labeled all-scope variant — never rendered under
+  // the plain "WACI" label per PCAF/TCFD's separate-scope-reporting
+  // convention (same principle as financedEmissions/financedScope3, R3 gap
+  // B-2).
   const waci=revenueM>0?(totalEmissions/revenueM):0;
+  const waciS123=revenueM>0?(totalWithScope3/revenueM):0;
   const carbonIntensity=(!dataGap&&p.outstanding>0)?financedEmissions/p.outstanding:0;
   const scope1Pct=totalEmissions>0?(p.scope1||0)/totalEmissions:0;
   const scope2Pct=totalEmissions>0?(p.scope2||0)/totalEmissions:0;
-  return{...p,totalEmissions,totalWithScope3,attrFactor,financedEmissions,financedScope3,waci,carbonIntensity,evicWarning,dataGap,dataGapReason,dqs:adjustedDqs,scope1Pct,scope2Pct};
+  return{...p,totalEmissions,totalWithScope3,attrFactor,financedEmissions,financedScope3,waci,waciS123,revenueProxy,carbonIntensity,evicWarning,dataGap,dataGapReason,dqs:adjustedDqs,scope1Pct,scope2Pct};
 }
 
 const INITIAL_POSITIONS=BASE_POSITIONS.map(computeRow);
@@ -841,6 +850,11 @@ function PartATab({positions,setPositions}){
   const avgDqs=useMemo(()=>positions.length?(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2):'—',[positions]);
   const carbonFootprint=useMemo(()=>totalOut>0?totalFE/(totalOut/1000):0,[totalFE,totalOut]);
   const waci=useMemo(()=>{let num=0,den=0;positions.forEach(p=>{num+=p.outstanding*p.waci;den+=p.outstanding;});return den>0?num/den:0;},[positions]);
+  // R3 gap B-4: WACI_S123 computed and exposed separately from the WACI_S12
+  // headline above — never blended into one number, same principle as
+  // financed emissions scope separation (B-2).
+  const waciS123=useMemo(()=>{let num=0,den=0;positions.forEach(p=>{num+=p.outstanding*p.waciS123;den+=p.outstanding;});return den>0?num/den:0;},[positions]);
+  const revenueProxyCount=useMemo(()=>positions.filter(p=>p.revenueProxy).length,[positions]);
   const carbonCostM=useMemo(()=>(totalFE*carbonPrice/1e6).toFixed(1),[totalFE,carbonPrice]);
 
   const byAC=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,count:0,fe:0,out:0,avgDqs:0,totalDqs:0};const e=m[p.assetClass];e.count++;e.fe+=p.financedEmissions;e.out+=p.outstanding;e.totalDqs+=p.dqs;});Object.values(m).forEach(v=>v.avgDqs=+(v.totalDqs/v.count).toFixed(1));return Object.values(m).sort((a,b)=>b.fe-a.fe);},[computablePositions]);
@@ -877,7 +891,9 @@ function PartATab({positions,setPositions}){
       <KPICard label="Undrawn Commitments" value={fmt(totalUndrawnFE)+' tCO2e'} sub="Reported separately per PCAF" color={T.purple||'#7c3aed'}/>
       {dataGapPositions.length>0&&<KPICard label="Data Gaps" value={`${dataGapPositions.length} position${dataGapPositions.length===1?'':'s'}`} sub="No plausible EVIC — excluded, not zeroed" color={T.red}/>}
       <KPICard label="Carbon Footprint" value={carbonFootprint.toFixed(0)+' tCO2e/$Bn'} sub="Total FE / AUM" color={T.gold}/>
-      <KPICard label="WACI" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
+      <KPICard label="WACI (S1+2)" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
+      <KPICard label="WACI (S1+2+3)" value={waciS123.toFixed(1)} sub="tCO2e / $M revenue, reported separately" color={T.sageL||T.sage}/>
+      <KPICard label="Revenue Proxy" value={`${revenueProxyCount}/${positions.length}`} sub="positions using a sector proxy, not reported revenue — DQS capped at 4" color={revenueProxyCount>0?T.amber:T.green}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="Portfolio average" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
       <div style={{flex:'1 0 auto',background:T.surface,borderRadius:8,padding:'8px 12px',border:`1px solid ${T.border}`,minWidth:120}}>
         <div style={{fontSize:10,color:T.textSec,letterSpacing:0.3,marginBottom:4}}>CARBON COST</div>
@@ -1484,7 +1500,9 @@ function AuditTrailTab({positions}){
         {label:'Financed Emissions (S1+2)',value:fmt(trail.portfolio.totalFinancedEmissions)+' tCO2e',color:T.navy},
         {label:'Financed Emissions (S3)',value:fmt(trail.portfolio.totalFinancedEmissionsS3)+' tCO2e',color:T.navyL,sub:'reported separately, never blended'},
         {label:'Scope 3 Required / Missing',value:`${trail.portfolio.scope3RequiredCount} / ${trail.portfolio.scope3MissingCount}`,color:trail.portfolio.scope3MissingCount>0?T.red:T.green,sub:`for reporting year ${trail.reportingYear}`},
-        {label:'Portfolio WACI',value:trail.portfolio.portfolioWaci.toFixed(3)+' tCO2e/$M',color:T.navy},
+        {label:'Portfolio WACI (S1+2)',value:trail.portfolio.portfolioWaci.toFixed(3)+' tCO2e/$M',color:T.navy},
+        {label:'Portfolio WACI (S1+2+3)',value:trail.portfolio.portfolioWaciS123.toFixed(3)+' tCO2e/$M',color:T.navyL,sub:'reported separately, never blended'},
+        {label:'Revenue Proxy',value:`${trail.portfolio.revenueProxyCount} / ${trail.portfolio.totalPositions}`,color:trail.portfolio.revenueProxyCount>0?T.amber:T.green,sub:'positions on a sector proxy — DQS capped at 4'},
         {label:'Avg DQS',value:trail.portfolio.avgDqs,color:dqsColor(Math.round(trail.portfolio.avgDqs))},
         {label:'DQS Target Met',value:trail.portfolio.dqsMeetsTarget?'✓ Yes':'✗ No',color:trail.portfolio.dqsMeetsTarget?T.green:T.red},
         {label:'Flags',value:trail.portfolio.flagSummary.total,color:trail.portfolio.flagSummary.errors>0?T.red:T.amber},
