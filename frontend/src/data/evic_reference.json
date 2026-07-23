@@ -1,0 +1,42 @@
+{
+  "_meta": {
+    "purpose": "Curated EVIC (Enterprise Value Including Cash) + revenue reference table for PCAF Financed Emissions attribution (R3 gap A-4). This is the second tier in the engine's EVIC resolution order: (1) live feed [data/evicData.json via evicService.js, currently empty] -> (2) this file -> (3) sector-median proxy, only within a plausibility ceiling, else a blocking data-gap flag on that position.",
+    "schema": "{ticker, name, evic_usd_bn, revenue_usd_m, source, asOf}",
+    "howToUpdate": "Replace a null evic_usd_bn/revenue_usd_m and its 'source' string with a real, dated, citable figure (e.g. 'Bloomberg terminal, 2026-06-30' or 'Company 10-K FY2025'). Do not guess a plausible-looking number — an honest null is safer than an unverified one for a PCAF disclosure figure.",
+    "warning": "Every entry below is currently UNVERIFIED — the evic_usd_bn values were carried over as-is from this module's pre-existing hardcoded demo dataset (BASE_POSITIONS), not independently confirmed against a real source. They are populated (non-null) only so the module keeps functioning; treat every row as needing analyst review, not as already-correct."
+  },
+  "entries": [
+    {"ticker":"AAPL","name":"Apple Inc","evic_usd_bn":2740,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"MSFT","name":"Microsoft Corp","evic_usd_bn":2910,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"SHEL","name":"Shell plc","evic_usd_bn":245,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"TTE","name":"TotalEnergies SE","evic_usd_bn":178,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"BAS","name":"BASF SE","evic_usd_bn":48,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"BHP","name":"BHP Group","evic_usd_bn":168,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"VALE","name":"Vale S.A.","evic_usd_bn":72,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"5401","name":"Nippon Steel Corp","evic_usd_bn":31,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"RIO","name":"Rio Tinto plc","evic_usd_bn":98,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"GLEN","name":"Glencore plc","evic_usd_bn":94,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"XOM","name":"ExxonMobil Corp","evic_usd_bn":388,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"CVX","name":"Chevron Corp","evic_usd_bn":298,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"MT","name":"ArcelorMittal SA","evic_usd_bn":28,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"HEI","name":"HeidelbergCement AG","evic_usd_bn":22,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"HOLN","name":"LafargeHolcim Ltd","evic_usd_bn":31,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"7203","name":"Toyota Motor Corp","evic_usd_bn":312,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"VOW3","name":"Volkswagen AG","evic_usd_bn":84,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"005930","name":"Samsung Electronics","evic_usd_bn":276,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"BP","name":"BP plc","evic_usd_bn":134,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"EQNR","name":"Equinor ASA","evic_usd_bn":102,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"F","name":"Ford Motor 7.45% 2031","evic_usd_bn":54,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"EDF","name":"EDF Green Bond 1.625% 2030","evic_usd_bn":89,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"PBR","name":"Petrobras 6.9% 2049","evic_usd_bn":115,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"MAERSK","name":"Maersk 2.5% 2030","evic_usd_bn":21,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"DAL","name":"Delta Air Lines 7% 2025","evic_usd_bn":19,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"LHA","name":"Lufthansa 3.5% 2028","evic_usd_bn":14,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"BMW","name":"BMW AG 0.75% 2030","evic_usd_bn":67,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"SIE","name":"Siemens AG 0.375% 2027","evic_usd_bn":98,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"SU","name":"Schneider Electric 1.5% 2028","evic_usd_bn":84,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"TATASTEEL","name":"Tata Steel 5.45% 2028","evic_usd_bn":16,"revenue_usd_m":null,"source":"Existing platform estimate — not independently analyst-verified","asOf":null},
+    {"ticker":"IKEA","name":"IKEA bonds 1.5% 2027","evic_usd_bn":null,"revenue_usd_m":null,"source":"TODO — analyst to verify (no EVIC in current dataset; IKEA is privately held via Inter IKEA / Ingka Group, so EVIC must be sourced from group financial statements, not public market data)","asOf":null},
+    {"ticker":"HMB","name":"H&M bonds 0.25% 2024","evic_usd_bn":null,"revenue_usd_m":null,"source":"TODO — analyst to verify (no EVIC in current dataset)","asOf":null}
+  ]
+}

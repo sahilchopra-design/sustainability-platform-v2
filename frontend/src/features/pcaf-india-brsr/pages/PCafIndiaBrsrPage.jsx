@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import axios from 'axios';
+import { requestWithTimeout } from '../../../lib/http';
 import { COMPANY_MASTER, searchCompanies } from '../../../data/companyMaster';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
@@ -786,7 +787,8 @@ export default function PCafIndiaBrsrPage() {
           dqs_override: h.dqs_override ? parseInt(h.dqs_override) : undefined,
         })),
       };
-      const { data } = await axios.post(`${API}/api/v1/e138-pcaf/brsr-portfolio`, payload, { headers: authH });
+      const url = `${API}/api/v1/e138-pcaf/brsr-portfolio`;
+      const { data } = await requestWithTimeout(url, signal => axios.post(url, payload, { headers: authH, signal }));
       setPortfolioResult(data);
     } catch(e) {
       // API unreachable — fall back to client-side PCAF calculation
@@ -824,7 +826,8 @@ export default function PCafIndiaBrsrPage() {
           policyholder_country_iso2: 'IN',
         })),
       };
-      const { data } = await axios.post(`${API}/api/v1/facilitated-emissions/insurance/batch`, payload, { headers: authH });
+      const url = `${API}/api/v1/facilitated-emissions/insurance/batch`;
+      const { data } = await requestWithTimeout(url, signal => axios.post(url, payload, { headers: authH, signal }));
       setInsuranceResult(data);
     } catch(e) {
       // Demo fallback — estimate emissions by LOB method
@@ -918,7 +921,8 @@ export default function PCafIndiaBrsrPage() {
           weighted_avg_life_years: parseFloat(d.weighted_avg_life_years) || undefined,
         })),
       };
-      const { data } = await axios.post(`${API}/api/v1/facilitated-emissions/deals/batch`, payload, { headers: authH });
+      const url = `${API}/api/v1/facilitated-emissions/deals/batch`;
+      const { data } = await requestWithTimeout(url, signal => axios.post(url, payload, { headers: authH, signal }));
       setFacilitatedResult(data);
     } catch(e) {
       // Demo fallback — PCAF Standard Part B (Facilitated Emissions, Dec 2023)
@@ -983,7 +987,8 @@ export default function PCafIndiaBrsrPage() {
   const lookupCompany = useCallback(async () => {
     setCompanyLoading(true); setCompanyError(''); setCompanyResult(null);
     try {
-      const { data } = await axios.get(`${API}/api/v1/e138-pcaf/company/${cin}`, { headers: authH });
+      const url = `${API}/api/v1/e138-pcaf/company/${cin}`;
+      const { data } = await requestWithTimeout(url, signal => axios.get(url, { headers: authH, signal }));
       setCompanyResult(data);
     } catch(e) {
       // Demo fallback — show local suggestion if CIN matches
@@ -1004,10 +1009,13 @@ export default function PCafIndiaBrsrPage() {
   const loadRefData = useCallback(async () => {
     setRefLoading(true);
     try {
+      const efUrl = `${API}/api/v1/e138-pcaf/ref/india-emission-factors`;
+      const dqsUrl = `${API}/api/v1/e138-pcaf/ref/dqs-framework`;
+      const regUrl = `${API}/api/v1/e138-pcaf/ref/regulatory-mapping`;
       const [ef, dqs, reg] = await Promise.all([
-        axios.get(`${API}/api/v1/e138-pcaf/ref/india-emission-factors`, { headers: authH }),
-        axios.get(`${API}/api/v1/e138-pcaf/ref/dqs-framework`, { headers: authH }),
-        axios.get(`${API}/api/v1/e138-pcaf/ref/regulatory-mapping`, { headers: authH }),
+        requestWithTimeout(efUrl, signal => axios.get(efUrl, { headers: authH, signal })),
+        requestWithTimeout(dqsUrl, signal => axios.get(dqsUrl, { headers: authH, signal })),
+        requestWithTimeout(regUrl, signal => axios.get(regUrl, { headers: authH, signal })),
       ]);
       setRefData({ emissionFactors: ef.data, dqsFramework: dqs.data, regulatory: reg.data });
     } catch(e) { /* ignore for ref */ }

@@ -16,6 +16,7 @@ import {
 import { EMISSION_FACTORS, SECTOR_BENCHMARKS, PCAF_DATA_QUALITY, CARBON_PRICES } from '../../../data/referenceData';
 import { SECURITY_UNIVERSE, MOCK_PORTFOLIO } from '../../../data/securityUniverse';
 import { getEVIC } from '../../../data/evicService';
+import { getReferenceEvicBn, getReferenceRevenueM, getReferenceEntry } from '../../../data/evicReference';
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
@@ -504,6 +505,32 @@ const DOWNSTREAM_MODULES=[
 /* ═══════════════════════════════════════════════════════════════════════════════
    COMPUTATION FUNCTIONS
    ═══════════════════════════════════════════════════════════════════════════════ */
+// EVIC resolution order (R3 gap A-4): (1) a genuinely analyst-verified entry
+// in evic_reference.json [source no longer says TODO/"existing platform
+// estimate"] -> (2) whatever EVIC value the position/reference table already
+// carries, flagged as unverified -> (3) sector-median proxy, ONLY if it
+// doesn't imply an implausible attribution factor -> otherwise a blocking
+// data gap. This replaces an unbounded sector-median guess that could (on a
+// different, now-fixed code path) turn a company the size of Apple into a
+// ~$3.5Bn EVIC instead of ~$3.5Tn — a data error, not a value to silently render.
+const SECTOR_PROXY_MAX_PLAUSIBLE_AF = 0.25; // >25% attribution from a sector-median guess isn't credible; flag instead of compute
+
+function resolveEvic(p) {
+  const ref = getReferenceEntry(p.ticker);
+  const refIsVerified = !!(ref && typeof ref.evic_usd_bn === 'number' && !/^(TODO|Existing platform estimate)/i.test(ref.source || ''));
+  if (refIsVerified) return { evicBn: ref.evic_usd_bn, tier: 'verified', source: ref.source };
+  if (p.evic) return { evicBn: p.evic, tier: 'unverified', source: 'Existing platform estimate — not independently analyst-verified' };
+  if (ref && typeof ref.evic_usd_bn === 'number') return { evicBn: ref.evic_usd_bn, tier: 'unverified', source: ref.source };
+  // No direct EVIC anywhere for this position — try a sector-median proxy,
+  // but only if it implies a plausible attribution factor; otherwise this is
+  // a data gap to be flagged, not a number to silently render.
+  const se = SECTOR_MEDIAN_EVIC[p.sector] || SECTOR_MEDIAN_EVIC.default;
+  if (!se) return { evicBn: null, tier: 'gap', source: null };
+  const impliedAf = p.outstanding / (se * 1000);
+  if (impliedAf > SECTOR_PROXY_MAX_PLAUSIBLE_AF) return { evicBn: null, tier: 'gap', source: null };
+  return { evicBn: se, tier: 'sector_proxy', source: `Sector-median EVIC proxy (${p.sector || 'default'})` };
+}
+
 // UNIT CONVENTION (see BASE_POSITIONS comment above): evic/se/gdp = $Bn,
 // outstanding/propertyValue/projectCost/etc. = $M. Every EVIC-denominator
 // branch below must convert one side before dividing (se/evic/gdp * 1000)
@@ -558,42 +585,73 @@ function computeAttrFactor(p){
   // attribute; flat placeholder retained.
   if(p.assetClass==='Sub-Sovereign')return 0.10;
   // Undrawn Commitments (platform extension, not a core PCAF asset class):
-  // CCF x (Outstanding / EVIC)
+  // CCF x (Outstanding / EVIC). Returns null (data gap) rather than a number
+  // when no EVIC can be resolved at a plausible confidence — see resolveEvic.
   if(p.assetClass==='Undrawn Commitments'){
     const ccf=p.ccf||0.75;
-    if(!p.evic){const se=SECTOR_MEDIAN_EVIC[p.sector]||SECTOR_MEDIAN_EVIC.default;return ccf*(se?Math.min(1.0,p.outstanding/(se*1000)):0.5);}
-    return ccf*Math.min(1.0,p.outstanding/(p.evic*1000));
+    const {evicBn}=resolveEvic(p);
+    if(evicBn==null)return null;
+    return ccf*Math.min(1.0,p.outstanding/(evicBn*1000));
   }
-  // Listed Equity, Corporate Bonds, Business Loans: Outstanding / EVIC (Ch.5)
-  if(!p.evic){
-    const se=SECTOR_MEDIAN_EVIC[p.sector]||SECTOR_MEDIAN_EVIC.default;
-    return se?Math.min(1.0,p.outstanding/(se*1000)):1.0;
+  // Listed Equity, Corporate Bonds, Business Loans: Outstanding / EVIC (Ch.5).
+  // Returns null (data gap) rather than a number when no EVIC can be
+  // resolved at a plausible confidence — see resolveEvic.
+  {
+    const {evicBn}=resolveEvic(p);
+    if(evicBn==null)return null;
+    return Math.min(1.0,p.outstanding/(evicBn*1000));
   }
-  return Math.min(1.0,p.outstanding/(p.evic*1000));
 }
+
+const EVIC_DEPENDENT_CLASSES=['Listed Equity','Corporate Bonds','Business Loans','Undrawn Commitments'];
 
 function computeRow(p){
   const totalEmissions=(p.scope1||0)+(p.scope2||0);
   const totalWithScope3=totalEmissions+(p.scope3||0);
   const attrFactor=computeAttrFactor(p);
-  const financedEmissions=+(attrFactor*totalEmissions).toFixed(0);
-  const financedScope3=+(attrFactor*(p.scope3||0)).toFixed(0);
-  const evicWarning=(!p.evic&&['Listed Equity','Corporate Bonds','Business Loans'].includes(p.assetClass))?'NULL_EVIC \u2014 sector proxy used':null;
-  const adjustedDqs=evicWarning?Math.max(p.dqs,4):p.dqs;
-  // Revenue proxy: sector-specific Revenue/EVIC ratios (PCAF data quality hierarchy).
-  // p.evic (and the SECTOR_MEDIAN_EVIC fallback) are in $Bn; revenueM must be
-  // in $M to match financedEmissions' units, so convert Bn->M (x1000) before
-  // applying the ratio — this was previously missing, inflating WACI ~1,000x
-  // (GAP-020, e.g. header showed 606,192.9 tCO2e/$M against a status-bar
-  // figure of 312 for the same portfolio).
+  // A null attrFactor means computeAttrFactor hit an unresolvable/implausible
+  // EVIC (see resolveEvic) — this position's financed emissions are a
+  // genuine data gap, not zero. Render/aggregate it as null everywhere, never
+  // coerce it to 0 (0 + null === 0 in JS, which would silently reintroduce
+  // the exact "missing data renders as a real number" failure mode this
+  // module has already been fixed for once, GAP-007/013).
+  const dataGap=attrFactor===null;
+  const financedEmissions=dataGap?null:+(attrFactor*totalEmissions).toFixed(0);
+  const financedScope3=dataGap?null:+(attrFactor*(p.scope3||0)).toFixed(0);
+  const isEvicDependent=EVIC_DEPENDENT_CLASSES.includes(p.assetClass);
+  const evicResolution=isEvicDependent?resolveEvic(p):null;
+  const dataGapReason=dataGap?`No plausible EVIC for ${p.name||'this position'} — a sector-median proxy would imply >${(SECTOR_PROXY_MAX_PLAUSIBLE_AF*100).toFixed(0)}% attribution, which is not credible. Add a verified entry to evic_reference.json.`:null;
+  // Every EVIC-dependent position whose EVIC isn't a genuinely analyst-
+  // verified reference-table entry is flagged — including ones that already
+  // carry a hardcoded (pre-existing, unverified) EVIC value. Previously only
+  // fully-null EVICs were flagged, understating how much of the book is
+  // actually unverified (R3 gap A-4/GAP-028: "only 2 EVIC warnings" when
+  // effectively the whole book was proxied/unverified).
+  const evicWarning=dataGap
+    ? 'DATA_GAP — no plausible EVIC available'
+    : (evicResolution && evicResolution.tier==='sector_proxy') ? 'SECTOR_PROXY — no direct EVIC available'
+    : (evicResolution && evicResolution.tier==='unverified') ? 'UNVERIFIED_EVIC — not independently analyst-verified'
+    : null;
+  const adjustedDqs=dataGap?5:evicWarning?Math.max(p.dqs,4):p.dqs;
+  // Revenue proxy: prefer a genuinely verified reference-table revenue figure
+  // (data/evic_reference.json revenue_usd_m — R3 gap B-4) when present;
+  // otherwise fall back to the existing sector-specific Revenue/EVIC ratio
+  // proxy. p.evic (and the SECTOR_MEDIAN_EVIC fallback) are in $Bn; revenueM
+  // must be in $M to match financedEmissions' units, so convert Bn->M
+  // (x1000) before applying the ratio — this was previously missing,
+  // inflating WACI ~1,000x (GAP-020, e.g. header showed 606,192.9 tCO2e/$M
+  // against a status-bar figure of 312 for the same portfolio).
   const SECTOR_REV_EVIC = { 'Technology': 8, 'Software': 10, 'Financials': 3, 'Energy': 0.8, 'Mining': 1.2, 'Utilities': 1.5, 'Real Estate': 0.6, 'Healthcare': 5, 'Consumer': 4, 'Industrials': 2.5, 'Materials': 1.8, 'Telecom': 3.5 };
   const revMultiple = SECTOR_REV_EVIC[p.sector] || 2.5;
-  const revenueM = p.evic ? p.evic * 1000 * revMultiple : (SECTOR_MEDIAN_EVIC[p.sector] || 50) * 1000 * revMultiple;
+  const referenceRevenueM=getReferenceRevenueM(p.ticker);
+  const revenueM = referenceRevenueM!=null ? referenceRevenueM
+    : p.evic ? p.evic * 1000 * revMultiple
+    : (SECTOR_MEDIAN_EVIC[p.sector] || 50) * 1000 * revMultiple;
   const waci=revenueM>0?(totalEmissions/revenueM):0;
-  const carbonIntensity=p.outstanding>0?financedEmissions/p.outstanding:0;
+  const carbonIntensity=(!dataGap&&p.outstanding>0)?financedEmissions/p.outstanding:0;
   const scope1Pct=totalEmissions>0?(p.scope1||0)/totalEmissions:0;
   const scope2Pct=totalEmissions>0?(p.scope2||0)/totalEmissions:0;
-  return{...p,totalEmissions,totalWithScope3,attrFactor,financedEmissions,financedScope3,waci,carbonIntensity,evicWarning,dqs:adjustedDqs,scope1Pct,scope2Pct};
+  return{...p,totalEmissions,totalWithScope3,attrFactor,financedEmissions,financedScope3,waci,carbonIntensity,evicWarning,dataGap,dataGapReason,dqs:adjustedDqs,scope1Pct,scope2Pct};
 }
 
 const INITIAL_POSITIONS=BASE_POSITIONS.map(computeRow);
@@ -744,19 +802,26 @@ function PartATab({positions,setPositions}){
   // financed-emissions headline (the module's own ASSET_CLASS_DEFS note for
   // Undrawn Commitments already says so). Previously folded straight into
   // totalFE with no separate line (GAP-013).
-  const totalFE=useMemo(()=>positions.filter(p=>p.assetClass!=='Undrawn Commitments').reduce((s,p)=>s+p.financedEmissions,0),[positions]);
-  const totalUndrawnFE=useMemo(()=>positions.filter(p=>p.assetClass==='Undrawn Commitments').reduce((s,p)=>s+p.financedEmissions,0),[positions]);
-  const totalFEScope3=useMemo(()=>positions.filter(p=>p.assetClass!=='Undrawn Commitments').reduce((s,p)=>s+p.financedScope3,0),[positions]);
+  //
+  // Data-gap positions (financedEmissions===null, see computeRow/resolveEvic)
+  // must also be excluded from every sum below rather than folded in — in JS,
+  // `0 + null` is 0, so an un-filtered reduce() would silently treat an
+  // unresolvable EVIC as a computed zero (R3 gap A-4).
+  const computablePositions=useMemo(()=>positions.filter(p=>!p.dataGap&&p.assetClass!=='Undrawn Commitments'),[positions]);
+  const dataGapPositions=useMemo(()=>positions.filter(p=>p.dataGap),[positions]);
+  const totalFE=useMemo(()=>computablePositions.reduce((s,p)=>s+p.financedEmissions,0),[computablePositions]);
+  const totalUndrawnFE=useMemo(()=>positions.filter(p=>p.assetClass==='Undrawn Commitments'&&!p.dataGap).reduce((s,p)=>s+p.financedEmissions,0),[positions]);
+  const totalFEScope3=useMemo(()=>computablePositions.reduce((s,p)=>s+p.financedScope3,0),[computablePositions]);
   const totalOut=useMemo(()=>positions.reduce((s,p)=>s+p.outstanding,0),[positions]);
   const avgDqs=useMemo(()=>positions.length?(positions.reduce((s,p)=>s+p.dqs,0)/positions.length).toFixed(2):'—',[positions]);
   const carbonFootprint=useMemo(()=>totalOut>0?totalFE/(totalOut/1000):0,[totalFE,totalOut]);
   const waci=useMemo(()=>{let num=0,den=0;positions.forEach(p=>{num+=p.outstanding*p.waci;den+=p.outstanding;});return den>0?num/den:0;},[positions]);
   const carbonCostM=useMemo(()=>(totalFE*carbonPrice/1e6).toFixed(1),[totalFE,carbonPrice]);
 
-  const byAC=useMemo(()=>{const m={};positions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,count:0,fe:0,out:0,avgDqs:0,totalDqs:0};const e=m[p.assetClass];e.count++;e.fe+=p.financedEmissions;e.out+=p.outstanding;e.totalDqs+=p.dqs;});Object.values(m).forEach(v=>v.avgDqs=+(v.totalDqs/v.count).toFixed(1));return Object.values(m).sort((a,b)=>b.fe-a.fe);},[positions]);
-  const byGeo=useMemo(()=>{const m={};positions.forEach(p=>{if(!m[p.geo])m[p.geo]={geo:p.geo,fe:0,count:0,out:0};m[p.geo].fe+=p.financedEmissions;m[p.geo].count++;m[p.geo].out+=p.outstanding;});return Object.values(m);},[positions]);
-  const bySector=useMemo(()=>{const m={};positions.forEach(p=>{if(!m[p.sector])m[p.sector]={sector:p.sector,fe:0,count:0};m[p.sector].fe+=p.financedEmissions;m[p.sector].count++;});return Object.values(m).sort((a,b)=>b.fe-a.fe).slice(0,15);},[positions]);
-  const top10=useMemo(()=>[...positions].sort((a,b)=>b.financedEmissions-a.financedEmissions).slice(0,10),[positions]);
+  const byAC=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,count:0,fe:0,out:0,avgDqs:0,totalDqs:0};const e=m[p.assetClass];e.count++;e.fe+=p.financedEmissions;e.out+=p.outstanding;e.totalDqs+=p.dqs;});Object.values(m).forEach(v=>v.avgDqs=+(v.totalDqs/v.count).toFixed(1));return Object.values(m).sort((a,b)=>b.fe-a.fe);},[computablePositions]);
+  const byGeo=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.geo])m[p.geo]={geo:p.geo,fe:0,count:0,out:0};m[p.geo].fe+=p.financedEmissions;m[p.geo].count++;m[p.geo].out+=p.outstanding;});return Object.values(m);},[computablePositions]);
+  const bySector=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.sector])m[p.sector]={sector:p.sector,fe:0,count:0};m[p.sector].fe+=p.financedEmissions;m[p.sector].count++;});return Object.values(m).sort((a,b)=>b.fe-a.fe).slice(0,15);},[computablePositions]);
+  const top10=useMemo(()=>[...computablePositions].sort((a,b)=>b.financedEmissions-a.financedEmissions).slice(0,10),[computablePositions]);
 
   function handleSort(key){if(sortKey===key)setSortDir(d=>-d);else{setSortKey(key);setSortDir(-1);}}
   function startEdit(p){setExpandedId(p.id);setEditDraft({outstanding:p.outstanding,evicOverride:p.evic,scope1:p.scope1,scope2:p.scope2,scope3:p.scope3,dqs:p.dqs});}
@@ -781,9 +846,10 @@ function PartATab({positions,setPositions}){
 
     {/* KPI Row */}
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
-      <KPICard label="Total Financed Emissions" value={fmt(totalFE)+' tCO2e'} sub={`${positions.length} positions | Scope 1+2 | excl. undrawn`} color={T.navy}/>
+      <KPICard label="Total Financed Emissions" value={fmt(totalFE)+' tCO2e'} sub={`${computablePositions.length} computable | Scope 1+2 | excl. undrawn/gaps`} color={T.navy}/>
       <KPICard label="Including Scope 3" value={fmt(totalFE+totalFEScope3)+' tCO2e'} sub="All scopes attributed" color={T.navyL}/>
       <KPICard label="Undrawn Commitments" value={fmt(totalUndrawnFE)+' tCO2e'} sub="Reported separately per PCAF" color={T.purple||'#7c3aed'}/>
+      {dataGapPositions.length>0&&<KPICard label="Data Gaps" value={`${dataGapPositions.length} position${dataGapPositions.length===1?'':'s'}`} sub="No plausible EVIC — excluded, not zeroed" color={T.red}/>}
       <KPICard label="Carbon Footprint" value={carbonFootprint.toFixed(0)+' tCO2e/$Bn'} sub="Total FE / AUM" color={T.gold}/>
       <KPICard label="WACI" value={waci.toFixed(1)} sub="tCO2e / $M revenue" color={T.sage}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="Portfolio average" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
@@ -886,8 +952,10 @@ function PartATab({positions,setPositions}){
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(p.scope1)}</td>
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(p.scope2)}</td>
                 {scopeView==='1+2+3'&&<td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{fmt(p.scope3)}</td>}
-                <td style={{padding:'5px 8px',textAlign:'right',fontWeight:600,color:p.financedEmissions>1e6?T.red:p.financedEmissions>1e5?T.amber:T.text,fontFamily:T.mono,fontSize:10}}>
-                  {fmt(scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions)}
+                <td style={{padding:'5px 8px',textAlign:'right',fontWeight:600,color:p.dataGap?T.red:p.financedEmissions>1e6?T.red:p.financedEmissions>1e5?T.amber:T.text,fontFamily:T.mono,fontSize:10}}>
+                  {p.dataGap
+                    ? <span title={p.dataGapReason}>⚠ Data gap</span>
+                    : fmt(scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions)}
                 </td>
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{p.carbonIntensity.toFixed(0)}</td>
                 <td style={{padding:'5px 8px',textAlign:'center'}}><span style={{fontWeight:700,color:DQS_COLOR[p.dqs]||T.text,fontSize:12}}>{p.dqs}</span></td>
@@ -908,7 +976,9 @@ function PartATab({positions,setPositions}){
                       <button onClick={()=>applyEdit(p)} style={{padding:'5px 14px',border:'none',borderRadius:4,background:T.sage,color:'#fff',fontSize:11,fontWeight:600,cursor:'pointer'}}>Recalculate</button>
                     </div>
                     <div style={{marginTop:6,fontSize:10,color:T.textMut,fontFamily:T.mono}}>
-                      {(()=>{const _ch=ASSET_CLASS_DEFS.find(d=>d.ac===p.assetClass)?.ch;return _ch==='ext'?'Platform extension (not a PCAF standard chapter)':`PCAF Ch.${_ch||'5'}`;})()}: FE = ({fmtPct(p.attrFactor)}) \u00d7 {fmt(p.totalEmissions)} = {fmt(p.financedEmissions)} tCO2e | Carbon cost: ${(p.financedEmissions*carbonPrice/1e6).toFixed(3)}M @ ${carbonPrice}/t | Source: {p.source}
+                      {p.dataGap
+                        ? <span style={{color:T.red}}>⚠ {p.dataGapReason}</span>
+                        : <>{(()=>{const _ch=ASSET_CLASS_DEFS.find(d=>d.ac===p.assetClass)?.ch;return _ch==='ext'?'Platform extension (not a PCAF standard chapter)':`PCAF Ch.${_ch||'5'}`;})()}: FE = ({fmtPct(p.attrFactor)}) \u00d7 {fmt(p.totalEmissions)} = {fmt(p.financedEmissions)} tCO2e | Carbon cost: ${(p.financedEmissions*carbonPrice/1e6).toFixed(3)}M @ ${carbonPrice}/t | Source: {p.source}</>}
                     </div>
                   </td>
                 </tr>
@@ -919,7 +989,7 @@ function PartATab({positions,setPositions}){
       </table>
     </div>
     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
-      <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Showing {filtered.length} of {positions.length} positions | Scope: {scopeView} | Filtered FE: {fmt(filtered.reduce((s,p)=>s+p.financedEmissions,0))} tCO2e</div>
+      <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Showing {filtered.length} of {positions.length} positions | Scope: {scopeView} | Filtered FE: {fmt(filtered.filter(p=>!p.dataGap).reduce((s,p)=>s+(scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions),0))} tCO2e{filtered.some(p=>p.dataGap)?` (${filtered.filter(p=>p.dataGap).length} data gap${filtered.filter(p=>p.dataGap).length===1?'':'s'} excluded)`:''}</div>
       <div style={{fontSize:10,color:T.textMut}}>Total exposure: ${fmt(totalOut*1e6)} | Positions with EVIC warning: {positions.filter(p=>p.evicWarning).length}</div>
     </div>
     {showAdd&&<AddPositionModal onAdd={p=>setPositions(prev=>[p,...prev])} onClose={()=>setShowAdd(false)}/>}
@@ -1269,7 +1339,10 @@ function FormulaEngineTab(){
    TAB 7: DOWNSTREAM CONNECTIONS & EXPORT
    ═══════════════════════════════════════════════════════════════════════════════ */
 function DownstreamTab({positions}){
-  const totalFE=useMemo(()=>positions.reduce((s,p)=>s+p.financedEmissions,0),[positions]);
+  // Exclude data-gap positions (financedEmissions===null) from the sum — see
+  // computeRow/resolveEvic; 0+null===0 in JS would otherwise silently zero
+  // them into a regulatory disclosure figure instead of excluding them.
+  const totalFE=useMemo(()=>positions.filter(p=>!p.dataGap).reduce((s,p)=>s+p.financedEmissions,0),[positions]);
   const totalOut=useMemo(()=>positions.reduce((s,p)=>s+p.outstanding,0),[positions]);
   const aumBn=totalOut/1000;
   const[exportFmt,setExportFmt]=useState('json');
