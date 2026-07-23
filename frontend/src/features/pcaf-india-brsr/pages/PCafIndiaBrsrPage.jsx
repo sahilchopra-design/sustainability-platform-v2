@@ -1162,7 +1162,12 @@ export default function PCafIndiaBrsrPage() {
         display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', flex: 1 }}>
           {[
-            ['SEBI BRSR Core P6 FY26', T.sage],
+            // R3 gap D-2: this badge was a hardcoded "FY26" regardless of
+            // the actual reportingYear field driving every calculation and
+            // export below it — the exact FY badge/field mismatch this gap
+            // was filed for. Both now derive from the same reportingYear
+            // state.
+            [`SEBI BRSR Core P6 FY${reportingYear}-${String(+reportingYear+1).slice(-2)}`, T.sage],
             ['RBI Climate Risk Circular 2023', T.navy],
             ['PCAF Standard 3rd Ed. Dec 2025', T.teal],
             ['GHG Protocol Scope 3 Cat.15', T.blue],
@@ -1671,16 +1676,26 @@ export default function PCafIndiaBrsrPage() {
                 </div>
               </Card>
 
-              {/* BRSR Core P6 */}
+              {/* BRSR Core P6 — R3 gap D-2: reshaped toward SEBI's filing
+                  format (Scope 3 Cat.15 classification, DQS distribution
+                  table, coverage %, methodology note, FY selector driving
+                  both the header badge and this card, not two independent
+                  values) plus a filing-shaped JSON export. */}
               {brsr.total_financed_co2e_tonne > 0 && (
                 <Card style={{ borderLeft:`4px solid ${T.sage}` }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:T.sage, marginBottom:10 }}>🌿 SEBI BRSR Core — Principle 6: Environment</div>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:10 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:T.sage }}>🌿 SEBI BRSR Core — Principle 6: Environment</div>
+                    <div style={{ fontSize:11, color:T.sub, fontFamily:T.mono }}>Reporting Period: FY{reportingYear}-{String(+reportingYear+1).slice(-2)}</div>
+                  </div>
+                  <div style={{ fontSize:10, color:T.sub, marginBottom:10 }}>
+                    Financed emissions classified as GHG Protocol Scope 3, Category 15 (Investments) per PCAF methodology — attributed, not the reporting entity's own direct/indirect operational emissions.
+                  </div>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
                     {[
-                      ['Total Financed Emissions', `${(brsr.total_financed_co2e_tonne||0).toLocaleString()} tCO₂e`],
-                      ['WACI', `${(brsr.waci||0).toFixed(2)} tCO₂e/₹Cr`],
+                      ['Total Financed Emissions (Scope 3, Cat.15)', `${(brsr.total_financed_co2e_tonne||0).toLocaleString()} tCO₂e`],
+                      ['WACI (Intensity)', `${(brsr.waci||0).toFixed(2)} tCO₂e/₹Cr`],
                       ['Undrawn (separate line)', `${(ps.total_undrawn_co2e_tonne||0).toLocaleString()} tCO₂e`],
-                      ['Data Completeness', `${(brsr.data_completeness_pct||0).toFixed(0)}%`],
+                      ['Coverage', `${(brsr.data_completeness_pct||0).toFixed(0)}%`],
                       ['Weighted DQS', (brsr.weighted_dqs||0).toFixed(2)],
                       ['Holdings', brsr.holdings_count],
                     ].map(([l,v]) => (
@@ -1690,12 +1705,52 @@ export default function PCafIndiaBrsrPage() {
                       </div>
                     ))}
                   </div>
+                  {dqsDistribution.length > 0 && (
+                    <div style={{ marginTop:12 }}>
+                      <div style={{ fontSize:11, fontWeight:600, color:T.sage, marginBottom:6 }}>DQS Distribution</div>
+                      <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                        {dqsDistribution.map(d => (
+                          <span key={d.name} style={{ background:'#f8fafc', border:`1px solid ${T.border}`, borderLeft:`3px solid ${d.color}`, borderRadius:6, padding:'4px 10px', fontSize:10 }}>
+                            {d.name}: {d.value} holding{d.value===1?'':'s'}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                   {brsr.sfdr_pai_1_tco2e && (
                     <div style={{ marginTop:12, display:'flex', gap:12 }}>
                       <span style={{ background:'#dbeafe', color:T.blue, borderRadius:20, padding:'3px 12px', fontSize:11, fontWeight:600 }}>SFDR PAI#1: {brsr.sfdr_pai_1_tco2e?.toLocaleString()} tCO₂e</span>
                       <span style={{ background:'#f3e8ff', color:'#7c3aed', borderRadius:20, padding:'3px 12px', fontSize:11, fontWeight:600 }}>PAI#3 WACI: {(brsr.sfdr_pai_3_waci||0).toFixed(2)} tCO₂e/₹Cr</span>
                     </div>
                   )}
+                  <div style={{ marginTop:12, fontSize:9, color:T.sub, fontFamily:T.mono, borderTop:`1px solid ${T.border}`, paddingTop:8 }}>
+                    Methodology: {PCAF_PART_A} · SEBI BRSR Core Framework, Principle 6 (Environment) · GHG Protocol Corporate Standard, Scope 3 Category 15
+                  </div>
+                  <div style={{ marginTop:10 }}>
+                    <button onClick={() => {
+                      const payload = {
+                        filing: 'SEBI BRSR Core — Principle 6 (Environment)',
+                        reporting_period: `FY${reportingYear}-${String(+reportingYear+1).slice(-2)}`,
+                        methodology: `${PCAF_PART_A}; GHG Protocol Scope 3 Category 15 (Investments)`,
+                        financed_emissions_tco2e: brsr.total_financed_co2e_tonne,
+                        financed_emissions_intensity_tco2e_per_inr_cr: brsr.waci,
+                        undrawn_commitments_tco2e_separate_line: ps.total_undrawn_co2e_tonne,
+                        coverage_pct: brsr.data_completeness_pct,
+                        portfolio_weighted_dqs: brsr.weighted_dqs,
+                        dqs_distribution: Object.fromEntries(dqsDistribution.map(d => [d.name, d.value])),
+                        holdings_count: brsr.holdings_count,
+                        generated_at: new Date().toISOString(),
+                      };
+                      const str = JSON.stringify(payload, null, 2);
+                      const blob = new Blob([str], { type: 'application/json' });
+                      const u = URL.createObjectURL(blob);
+                      const a = document.createElement('a');
+                      a.href = u; a.download = `brsr_core_p6_FY${reportingYear}.json`; a.click();
+                      URL.revokeObjectURL(u);
+                    }} style={{ background:T.sage, color:'#fff', border:'none', borderRadius:6, padding:'6px 14px', fontSize:11, fontWeight:600, cursor:'pointer' }}>
+                      ↓ Export BRSR Core P6 (JSON)
+                    </button>
+                  </div>
                 </Card>
               )}
 

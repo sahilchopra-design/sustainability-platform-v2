@@ -22,7 +22,6 @@ import { getReferenceEvicBn, getReferenceRevenueM, getReferenceEntry } from '../
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
 import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR, sectorRevenueProxyM } from '../../../data/pcafStandards';
 import { LOB_FIELDS, calcPolicyEmissions } from '../../../data/pcafInsuranceEngine';
-import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
 import ReportExporter from '../../../components/ReportExporter';
@@ -34,6 +33,12 @@ import { CDP_COMPANY_EMISSIONS } from '../../../data/publicDataSeed';
    ═══════════════════════════════════════════════════════════════════════════════ */
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
+// R3 gap D-1: SFDR PAI cards must report in EUR; this module's underlying
+// positions are USD. Illustrative ECB-reference-style rate — replace with a
+// live FX feed if/when one is wired in; flagged here rather than silently
+// treating USD figures as EUR (the prior bug) or inventing a precise-looking
+// "live" rate this module doesn't actually fetch.
+const USD_TO_EUR_RATE=0.92;
 
 const PIE_COLORS=['#0ea5e9','#06c896','#f0a828','#a78bfa','#f04060','#38bdf8','#facc15','#34d399','#fb7185','#818cf8','#c084fc','#f472b6'];
 const DQS_COLOR={1:T.green,2:'#38bdf8',3:T.amber,4:'#f97316',5:T.red};
@@ -518,12 +523,23 @@ const PCAF_FORMULAS=[
    DOWNSTREAM MODULE CONNECTIONS
    ═══════════════════════════════════════════════════════════════════════════════ */
 const DOWNSTREAM_MODULES=[
-  {module:'SFDR PAI #1 \u2014 GHG Emissions',field:'totalFinancedEmissions',description:'Total Scope 1, 2, and 3 GHG emissions of investee companies, proportional to ownership. Directly sourced from PCAF Part A financed emissions calculation.',format:'tCO2e',regulation:'SFDR RTS, Annex I, Table 1, Indicator 1',inputFields:['financedEmissions per holding','scope coverage flags'],frequency:'Annual (PAI reference period)'},
-  {module:'SFDR PAI #2 \u2014 Carbon Footprint',field:'carbonFootprint',description:'Total financed emissions divided by current value of all investments (AUM). Measures emission intensity per unit invested.',format:'tCO2e per EUR M invested',regulation:'SFDR RTS, Annex I, Table 1, Indicator 2',inputFields:['totalFinancedEmissions','portfolio AUM'],frequency:'Annual'},
-  {module:'SFDR PAI #3 \u2014 GHG Intensity',field:'waciIntensity',description:'Weighted Average Carbon Intensity (WACI) of investee companies. Weighted by portfolio weight \u00d7 company intensity (emissions/revenue).',format:'tCO2e per EUR M revenue',regulation:'SFDR RTS, Annex I, Table 1, Indicator 3',inputFields:['company emissions','company revenue','portfolio weights'],frequency:'Annual'},
-  {module:'Portfolio Temperature Score',field:'impliedTemperatureRise',description:'Implied temperature rise based on company-level emission pathways vs Paris-aligned budgets. Uses SBTi/GFANZ methodology.',format:'\u00b0C above pre-industrial',regulation:'TCFD / SBTi / GFANZ guidance',inputFields:['company emissions trajectory','SBTi targets','sector pathway'],frequency:'Quarterly'},
-  {module:'Climate Value-at-Risk',field:'climateValueAtRisk',description:'Financial risk quantification from carbon pricing, regulatory costs, physical damage, and technology shifts under NGFS scenarios.',format:'% of portfolio NAV',regulation:'TCFD Scenario Analysis / NGFS',inputFields:['financed emissions','carbon prices','physical risk exposure'],frequency:'Annual / semi-annual'},
-  {module:'CSRD E1 \u2014 Climate Change',field:'esrsE1Emissions',description:'ESRS E1 disclosure on Scope 1, 2, 3 emissions and transition plans. PCAF provides the financed emissions base for financial institution E1 disclosures.',format:'tCO2e / intensity per EUR M',regulation:'CSRD ESRS E1-5, E1-6',inputFields:['total financed emissions by scope','intensity metrics','DQS distribution'],frequency:'Annual (CSRD reporting cycle)'},
+  // R3 gap D-1: PAI #1's own field (totalFinancedEmissions) is the Scope
+  // 1+2 headline (per B-2, never blended with Scope 3) \u2014 the description
+  // previously claimed "Scope 1, 2, and 3" while feeding a S1+2-only number.
+  {module:'SFDR PAI #1 \u2014 GHG Emissions',field:'totalFinancedEmissions',description:'Scope 1+2 GHG emissions of investee companies, proportional to ownership (reported separately from Scope 3, shown alongside). Directly sourced from PCAF Part A financed emissions calculation.',format:'tCO2e (S1+2)',regulation:'SFDR RTS, Annex I, Table 1, Indicator 1',inputFields:['financedEmissions per holding (S1+2)','financedScope3 per holding (S3, separate)'],frequency:'Annual (PAI reference period)'},
+  {module:'SFDR PAI #2 \u2014 Carbon Footprint',field:'carbonFootprint',description:'Total financed emissions divided by current value of all investments (AUM), converted to EUR per the ECB reference rate. Measures emission intensity per unit invested.',format:'tCO2e per EUR M invested',regulation:'SFDR RTS, Annex I, Table 1, Indicator 2',inputFields:['totalFinancedEmissions','portfolio AUM ($M)','USD\u2192EUR reference rate'],frequency:'Annual'},
+  {module:'SFDR PAI #3 \u2014 GHG Intensity',field:'waciIntensity',description:'Weighted Average Carbon Intensity (WACI) of investee companies, converted to EUR. Weighted by portfolio weight \u00d7 company intensity (emissions/revenue).',format:'tCO2e per EUR M revenue',regulation:'SFDR RTS, Annex I, Table 1, Indicator 3',inputFields:['company emissions','company revenue','portfolio weights','USD\u2192EUR reference rate'],frequency:'Annual'},
+  // R3 gap D-3: this card previously rendered a seeded-random number
+  // (Math.sin-based, not a real calculation) labeled as TCFD/SBTi/GFANZ
+  // methodology output \u2014 a fabricated-analytics violation, not just a
+  // display bug. No validated Implied Temperature Rise (ITR) methodology is
+  // implemented anywhere in this module; per the review's own explicit
+  // alternative ("implement one ITR method... or remove the metric"),
+  // removing the fabricated value is the honest choice absent a real
+  // company-level warming-pathway engine.
+  {module:'Portfolio Temperature Score',field:'impliedTemperatureRise',description:'Not computed by this module \u2014 no validated Implied Temperature Rise (ITR) methodology (e.g. SBTi/CDP-WWF portfolio temperature rating) is implemented here. A prior version of this card showed a fabricated placeholder value; removed rather than left in place.',format:'\u00b0C above pre-industrial (not computed)',regulation:'TCFD / SBTi / GFANZ guidance \u2014 PCAF itself defines no ITR metric',inputFields:['\u2014 requires company-level emission trajectories + SBTi/sector pathway data, not currently sourced'],frequency:'N/A'},
+  {module:'Climate Value-at-Risk',field:'climateValueAtRisk',description:'Not computed by this module \u2014 no validated climate VaR methodology (carbon pricing + physical + transition risk under NGFS scenarios) is implemented here. A prior version of this card showed a fabricated placeholder value; removed rather than left in place.',format:'% of portfolio NAV (not computed)',regulation:'TCFD Scenario Analysis / NGFS',inputFields:['\u2014 requires a scenario-analysis engine, not currently implemented'],frequency:'N/A'},
+  {module:'CSRD E1 \u2014 Climate Change',field:'esrsE1Emissions',description:'ESRS E1 disclosure on Scope 1+2 financed emissions and transition plans. PCAF provides the financed emissions base for financial institution E1 disclosures.',format:'tCO2e / intensity per EUR M',regulation:'CSRD ESRS E1-5, E1-6',inputFields:['total financed emissions by scope','intensity metrics','DQS distribution'],frequency:'Annual (CSRD reporting cycle)'},
   {module:'EBA Pillar 3 \u2014 ESG Risk',field:'ebaPillar3',description:'Banking book financed emissions, WACI, and data quality scores for prudential ESG disclosure per EBA ITS.',format:'tCO2e / DQS weighted',regulation:'EBA ITS on Pillar 3 ESG 2022/2453',inputFields:['financed emissions by asset class','WACI','DQS distribution','counterparty-level data'],frequency:'Annual (aligned with Pillar 3)'},
   {module:'TCFD Metrics & Targets',field:'tcfdMetrics',description:'PCAF-sourced metrics for TCFD-aligned climate disclosure. Includes absolute emissions, intensity, and data quality.',format:'Multiple metrics',regulation:'TCFD Recommendations 2017, 2021 guidance',inputFields:['financed emissions absolute & intensity','YoY comparison','target progress'],frequency:'Annual'},
 ];
@@ -843,7 +859,6 @@ function AddPositionModal({onAdd,onClose}){
    attribution factor, DQS. Add/edit/remove functionality.
    ═══════════════════════════════════════════════════════════════════════════════ */
 function PartATab({positions,setPositions}){
-  const _ccData = useCarbonCredit(); const ccPcaf = _ccData?.adaptForPcaf?.() || {};
   const[search,setSearch]=useState('');
   const[acFilter,setAcFilter]=useState('All');
   const[sortKey,setSortKey]=useState('financedEmissions');
@@ -951,8 +966,15 @@ function PartATab({positions,setPositions}){
         <CurrencyToggle usdValue={totalFE*carbonPrice} size="md" />
         <div style={{fontSize:9,color:T.textSec,marginTop:2}}>@ ${carbonPrice}/tCO2e</div>
       </div>
-      <KPICard label="CC Credits Financed" value={ccPcaf?.totalFinancedCredits?.toLocaleString() || '0'} sub="Carbon Credit Engine" color={'#059669'}/>
     </div>
+    {/* R3 gap D-4: the "CC Credits Financed" card previously rendered the
+        global Carbon Credit Engine's platform-wide total credits issued
+        (an unrelated, separately-tracked registry, not this portfolio's own
+        financed emissions) under a label implying a real relationship
+        between the two that doesn't exist — an 11-digit unexplained KPI on
+        a disclosure screen. There is no genuine per-holding link between
+        this portfolio and the carbon-credit registry to compute a real
+        number from, so the card is removed rather than fabricating one. */}
 
     {/* Charts */}
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr 1fr',gap:14,marginBottom:20}}>
@@ -1496,25 +1518,36 @@ function DownstreamTab({positions}){
   // them into a regulatory disclosure figure instead of excluding them.
   const totalFE=useMemo(()=>positions.filter(p=>!p.dataGap).reduce((s,p)=>s+p.financedEmissions,0),[positions]);
   const totalOut=useMemo(()=>positions.reduce((s,p)=>s+p.outstanding,0),[positions]);
-  const aumBn=totalOut/1000;
   const[exportFmt,setExportFmt]=useState('json');
 
   const downstream=useMemo(()=>{
     const waci=totalOut>0?positions.reduce((s,p)=>s+p.outstanding*p.waci,0)/totalOut:0;
     const avgDqs=(positions.length ? positions.reduce((s,p)=>s+p.dqs,0)/positions.length : 0).toFixed(1);
+    // R3 gap D-1: SFDR's PAI cards must be in EUR \u2014 the prior version left
+    // USD figures unconverted under an "\u20acM" label, and separately divided
+    // by AUM in $Bn (aumBn) instead of $M (totalOut), understating the
+    // figure by 1,000x. Fixed to convert USD -> EUR at the same reference
+    // rate and to divide by the correctly-scaled AUM.
+    const carbonFootprintEur=totalOut>0?(totalFE/(totalOut*USD_TO_EUR_RATE)):null;
+    const waciEur=waci/USD_TO_EUR_RATE;
     return DOWNSTREAM_MODULES.map(m=>{
       let v='\u2014';
       if(m.field==='totalFinancedEmissions')v=fmt(totalFE)+' tCO2e';
-      else if(m.field==='carbonFootprint')v=aumBn>0?(totalFE/aumBn).toFixed(0)+' tCO2e/\u20acM':'\u2014';
-      else if(m.field==='waciIntensity')v=waci.toFixed(1)+' tCO2e/\u20acM';
-      else if(m.field==='impliedTemperatureRise')v=(1.5+sr(42)*1.5).toFixed(1)+'\u00b0C';
-      else if(m.field==='climateValueAtRisk')v=(sr(43)*8+2).toFixed(1)+'% NAV';
+      else if(m.field==='carbonFootprint')v=carbonFootprintEur!=null?carbonFootprintEur.toFixed(0)+' tCO2e/\u20acM':'\u2014';
+      else if(m.field==='waciIntensity')v=waciEur.toFixed(1)+' tCO2e/\u20acM';
+      // R3 gap D-3: no validated methodology is implemented for either of
+      // these two \u2014 a prior version filled them with a seeded-random
+      // number (sr(42)/sr(43)) dressed up as a TCFD/SBTi/NGFS-sourced
+      // figure. Removed rather than fabricated; see DOWNSTREAM_MODULES
+      // description for each field for the full rationale.
+      else if(m.field==='impliedTemperatureRise')v='Not computed';
+      else if(m.field==='climateValueAtRisk')v='Not computed';
       else if(m.field==='esrsE1Emissions')v=fmt(totalFE);
       else if(m.field==='ebaPillar3')v=fmt(totalFE)+' | DQS '+avgDqs;
       else if(m.field==='tcfdMetrics')v='FE + WACI + DQS';
       return{...m,value:v};
     });
-  },[positions,totalFE,totalOut,aumBn]);
+  },[positions,totalFE,totalOut]);
 
   const doExport=useCallback(()=>{
     // R3 gap B-7: PCAF requires vintage disclosure for lagged data — surface
@@ -1541,7 +1574,7 @@ function DownstreamTab({positions}){
           {m.inputFields&&<div style={{fontSize:9,color:T.gold,marginTop:1}}>Inputs: {m.inputFields.join(', ')}</div>}
         </div>
         <div style={{textAlign:'right',minWidth:120}}>
-          <div style={{fontSize:14,fontWeight:700,color:T.navy,fontFamily:T.mono}}>{m.value}</div>
+          <div style={{fontSize:14,fontWeight:700,color:m.value==='Not computed'?T.textMut:T.navy,fontFamily:T.mono,fontStyle:m.value==='Not computed'?'italic':'normal'}}>{m.value}</div>
           <div style={{fontSize:9,color:T.textMut}}>{m.format} | {m.frequency}</div>
         </div>
       </div>)}
@@ -1733,7 +1766,6 @@ export default function PcafFinancedEmissionsPage(){
   const[activeTab,setActiveTab]=useState(TABS[0]);
   const[positions,setPositions]=useState(INITIAL_POSITIONS);
   const[showUploader,setShowUploader]=useState(false);
-  const ccData = useCarbonCredit(); const ccPcaf = ccData?.adaptForPcaf?.() || {};
 
   return(
     <div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
