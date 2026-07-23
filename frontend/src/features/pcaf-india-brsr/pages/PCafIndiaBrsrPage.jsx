@@ -153,6 +153,39 @@ const Alert = ({ children, type='info' }) => {
   return <div style={{ background:c.bg, border:`1px solid ${c.border}`, borderRadius:8, padding:'12px 16px', fontSize:13, color:c.text }}>{children}</div>;
 };
 
+// R3 gap U-B: runPortfolio/runInsurance/runFacilitated/lookupCompany hit a
+// real backend endpoint (axios.post/get, with a client-side demo fallback
+// on failure) — genuine async latency, not instant local computation. Prior
+// to this the result panel simply vanished (result state reset to null)
+// while loading, with only the button label ("⏳ Calculating…") indicating
+// anything was happening. This renders a shaped placeholder matching the
+// result panel it's standing in for, so the layout doesn't jump when the
+// real KPI strip/table arrives.
+const SKELETON_CSS = `@keyframes pcafBrsrShimmer { 0%{opacity:.55;} 50%{opacity:1;} 100%{opacity:.55;} }`;
+const SkeletonBar = ({ width='100%', height=14, style }) => (
+  <div style={{ width, height, borderRadius:4, background:T.borderL, animation:'pcafBrsrShimmer 1.4s ease-in-out infinite', ...style }}/>
+);
+const ResultSkeleton = ({ kpiCount=4, rows=6 }) => (
+  <div aria-busy="true" aria-label="Loading result">
+    <div style={{ display:'flex', gap:12, flexWrap:'wrap', marginBottom:16 }}>
+      {Array.from({length:kpiCount}).map((_,i)=>(
+        <div key={i} style={{ background:T.card, border:`1px solid ${T.border}`, borderRadius:10, padding:'16px 20px', minWidth:140, flex:1 }}>
+          <SkeletonBar width={70} height={9} style={{marginBottom:10}}/>
+          <SkeletonBar width={90} height={22} style={{marginBottom:6}}/>
+          <SkeletonBar width={60} height={9}/>
+        </div>
+      ))}
+    </div>
+    <Card>
+      {Array.from({length:rows}).map((_,i)=>(
+        <div key={i} style={{ display:'flex', gap:10, padding:'7px 0', borderBottom: i<rows-1?`1px solid ${T.border}`:'none' }}>
+          <SkeletonBar width="22%"/><SkeletonBar width="16%"/><SkeletonBar width="14%"/><SkeletonBar width="12%"/><SkeletonBar width="10%"/>
+        </div>
+      ))}
+    </Card>
+  </div>
+);
+
 // ── Company name autocomplete — uses companyMaster for rich pre-fill ────────
 const CompanyAutocomplete = ({ value, onChange, onSelect, placeholder, width }) => {
   const [open, setOpen]   = useState(false);
@@ -533,6 +566,18 @@ export default function PCafIndiaBrsrPage() {
   const [tab, setTab] = useState('partA');
   const [formulaSection, setFormulaSection] = useState('partA');
   const [supplementSection, setSupplementSection] = useState('avoided');
+
+  // R3 gap U-B: inject the skeleton shimmer keyframes once (same
+  // guarded-injection pattern as AiHubPage.jsx) rather than repeating a
+  // <style> tag per render.
+  useEffect(() => {
+    if (!document.getElementById('pcaf-brsr-skeleton-css')) {
+      const el = document.createElement('style');
+      el.id = 'pcaf-brsr-skeleton-css';
+      el.textContent = SKELETON_CSS;
+      document.head.appendChild(el);
+    }
+  }, []);
 
   // Part A state
   const [holdings, setHoldings] = useState(DEFAULT_HOLDINGS);
@@ -1454,6 +1499,7 @@ export default function PCafIndiaBrsrPage() {
           {portfolioError && <Alert type='warn'>❌ {portfolioError}</Alert>}
 
           {/* Results */}
+          {portfolioLoading && <ResultSkeleton kpiCount={4} rows={8}/>}
           {portfolioResult && portfolioResult._demo && (
             <Alert type='info'>
               ⚡ <strong>Client-side calculation mode</strong> — API at {API} is unavailable. Results computed in-browser using PCAF Part A attribution formula (AF = Exposure ÷ EVIC). Connect the backend for CIN→yfinance EVIC lookup, CPCB sector emission factors, and BRSR P6 live data.
@@ -1877,6 +1923,7 @@ export default function PCafIndiaBrsrPage() {
 
           {insuranceError && <Alert type='warn'>❌ {insuranceError}</Alert>}
 
+          {insuranceLoading && <ResultSkeleton kpiCount={3} rows={6}/>}
           {insuranceResult && insuranceResult._demo && (
             <Alert type='info'>
               ⚡ <strong>Client-side calculation mode</strong> — Insurance emissions estimated using PCAF Part B LOB methods: Motor (vehicles × km × fuel EF), Property (area × EPC factor), Commercial (revenue × NACE sector EF), Reinsurance (ceded/GWP × cedent emissions).
@@ -2089,6 +2136,7 @@ export default function PCafIndiaBrsrPage() {
 
           {facilitatedError && <Alert type='warn'>❌ {facilitatedError}</Alert>}
 
+          {facilitatedLoading && <ResultSkeleton kpiCount={3} rows={6}/>}
           {facilitatedResult && facilitatedResult._demo && (
             <Alert type='info'>
               ⚡ <strong>Client-side calculation mode</strong> — Facilitated emissions estimated using PCAF Standard Part B attribution factors (×0.33 weighting factor applied): Bond (underwritten÷deal size), IPO (placed÷(MCap×3)), Syndicated (tranche÷facility), Securitisation (tranche÷pool). Issuer GHG estimated from revenue × sector emission intensity. M&A/advisory mandates are out of scope.
@@ -2186,6 +2234,7 @@ export default function PCafIndiaBrsrPage() {
 
           {companyError && <Alert type='warn'>❌ {companyError}</Alert>}
 
+          {companyLoading && <ResultSkeleton kpiCount={4} rows={5}/>}
           {companyResult && (
             <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
