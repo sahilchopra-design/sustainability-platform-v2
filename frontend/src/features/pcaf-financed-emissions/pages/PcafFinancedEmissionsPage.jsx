@@ -752,6 +752,14 @@ function scopedFE(p,scopeView){
   return scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions;
 }
 
+// R3 gap U-A: the same "excluded from every total" filter PartATab already
+// used (data-gap / matured / undrawn-commitments positions), lifted so the
+// new cross-asset-class ResultsStage totals the same computable set instead
+// of quietly re-deriving its own filter that could disagree with Part A's.
+function computablePcafPositions(positions){
+  return positions.filter(p=>!p.dataGap&&!p.matured&&p.assetClass!=='Undrawn Commitments');
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    REUSABLE UI COMPONENTS
    ═══════════════════════════════════════════════════════════════════════════════ */
@@ -763,9 +771,15 @@ function KPICard({label,value,sub,color,mono}){
   </div>);
 }
 
+// R3 gap U-A (quick-fix half): each button gets an explicit min-height of
+// 44px (WCAG touch-target guidance) and the active-state indicator is drawn
+// with box-shadow instead of a negative-margin border overlap — the prior
+// -2px marginBottom trick shifted the visual border without changing the
+// button's own box, which is a plausible contributor to the reported
+// dead-click behavior at narrow viewports where buttons wrap/overlap.
 function TabBar({tabs,active,onChange}){
   return(<div style={{display:'flex',borderBottom:`2px solid ${T.border}`,marginBottom:24,gap:0,overflowX:'auto'}}>
-    {tabs.map(t=>(<button key={t} onClick={()=>onChange(t)} style={{padding:'10px 18px',border:'none',background:'none',cursor:'pointer',fontSize:12,fontWeight:600,fontFamily:T.font,color:active===t?T.navy:T.textMut,borderBottom:active===t?`2px solid ${T.navy}`:'2px solid transparent',marginBottom:-2,transition:'color 0.15s',whiteSpace:'nowrap'}}>{t}</button>))}
+    {tabs.map(t=>(<button key={t} onClick={()=>onChange(t)} style={{padding:'12px 18px',minHeight:44,border:'none',background:'none',cursor:'pointer',fontSize:12,fontWeight:600,fontFamily:T.font,color:active===t?T.navy:T.textMut,boxShadow:active===t?`inset 0 -2px 0 ${T.navy}`:'inset 0 -2px 0 transparent',transition:'color 0.15s',whiteSpace:'nowrap',position:'relative',zIndex:1}}>{t}</button>))}
   </div>);
 }
 
@@ -934,7 +948,7 @@ function PartATab({positions,setPositions}){
   // R3 gap B-7: a matured instrument (bond past its maturity year) has no
   // current outstanding exposure and cannot sit in a "current" book —
   // excluded from totals like a data gap, not zeroed.
-  const computablePositions=useMemo(()=>positions.filter(p=>!p.dataGap&&!p.matured&&p.assetClass!=='Undrawn Commitments'),[positions]);
+  const computablePositions=useMemo(()=>computablePcafPositions(positions),[positions]);
   const dataGapPositions=useMemo(()=>positions.filter(p=>p.dataGap),[positions]);
   const maturedPositions=useMemo(()=>positions.filter(p=>p.matured),[positions]);
   const vintagePositions=useMemo(()=>positions.filter(p=>p.vintageWarning),[positions]);
@@ -1189,25 +1203,26 @@ function PartATab({positions,setPositions}){
    TAB 2: PART C — INSURANCE-ASSOCIATED EMISSIONS (PCAF IAE Standard)
    8 Lines of Business with full methodology
    ═══════════════════════════════════════════════════════════════════════════════ */
-function PartBTab(){
-  const[lobData,setLobData]=useState(INSURANCE_LOB);
-  const[editId,setEditId]=useState(null);
-  const[editForm,setEditForm]=useState({});
-  const[showDetails,setShowDetails]=useState(null);
-
-  // R3 gap B-3: Motor/Property/Commercial/Reinsurance/Project Insurance now
-  // run through the shared PCAF IAE calculator (data/pcafInsuranceEngine.js,
-  // ported verbatim from the India BRSR module — confirmed by the R3 review
-  // as the best PCAF methodology on the platform) instead of a flat
-  // GWP x sector-EF proxy that produced totals 3-4 orders of magnitude too
-  // low (~5,236 tCO2e on $17.3Bn GWP where PCAF's own attribution method
-  // lands in the 10^5-10^7 range). Life, Health, and Marine have no
-  // documented PCAF IAE methodology at all (Marine has none; Life/Health are
-  // explicitly excluded by the Standard) and stay on the old premium x EF
-  // proxy, clearly labeled non-PCAF — previously Marine was silently folded
-  // into the "PCAF-scoped" total despite its efSource already saying
-  // "not PCAF-defined"; it's now ring-fenced alongside Life/Health.
-  const lobResults=useMemo(()=>lobData.map(l=>{
+// R3 gap U-A: lifted to module scope (out of PartBTab) so the parent
+// component can compute the same lobResults once and hand them to both
+// PartBTab and the new cross-asset-class ResultsStage — recomputing this
+// independently in two places is exactly the "two sources of truth can
+// diverge" bug this session has already fixed elsewhere (F-13, DQS duality).
+//
+// R3 gap B-3: Motor/Property/Commercial/Reinsurance/Project Insurance now
+// run through the shared PCAF IAE calculator (data/pcafInsuranceEngine.js,
+// ported verbatim from the India BRSR module — confirmed by the R3 review
+// as the best PCAF methodology on the platform) instead of a flat
+// GWP x sector-EF proxy that produced totals 3-4 orders of magnitude too
+// low (~5,236 tCO2e on $17.3Bn GWP where PCAF's own attribution method
+// lands in the 10^5-10^7 range). Life, Health, and Marine have no
+// documented PCAF IAE methodology at all (Marine has none; Life/Health are
+// explicitly excluded by the Standard) and stay on the old premium x EF
+// proxy, clearly labeled non-PCAF — previously Marine was silently folded
+// into the "PCAF-scoped" total despite its efSource already saying
+// "not PCAF-defined"; it's now ring-fenced alongside Life/Health.
+function computeLobResults(lobData){
+  return lobData.map(l=>{
     const lobValue=LOB_FIELDS[l.lob]?.lobValues?.[0];
     if(!lobValue){
       const tco2e=Math.round(l.premiumM*l.efPerPremium);
@@ -1224,7 +1239,13 @@ function PartBTab(){
       sum_insured_musd:l.sum_insured_musd,total_project_cost_musd:l.total_project_cost_musd,project_scope1_tco2e:l.project_scope1_tco2e,
     });
     return{...l,tco2e:Math.round(tco2e),outOfPcafScope,dataGapReason,engineComputed:true};
-  }),[lobData]);
+  });
+}
+
+function PartBTab({lobData,setLobData,lobResults}){
+  const[editId,setEditId]=useState(null);
+  const[editForm,setEditForm]=useState({});
+  const[showDetails,setShowDetails]=useState(null);
 
   const inScopeLob=useMemo(()=>lobResults.filter(l=>!l.outOfPcafScope),[lobResults]);
   const outOfScopeLob=useMemo(()=>lobResults.filter(l=>l.outOfPcafScope),[lobResults]);
@@ -1325,13 +1346,11 @@ function lookupClientEvicBn(client){
   return match?_EVIC_BY_CLIENT[match]:null;
 }
 
-function PartCTab(){
-  const[deals,setDeals]=useState(FACILITATED_DEALS);
-  const[showForm,setShowForm]=useState(false);
-  const[expandedDeal,setExpandedDeal]=useState(null);
-  const[newDeal,setNewDeal]=useState({type:'Bond Underwriting',client:'',sector:'',dealSizeM:'',underwrittenM:'',clientScope1:'',clientScope2:'',dqs:'3'});
-
-  const dealData=useMemo(()=>deals.map(d=>{
+// R3 gap U-A: lifted to module scope for the same reason as
+// computeLobResults above \u2014 one computation, shared by PartCTab and
+// ResultsStage, instead of a second copy that can drift.
+function computeDealData(deals){
+  return deals.map(d=>{
     const outOfScope=d.type==='Advisory M&A';
     const evicBn=lookupClientEvicBn(d.client);
     let attr=0,denomBasis='none';
@@ -1351,7 +1370,14 @@ function PartCTab(){
     const advisoryShare=outOfScope?Math.min(0.10,(d.advisoryFeeM||d.dealSizeM*0.02)/d.dealSizeM||0.10):0;
     const extendedEm=outOfScope?Math.round(advisoryShare*clientEM):0;
     return{...d,attrFactor:attr,clientEM,denomBasis,outOfScope,facilitatedEm:outOfScope?0:Math.round(attr*clientEM),facilitatedScope3:outOfScope?0:Math.round(attr*(d.clientScope3||0)),advisoryShare,extendedEm};
-  }),[deals]);
+  });
+}
+
+function PartCTab({deals,setDeals,dealData}){
+  const[showForm,setShowForm]=useState(false);
+  const[expandedDeal,setExpandedDeal]=useState(null);
+  const[newDeal,setNewDeal]=useState({type:'Bond Underwriting',client:'',sector:'',dealSizeM:'',underwrittenM:'',clientScope1:'',clientScope2:'',dqs:'3'});
+
   const totalFac=useMemo(()=>dealData.reduce((s,d)=>s+d.facilitatedEm,0),[dealData]);
   const totalExtended=useMemo(()=>dealData.reduce((s,d)=>s+d.extendedEm,0),[dealData]);
   const totalDeals=useMemo(()=>deals.reduce((s,d)=>s+d.dealSizeM,0),[deals]);
@@ -1815,7 +1841,115 @@ function AuditTrailTab({positions}){
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   MAIN PAGE COMPONENT — 8 Tabs
+   RESULTS STAGE — cross-asset-class summary (Part A + Part C + Part B)
+   R3 gap U-A: previously getting a single combined figure meant visiting 3
+   separate tabs and adding the numbers yourself. This reads the exact same
+   lobResults/dealData/positions the Portfolio stage's three sub-tabs render
+   — nothing here is independently recomputed, so it cannot drift from what
+   those tabs show (the same principle behind computeLobResults/
+   computeDealData/computablePcafPositions/scopedFE being lifted to module
+   scope above).
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function ResultsStage({positions,lobResults,dealData,onOpenAudit}){
+  const computable=useMemo(()=>computablePcafPositions(positions),[positions]);
+  const financedS12=useMemo(()=>computable.reduce((s,p)=>s+scopedFE(p,'1+2'),0),[computable]);
+  const financedS123=useMemo(()=>computable.reduce((s,p)=>s+scopedFE(p,'1+2+3'),0),[computable]);
+  const inScopeLob=useMemo(()=>lobResults.filter(l=>!l.outOfPcafScope),[lobResults]);
+  const insuranceFE=useMemo(()=>inScopeLob.reduce((s,l)=>s+l.tco2e,0),[inScopeLob]);
+  const facilitatedFE=useMemo(()=>dealData.reduce((s,d)=>s+d.facilitatedEm,0),[dealData]);
+  const combinedS12=financedS12+insuranceFE+facilitatedFE;
+
+  const byPart=[
+    {name:'Part A: Financed',value:financedS12,color:T.navy},
+    {name:'Part C: Insurance',value:insuranceFE,color:T.red},
+    {name:'Part B: Facilitated',value:facilitatedFE,color:T.gold},
+  ];
+
+  return(<div>
+    <SectionHeader title="Results — Cross-Asset-Class Summary" description="Financed (Part A), Insurance-Associated (Part C), and Facilitated (Part B) emissions, read from the same computations shown in the Portfolio stage's three sub-tabs. PCAF does not itself define a cross-Part aggregate — each Part must still be disclosed separately in any real filing — so the Combined figure below is this platform's own at-a-glance total, labeled as such."/>
+    <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
+      <KPICard label="Financed Em. (Part A, S1+2)" value={fmt(financedS12)+' tCO2e'} sub={`${computable.length} computable positions`} color={T.navy}/>
+      <KPICard label="Insurance-Assoc. Em. (Part C, PCAF-scoped)" value={fmt(insuranceFE)+' tCO2e'} sub={`${inScopeLob.length} in-scope LOBs`} color={T.red}/>
+      <KPICard label="Facilitated Em. (Part B, 33% wtd.)" value={fmt(facilitatedFE)+' tCO2e'} sub={`${dealData.length} transactions`} color={T.gold}/>
+      <KPICard label="Combined (S1+2, platform total)" value={fmt(combinedS12)+' tCO2e'} sub="Part A + Part C + Part B — not a PCAF-defined aggregate" color={T.textMut}/>
+      <KPICard label="Financed Em. (Part A, S1+2+3)" value={fmt(financedS123)+' tCO2e'} sub="All-scope variant, reported separately per PCAF convention" color={T.navyL}/>
+    </div>
+    <Card title="Emissions by PCAF Part">
+      <ResponsiveContainer width="100%" height={240}><BarChart data={byPart}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="name" tick={{fontSize:10,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><Tooltip {...tip}/><Bar dataKey="value" name="tCO2e" radius={[4,4,0,0]}>{byPart.map((d,i)=><Cell key={i} fill={d.color}/>)}</Bar></BarChart></ResponsiveContainer>
+    </Card>
+    <InfoBox type="info">Combined = Part A (S1+2) + Part C (PCAF-scoped LOBs) + Part B (33%-weighted). Each figure is shown separately above in the KPI row and bar chart; the Combined KPI exists only as a single at-a-glance number for this platform, not a PCAF-standard metric.</InfoBox>
+    {onOpenAudit&&<div style={{marginTop:12}}><button onClick={onOpenAudit} style={{padding:'9px 16px',minHeight:44,border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Why these numbers? → Audit Trail</button></div>}
+  </div>);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   METHODOLOGY DRAWER — Reference Data + Formula Engine, slide-out from any stage
+   R3 gap U-A: these two were flat tabs alongside the working tabs; they're
+   reference/methodology material a user consults occasionally, not a stage
+   in the workflow, so they move into a drawer reachable from every stage's
+   header instead of competing for tab-bar space.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function MethodologyDrawer({onClose}){
+  const[sub,setSub]=useState('Reference Data');
+  return(
+    <div style={{position:'fixed',inset:0,zIndex:9998,display:'flex',justifyContent:'flex-end'}}>
+      <div onClick={onClose} style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.35)'}}/>
+      <div style={{position:'relative',width:'min(880px,92vw)',height:'100%',background:T.surface,boxShadow:'-8px 0 32px rgba(0,0,0,0.18)',overflowY:'auto',padding:'24px 28px'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <div style={{fontSize:16,fontWeight:700,color:T.navy}}>Methodology</div>
+          <button onClick={onClose} style={{padding:'8px 14px',minHeight:44,border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:'pointer',fontSize:12,fontFamily:T.font}}>✕ Close</button>
+        </div>
+        <TabBar tabs={['Reference Data','Formula Engine']} active={sub} onChange={setSub}/>
+        {sub==='Reference Data'?<ReferenceDataTab/>:<FormulaEngineTab/>}
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   AUDIT MODAL — "why this number?" drill-down, on demand instead of a
+   standalone tab (full per-KPI wiring deferred; this gives every stage one
+   reachable entry point into the same AuditTrailTab content rather than
+   duplicating it).
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function AuditModal({positions,onClose}){
+  return(
+    <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.4)',zIndex:9998,display:'flex',alignItems:'center',justifyContent:'center',padding:24}}>
+      <div style={{background:T.surface,borderRadius:10,padding:24,width:1100,maxWidth:'96vw',maxHeight:'90vh',overflowY:'auto',boxShadow:'0 12px 40px rgba(0,0,0,0.18)'}}>
+        <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginBottom:8}}>
+          <div style={{fontSize:16,fontWeight:700,color:T.navy}}>Audit Trail — Why This Number?</div>
+          <button onClick={onClose} style={{padding:'8px 14px',minHeight:44,border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,cursor:'pointer',fontSize:12,fontFamily:T.font}}>✕ Close</button>
+        </div>
+        <AuditTrailTab positions={positions}/>
+      </div>
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   STAGE NAV — 4-stage primary workflow nav (replaces the 8 flat tabs)
+   Full-button tabs (min 44px touch target, no negative-margin overlay) —
+   part of the same touch-target fix applied to TabBar above.
+   ═══════════════════════════════════════════════════════════════════════════════ */
+function StageNav({stages,active,onChange}){
+  return(<div style={{display:'flex',gap:8,marginBottom:20,flexWrap:'wrap'}}>
+    {stages.map((s,i)=>(
+      <button key={s} onClick={()=>onChange(s)} style={{
+        display:'flex',alignItems:'center',gap:8,padding:'12px 20px',minHeight:44,
+        border:`2px solid ${active===s?T.navy:T.border}`,borderRadius:8,
+        background:active===s?T.navy:T.surface,color:active===s?'#fff':T.text,
+        fontSize:13,fontWeight:700,fontFamily:T.font,cursor:'pointer',
+        transition:'background 0.15s,color 0.15s',whiteSpace:'nowrap',
+      }}>
+        <span style={{fontSize:10,fontFamily:T.mono,opacity:0.65}}>{i+1}</span>{s}
+      </button>
+    ))}
+  </div>);
+}
+
+/* ═══════════════════════════════════════════════════════════════════════════════
+   MAIN PAGE COMPONENT — 4-stage workflow (Portfolio → Data Quality →
+   Results → Disclosures), Methodology as a drawer, Audit Trail as a modal
    ═══════════════════════════════════════════════════════════════════════════════ */
 // Tab labels follow PCAF's real Part lettering: Part B = Facilitated
 // Emissions (Dec 2023), Part C = Insurance-Associated Emissions (Nov 2022,
@@ -1824,17 +1958,23 @@ function AuditTrailTab({positions}){
 // identifiers and don't correspond 1:1 to these display labels — PartBTab
 // renders Insurance, PartCTab renders Facilitated — this is cosmetic only,
 // not a functional issue, but flagged here to avoid confusing a future reader.
-const TABS=['Part A: Financed','Part C: Insurance','Part B: Facilitated','Data Quality','Reference Data','Formula Engine','Downstream','Audit Trail'];
+const STAGES=['Portfolio','Data Quality','Results','Disclosures'];
+const PORTFOLIO_SUBTABS=['Financed (Part A)','Insurance (Part C)','Facilitated (Part B)'];
 
 // R3 gaps F-16/F-19: writes (inline edits, add/remove position) previously
 // lived only in React state — a reload silently reverted to the 60-holding
 // demo seed with no indication anything had been lost. Persisted via
 // data/portfolioPersistence.js (localStorage today, designed so a backend
-// store can replace it later without touching call sites).
+// store can replace it later without touching call sites). R3 gap U-A
+// extends the same persistence to the Insurance and Facilitated datasets,
+// which previously reset on reload while Part A did not.
 const PORTFOLIO_STORAGE_ID='global-demo-portfolio';
+const INSURANCE_STORAGE_ID='global-demo-insurance-lob';
+const FACILITATED_STORAGE_ID='global-demo-facilitated-deals';
 
 export default function PcafFinancedEmissionsPage(){
-  const[activeTab,setActiveTab]=useState(TABS[0]);
+  const[activeStage,setActiveStage]=useState(STAGES[0]);
+  const[portfolioSubTab,setPortfolioSubTab]=useState(PORTFOLIO_SUBTABS[0]);
   const[positions,setPositions]=useState(()=>{
     const saved=loadPortfolio(PORTFOLIO_STORAGE_ID);
     // Re-run computeRow on load rather than trusting the persisted derived
@@ -1844,21 +1984,41 @@ export default function PcafFinancedEmissionsPage(){
     return saved&&saved.length?saved.map(computeRow):INITIAL_POSITIONS;
   });
   useEffect(()=>{savePortfolio(PORTFOLIO_STORAGE_ID,positions);},[positions]);
+  // R3 gap U-A: lobData/deals lifted here (out of PartBTab/PartCTab) so the
+  // Results stage can read the same live data those tabs edit, instead of a
+  // second copy that only matches at page-load.
+  const[lobData,setLobData]=useState(()=>{
+    const saved=loadPortfolio(INSURANCE_STORAGE_ID);
+    return saved&&saved.length?saved:INSURANCE_LOB;
+  });
+  useEffect(()=>{savePortfolio(INSURANCE_STORAGE_ID,lobData);},[lobData]);
+  const[deals,setDeals]=useState(()=>{
+    const saved=loadPortfolio(FACILITATED_STORAGE_ID);
+    return saved&&saved.length?saved:FACILITATED_DEALS;
+  });
+  useEffect(()=>{savePortfolio(FACILITATED_STORAGE_ID,deals);},[deals]);
+  const lobResults=useMemo(()=>computeLobResults(lobData),[lobData]);
+  const dealData=useMemo(()=>computeDealData(deals),[deals]);
+
   const[showUploader,setShowUploader]=useState(false);
+  const[showMethodology,setShowMethodology]=useState(false);
+  const[showAudit,setShowAudit]=useState(false);
 
   return(
     <div style={{padding:'24px 32px',fontFamily:T.font,background:T.bg,minHeight:'100vh'}}>
-      <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start'}}>
+      <div style={{marginBottom:20,display:'flex',justifyContent:'space-between',alignItems:'flex-start',flexWrap:'wrap',gap:12}}>
         <div>
           <h1 style={{fontSize:22,fontWeight:700,color:T.navy,margin:0}}>PCAF Financed Emissions</h1>
-          <p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>{PCAF_PART_A} + {PCAF_PART_C} + {PCAF_PART_B} \u2014 {positions.length} holdings | 10 Part A asset classes | 10 formulas</p>
+          <p style={{fontSize:12,color:T.textSec,margin:'4px 0 0'}}>{PCAF_PART_A} + {PCAF_PART_C} + {PCAF_PART_B} — {positions.length} holdings | 10 Part A asset classes | 10 formulas</p>
         </div>
-        <ReportExporter title="PCAF Financed Emissions" subtitle={`${positions.length} holdings | 10 PCAF Part A asset classes (3rd Ed.)`} framework={PCAF_PART_A} sections={[{type:'kpis',title:'Portfolio Summary',data:[{label:'Holdings',value:positions.length},{label:'Total Market Value',value:'$'+fmt(positions.reduce((s,p)=>s+p.mv,0))},{label:'Asset Classes',value:[...new Set(positions.map(p=>p.ac))].length}]}]} />
-      </div>
-      <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
-        <button onClick={()=>setShowUploader(s=>!s)} style={{background:showUploader?T.red:T.navy,color:'#fff',border:'none',borderRadius:6,padding:'6px 14px',fontSize:11,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>
-          {showUploader?'\u2715 Close':'Upload Portfolio'}
-        </button>
+        <div style={{display:'flex',gap:8,flexWrap:'wrap'}}>
+          <button onClick={()=>setShowMethodology(true)} style={{padding:'9px 14px',minHeight:44,border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Methodology</button>
+          <button onClick={()=>setShowAudit(true)} style={{padding:'9px 14px',minHeight:44,border:`1px solid ${T.border}`,borderRadius:6,background:T.surface,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>Audit Trail</button>
+          <button onClick={()=>setShowUploader(s=>!s)} style={{background:showUploader?T.red:T.navy,color:'#fff',border:'none',borderRadius:6,padding:'9px 14px',minHeight:44,fontSize:12,fontWeight:600,cursor:'pointer',fontFamily:T.font}}>
+            {showUploader?'✕ Close':'Upload Portfolio'}
+          </button>
+          <ReportExporter title="PCAF Financed Emissions" subtitle={`${positions.length} holdings | 10 PCAF Part A asset classes (3rd Ed.)`} framework={PCAF_PART_A} sections={[{type:'kpis',title:'Portfolio Summary',data:[{label:'Holdings',value:positions.length},{label:'Total Market Value',value:'$'+fmt(positions.reduce((s,p)=>s+p.mv,0))},{label:'Asset Classes',value:[...new Set(positions.map(p=>p.ac))].length}]}]} />
+        </div>
       </div>
       {showUploader&&<div style={{marginBottom:16}}><PortfolioUploader
         requiredFields={['name','sector','marketValue','scope1','scope2']}
@@ -1866,15 +2026,21 @@ export default function PcafFinancedEmissionsPage(){
         entityType="mixed"
         onUpload={(rows)=>{setPositions(rows.map((h,i)=>({id:i,name:h.name||`Holding ${i+1}`,sector:h.sector||'Other',ac:h.assetClass||'Listed Equity',mv:Number(h.marketValue)||0,s1:Number(h.scope1)||0,s2:Number(h.scope2)||0,s3:Number(h.scope3)||0,dqs:Number(h.dqs)||3,ticker:h.ticker||'',isin:h.isin||'',country:h.country||'US',esg:Number(h.esgScore)||50,evic:Number(h.marketValue)*1.4||0,revenue:Number(h.revenue)||Number(h.marketValue)*0.6||0,outstanding:Number(h.marketValue)||0,included:true})));setShowUploader(false);}}
       /></div>}
-      <TabBar tabs={TABS} active={activeTab} onChange={setActiveTab}/>
-      {activeTab===TABS[0]&&<PartATab positions={positions} setPositions={setPositions}/>}
-      {activeTab===TABS[1]&&<PartBTab/>}
-      {activeTab===TABS[2]&&<PartCTab/>}
-      {activeTab===TABS[3]&&<DataQualityTab positions={positions} setPositions={setPositions}/>}
-      {activeTab===TABS[4]&&<ReferenceDataTab/>}
-      {activeTab===TABS[5]&&<FormulaEngineTab/>}
-      {activeTab===TABS[6]&&<DownstreamTab positions={positions}/>}
-      {activeTab===TABS[7]&&<AuditTrailTab positions={positions}/>}
+
+      <StageNav stages={STAGES} active={activeStage} onChange={setActiveStage}/>
+
+      {activeStage==='Portfolio'&&<>
+        <TabBar tabs={PORTFOLIO_SUBTABS} active={portfolioSubTab} onChange={setPortfolioSubTab}/>
+        {portfolioSubTab===PORTFOLIO_SUBTABS[0]&&<PartATab positions={positions} setPositions={setPositions}/>}
+        {portfolioSubTab===PORTFOLIO_SUBTABS[1]&&<PartBTab lobData={lobData} setLobData={setLobData} lobResults={lobResults}/>}
+        {portfolioSubTab===PORTFOLIO_SUBTABS[2]&&<PartCTab deals={deals} setDeals={setDeals} dealData={dealData}/>}
+      </>}
+      {activeStage==='Data Quality'&&<DataQualityTab positions={positions} setPositions={setPositions}/>}
+      {activeStage==='Results'&&<ResultsStage positions={positions} lobResults={lobResults} dealData={dealData} onOpenAudit={()=>setShowAudit(true)}/>}
+      {activeStage==='Disclosures'&&<DownstreamTab positions={positions}/>}
+
+      {showMethodology&&<MethodologyDrawer onClose={()=>setShowMethodology(false)}/>}
+      {showAudit&&<AuditModal positions={positions} onClose={()=>setShowAudit(false)}/>}
     </div>
   );
 }
