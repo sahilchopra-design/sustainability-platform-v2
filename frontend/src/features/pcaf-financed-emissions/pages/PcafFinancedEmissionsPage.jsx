@@ -23,6 +23,7 @@ import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeveri
 import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR, sectorRevenueProxyM } from '../../../data/pcafStandards';
 import { LOB_FIELDS, calcPolicyEmissions } from '../../../data/pcafInsuranceEngine';
 import { loadPortfolio, savePortfolio } from '../../../data/portfolioPersistence';
+import { fmtCompact, fmtPercent, fmtLocaleNumber, fmtCurrency } from '../../../lib/numberFormat';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
 import ReportExporter from '../../../components/ReportExporter';
@@ -60,26 +61,16 @@ const tip={
   labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10},
 };
 
-function fmt(n,dec=0){
-  if(n==null)return '\u2014';
-  if(Math.abs(n)>=1e9)return(n/1e9).toFixed(dec||2)+'B';
-  if(Math.abs(n)>=1e6)return(n/1e6).toFixed(dec||2)+'M';
-  if(Math.abs(n)>=1e3)return(n/1e3).toFixed(dec||1)+'K';
-  return n.toFixed(dec);
-}
-// R3 gap B-6: fixed 2-decimal-place formatting truncates any attribution
-// factor below 0.005% to a bare "0.00%" \u2014 indistinguishable from a genuine
-// zero (e.g. Apple/Microsoft listed-equity rows, sovereign debt rows).
-// Below that threshold, switch to 4 significant figures so a real non-zero
-// value (e.g. 0.00089%) stays visible instead of being rounded away.
-function fmtPct(n){
-  if(n==null)return '\u2014';
-  const pct=n*100;
-  if(pct!==0&&Math.abs(pct)<0.005)return pct.toPrecision(4)+'%';
-  return pct.toFixed(2)+'%';
-}
-function fmtNum(n){if(n==null)return '\u2014';return n.toLocaleString('en-US',{maximumFractionDigits:2});}
-function fmtCcy(n,ccy='$'){return n==null?'\u2014':ccy+fmtNum(n);}
+// R3 gap U-D: thin aliases onto lib/numberFormat.js (shared with any other
+// module that adopts it) instead of a locally-maintained copy of the same
+// logic \u2014 keeps every existing fmt(...)/fmtPct(...)/fmtNum(...)/fmtCcy(...)
+// call site in this file unchanged while removing this file's own
+// standalone implementation as a second place the B-6 precision fix (and
+// any future formatting fix) would need to be applied.
+const fmt=fmtCompact;
+const fmtPct=fmtPercent;
+const fmtNum=(n)=>fmtLocaleNumber(n,'en-US');
+const fmtCcy=(n,ccy='$')=>fmtCurrency(n,ccy,'en-US');
 
 /* ═══════════════════════════════════════════════════════════════════════════════
    PCAF ASSET CLASS DEFINITIONS — Chapter 5 (2nd Ed. core classes); UoP/Securitisations/
@@ -1460,11 +1451,17 @@ function PartCTab({deals,setDeals,dealData}){
       <KPICard label="Avg Attribution" value={totalDeals>0?fmtPct(totalUW/totalDeals):'\u2014'} sub="UW / Deal (unweighted, informational)" color={T.navyL}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
+      {/* R3 gap U-D (chart QA): both charts carry free-text category labels
+          (deal type / client name) that were previously flat and near-
+          unreadable at 7-8px, with recharts silently skipping labels it
+          judged would overlap (interval="preserveEnd" default) rather than
+          showing all of them. Angling the labels and widening the bottom
+          margin lets every category render at a legible size instead. */}
       <Card title="Facilitated Em. by Deal Type" citation="PCAF Standard, Part B (Dec 2023)">
-        <ResponsiveContainer width="100%" height={230}><BarChart data={dealData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="type" tick={{fontSize:8,fill:T.textSec}} interval={0}/><YAxis tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><Tooltip {...tip}/><Bar dataKey="facilitatedEm" name="Facilitated Em." radius={[4,4,0,0]}>{dealData.map((d,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}</Bar></BarChart></ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={270}><BarChart data={dealData} margin={{bottom:60}}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="type" tick={{fontSize:10,fill:T.textSec}} interval={0} angle={-35} textAnchor="end" height={70}/><YAxis tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><Tooltip {...tip}/><Bar dataKey="facilitatedEm" name="Facilitated Em." radius={[4,4,0,0]}>{dealData.map((d,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}</Bar></BarChart></ResponsiveContainer>
       </Card>
       <Card title="Deal Size vs Underwritten">
-        <ResponsiveContainer width="100%" height={230}><BarChart data={dealData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="client" tick={{fontSize:7,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Legend wrapperStyle={{fontSize:10}}/><Bar dataKey="dealSizeM" name="Deal $M" fill={T.navy}/><Bar dataKey="underwrittenM" name="UW $M" fill={T.gold}/></BarChart></ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={270}><BarChart data={dealData} margin={{bottom:60}}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="client" tick={{fontSize:10,fill:T.textSec}} interval={0} angle={-35} textAnchor="end" height={70}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Legend wrapperStyle={{fontSize:10}}/><Bar dataKey="dealSizeM" name="Deal $M" fill={T.navy}/><Bar dataKey="underwrittenM" name="UW $M" fill={T.gold}/></BarChart></ResponsiveContainer>
       </Card>
     </div>
     <div style={{display:'flex',justifyContent:'flex-end',marginBottom:8}}>
