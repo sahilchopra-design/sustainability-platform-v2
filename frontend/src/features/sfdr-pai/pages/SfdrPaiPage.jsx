@@ -4,6 +4,7 @@ import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
   CartesianGrid, Cell
 } from 'recharts';
+import { isIndiaMode, adaptForSFDRPAI } from '../../../data/IndiaDataAdapter';
 
 const API = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
@@ -49,8 +50,6 @@ const PAI_CATEGORIES = [
 ];
 
 const ALL_INDICATORS = PAI_CATEGORIES.flatMap(c => c.indicators.map(i => ({ ...i, category: c.key, catColor: c.color })));
-
-import { isIndiaMode, adaptForSFDRPAI } from '../../../data/IndiaDataAdapter';
 
 // ── Default portfolio ──────────────────────────────────────────────────────
 const _DEFAULT_HOLDINGS = [

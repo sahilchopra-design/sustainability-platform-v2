@@ -645,7 +645,7 @@ export default function GreenHydrogenAmmoniaCarbonPage() {
       </div>
 
 
-      {tab === 11 && (
+      {activeTab === 11 && (
         <IndiaGreenHybridFinance T={T} useCases={[
     {
       tag: 'UC-1', title: '100 ktpa green ammonia export via SIGHT Mode-2',

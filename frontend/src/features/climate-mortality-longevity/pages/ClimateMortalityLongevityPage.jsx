@@ -858,7 +858,7 @@ export default function ClimateMortalityLongevityPage() {
                 { label: 'Avg Reserve Adequacy', value: (COUNTRIES.length ? COUNTRIES.reduce((s, c) => s + calcReserveAdequacy(c, scenIdx), 0) / COUNTRIES.length : 0).toFixed(1) + '%', color: T.amber },
                 { label: 'Countries SMR>1.1', value: COUNTRIES.filter(c => calcSMR(c, scenIdx) > 1.1).length, color: T.red },
                 { label: 'Active Scenario', value: NGFS_SCENARIOS[scenIdx].slice(0, 16), color: T.indigo },
-                { label: 'Warming (2100)', value: NGFS_WARMINGS[scenIdx] + '°C', color: T.orange },
+                { label: 'Warming (2100)', value: SCENARIO_WARMING[scenIdx] + '°C', color: T.orange },
               ].map(m => (
                 <div key={m.label} style={{ background: T.sub, borderRadius: 6, padding: '8px 10px', borderLeft: `3px solid ${m.color}` }}>
                   <div style={{ fontSize: 10, color: T.muted, marginBottom: 2 }}>{m.label}</div>

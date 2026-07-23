@@ -5,6 +5,7 @@ import {
   ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend,
   ResponsiveContainer, ReferenceLine, Cell,
 } from 'recharts';
+import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
@@ -35,8 +36,6 @@ const CURRENCIES = ['USD','EUR','GBP','JPY','AUD','SGD','CHF','HKD'];
 const NGFS3 = ['Orderly','Disorderly','Hot House'];
 const NGFS3_MULTS = [1.0, 1.4, 2.1];
 const NGFS3_COLORS = [T.green, T.amber, T.red];
-
-import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 
 /* ─── EXPOSURES (300) ─────────────────────────────────────────────────────── */
 const _DEFAULT_EXPOSURES = Array.from({ length: 300 }, (_, i) => {

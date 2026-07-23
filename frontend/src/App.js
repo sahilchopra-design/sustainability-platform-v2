@@ -25,11 +25,11 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { AUTO_ROUTES, AUTO_NAV, AUTO_PATHS } from './moduleRegistry.auto';
 import DemoBanner from './components/auth/DemoBanner';
 import ProtectedRoute from './components/auth/ProtectedRoute';
+import ModuleNavigatorPage from './features/module-navigator/pages/ModuleNavigatorPage';
 const LoginPage = React.lazy(() => import('./features/auth/pages/LoginPage'));
 const InviteAcceptPage = React.lazy(() => import('./features/auth/pages/InviteAcceptPage'));
 const AccessExpiredPage = React.lazy(() => import('./features/auth/pages/AccessExpiredPage'));
 const AdminPanelPage = React.lazy(() => import('./features/admin-panel/pages/AdminPanelPage'));
-import ModuleNavigatorPage from './features/module-navigator/pages/ModuleNavigatorPage';
 
 // Platform Admin & Data Management
 const DataSourceManagerPage = React.lazy(() => import("./features/data-source-manager/pages/DataSourceManagerPage"));

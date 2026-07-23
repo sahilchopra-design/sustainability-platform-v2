@@ -617,7 +617,7 @@ export default function CarbonArbitragePortfolioPage() {
       </div>
 
 
-      {tab === 11 && (
+      {activeTab === 11 && (
         <IndiaGreenHybridFinance T={T} useCases={[
     {
       tag: 'UC-1', title: '$500M net-zero carbon portfolio for sovereign wealth fund',

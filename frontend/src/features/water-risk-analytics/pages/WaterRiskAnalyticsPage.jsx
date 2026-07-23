@@ -2,6 +2,7 @@ import React,{useState,useMemo,useCallback,useEffect} from 'react';
 import axios from 'axios';
 import { WRI_AQUEDUCT_WATER_RISK } from '../../../data/publicDataSeed';
 import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,ScatterChart,Scatter,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis} from 'recharts';
+import { isIndiaMode, adaptForWaterRisk } from '../../../data/IndiaDataAdapter';
 
 // Backend E92 Water Risk & Stewardship engine (WRI AQUEDUCT 4.0 / CDP Water
 // A-List / TNFD E3 / AWS Standard v2 / CEO Water Mandate), same engine already
@@ -14,7 +15,6 @@ const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
 const ACCENT='#0284c7';const tip={contentStyle:{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,fontSize:11,fontFamily:T.font},labelStyle:{color:T.textSec,fontFamily:T.mono,fontSize:10}};const COLORS=[T.navy,T.gold,T.sage,T.red,T.amber,T.green,T.navyL,T.goldL,'#8b5cf6'];
 const fmt=v=>typeof v==='number'?v>=1e9?(v/1e9).toFixed(1)+'B':v>=1e6?(v/1e6).toFixed(1)+'M':v>=1e3?(v/1e3).toFixed(1)+'K':v.toFixed(1):v;
 const TABS=['Water Risk Dashboard','Regional Analysis','Corporate Exposure','Projections'];const RISKF=['All','Extremely High','High','Medium-High','Medium','Low'];const PAGE=12;
-import { isIndiaMode, adaptForWaterRisk } from '../../../data/IndiaDataAdapter';
 const _DEFAULT_REGIONS=Array.from({length:40},(_,i)=>{
   const names=['Ganges Basin','Indus Basin','Yellow River','Yangtze Delta','Mekong Delta','Nile Valley','Murray-Darling','Colorado Basin','California Central','Sao Francisco','Tigris-Euphrates','Lake Chad','Aral Sea','Jordan River','Orange-Senqu','Volta Basin','Zambezi','Congo Basin','Amazon Basin','Mississippi Delta','Rhine-Meuse','Danube Basin','Po Valley','Tagus Basin','Guadalquivir','North China Plain','Deccan Plateau','Rajasthan Desert','Middle East Gulf','Sahel Region','Horn of Africa','Central Asian Steppe','Australian Outback','Atacama Region','Western US','Great Plains','SE Australia','Southern Africa','NW India','Pakistan Punjab'];
   const basins=['Ganges','Indus','Yellow','Yangtze','Mekong','Nile','Murray','Colorado','Sacramento','Sao Francisco','Tigris','Lake Chad','Aral','Jordan','Orange','Volta','Zambezi','Congo','Amazon','Mississippi','Rhine','Danube','Po','Tagus','Guadalquivir','Hai','Godavari','Thar','Gulf','Niger','Juba','Amu Darya','Cooper','Loa','Columbia','Missouri','Yarra','Limpopo','Sabarmati','Chenab'];

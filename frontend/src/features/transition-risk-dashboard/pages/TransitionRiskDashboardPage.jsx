@@ -4,6 +4,7 @@ import {
   PolarAngleAxis, PolarRadiusAxis, XAxis, YAxis, CartesianGrid, Tooltip,
   ResponsiveContainer, Cell, Legend, ReferenceLine
 } from 'recharts';
+import { isIndiaMode, adaptForTransitionRisk } from '../../../data/IndiaDataAdapter';
 
 const T = {
   bg: '#f4f6f9', surface: '#ffffff', border: '#e3e8ef', navy: '#1b3a5c',
@@ -54,8 +55,6 @@ const REG_STATUS = [
   { framework: 'SFDR Art.9', pillars: ['Sustainability Factors','PAI','Taxonomy','Engagement'], complete: [4,4,3,4], color: T.blue },
   { framework: 'UK TPT', pillars: ['Strategy','Governance','Implementation','Engagement'], complete: [3,3,4,3], color: T.purple },
 ];
-
-import { isIndiaMode, adaptForTransitionRisk } from '../../../data/IndiaDataAdapter';
 
 // ─── Top-10 holdings transition snapshot ────────────────────────���───────────
 const _DEFAULT_HOLDINGS = [

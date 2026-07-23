@@ -8,8 +8,8 @@ const tabs=['Sanctions Landscape','Climate Finance Impact','Dual-Use Technology'
 const REGIMES=['OFAC SDN','EU Restrictive','UK Sanctions','UN Sanctions'];
 const REGIME_COLORS=[T.red,T.navy,T.gold,T.sage];
 
-const COUNTRIES_60=useMemoHelper();
-function useMemoHelper(){
+const COUNTRIES_60=buildCountries60();
+function buildCountries60(){
   const names=['Russia','Iran','China','North Korea','Syria','Myanmar','Venezuela','Cuba','Belarus','Zimbabwe',
     'Libya','Sudan','South Sudan','Yemen','Somalia','Eritrea','DRC Congo','CAR','Mali','Guinea',
     'Nicaragua','Turkey','UAE','Saudi Arabia','Qatar','Pakistan','India','Brazil','South Africa','Nigeria',

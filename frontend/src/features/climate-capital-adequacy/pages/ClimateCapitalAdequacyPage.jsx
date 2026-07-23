@@ -5,6 +5,7 @@ import {
   ScatterChart, Scatter, AreaChart, Area, Cell,
 } from 'recharts';
 import CurrencyToggle from '../../../components/CurrencyToggle';
+import { isIndiaMode, adaptForCapitalAdequacy } from '../../../data/IndiaDataAdapter';
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
@@ -95,8 +96,6 @@ const SENSITIVITY_DRIVERS = [
   { name:'Transition Plan Discount',   impact:+0.010, category:'Mitigation' },
   { name:'Scope 1 Intensity -20%',     impact:+0.008, category:'Mitigation' },
 ];
-
-import { isIndiaMode, adaptForCapitalAdequacy } from '../../../data/IndiaDataAdapter';
 
 const INST_NAMES = [
   'Barclays Global','JPMorgan Chase','Deutsche Bank','HSBC Holdings','BNP Paribas','Société Générale',

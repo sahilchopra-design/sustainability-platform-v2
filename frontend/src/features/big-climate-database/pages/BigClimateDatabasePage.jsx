@@ -5,7 +5,7 @@
  * Source: CONCITO / 2-0 LCA, CC-BY, v1.2 (2024).
  * Units: tCO2e per tonne product. Countries: DK/GB/FR/ES/NL.
  */
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, Suspense } from 'react';
 import { useBigClimateDb } from '../../../contexts/BigClimateDbContext';
 import {
   BarChart, LineChart, AreaChart, ComposedChart, ScatterChart, PieChart, RadarChart,
@@ -104,6 +104,24 @@ export default function BigClimateDatabasePage() {
 
   /* ── unique product names for dropdowns ─── */
   const uniqueNames = useMemo(() => [...new Set(db.products.map(p => p.name))].sort(), [db.products]);
+
+  /* ── Tab 8 batch swaps (lifted out of renderSwapCalculator so the hook
+     always runs, regardless of which tab is active) ─── */
+  const BATCH_SWAPS = useMemo(() => {
+    const swaps = [
+      { from: 'Beef, minced, 15-20% fat, raw', to: 'Tofu, firm', label: 'Beef mince to Tofu' },
+      { from: 'Pork, minced, 5-10% fat, raw', to: 'Tofu, firm', label: 'Pork mince to Tofu' },
+      { from: 'Cheese, Gouda, 45+, fatty', to: 'Tofu, firm', label: 'Gouda to Tofu' },
+      { from: 'Butter, unsalted', to: 'Oil, rapeseed', label: 'Butter to Rapeseed Oil' },
+    ];
+    return swaps.map(s => {
+      const fp = db.products.find(p => p.name === s.from && p.country === 'DK') || db.products.find(p => p.name === s.from);
+      const tp = db.products.find(p => p.name === s.to && p.country === 'DK') || db.products.find(p => p.name === s.to);
+      const saving = fp && tp ? fp.total - tp.total : 0;
+      return { ...s, fromEF: fp ? fp.total : 0, toEF: tp ? tp.total : 0, saving, annual: saving * 52 / 1000 };
+    }).filter(s => s.fromEF > 0);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [db.products]);
 
   /* ══════════════════════════════════════════════════════════════════
      TAB 1 — Food Carbon Dashboard
@@ -799,23 +817,6 @@ export default function BigClimateDatabasePage() {
     const waterfallData = fromProduct && toProduct ? PHASE_LABELS.map((label, i) => ({
       phase: label, saving: (fromProduct[PHASES[i]] || 0) - (toProduct[PHASES[i]] || 0),
     })) : [];
-
-    /* batch swaps */
-    const BATCH_SWAPS = useMemo(() => {
-      const swaps = [
-        { from: 'Beef, minced, 15-20% fat, raw', to: 'Tofu, firm', label: 'Beef mince to Tofu' },
-        { from: 'Pork, minced, 5-10% fat, raw', to: 'Tofu, firm', label: 'Pork mince to Tofu' },
-        { from: 'Cheese, Gouda, 45+, fatty', to: 'Tofu, firm', label: 'Gouda to Tofu' },
-        { from: 'Butter, unsalted', to: 'Oil, rapeseed', label: 'Butter to Rapeseed Oil' },
-      ];
-      return swaps.map(s => {
-        const fp = db.products.find(p => p.name === s.from && p.country === 'DK') || db.products.find(p => p.name === s.from);
-        const tp = db.products.find(p => p.name === s.to && p.country === 'DK') || db.products.find(p => p.name === s.to);
-        const saving = fp && tp ? fp.total - tp.total : 0;
-        return { ...s, fromEF: fp ? fp.total : 0, toEF: tp ? tp.total : 0, saving, annual: saving * 52 / 1000 };
-      }).filter(s => s.fromEF > 0);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [db.products]);
 
     return (
       <div>

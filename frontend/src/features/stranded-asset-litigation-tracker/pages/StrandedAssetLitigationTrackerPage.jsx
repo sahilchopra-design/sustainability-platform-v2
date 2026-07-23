@@ -4,6 +4,7 @@ import {
   LineChart, Line, ComposedChart, Area,
   ResponsiveContainer, Cell,
 } from 'recharts';
+import { isIndiaMode, adaptForPhysicalRisk } from '../../../data/IndiaDataAdapter';
 
 const T = {
   bg: '#f8f6f0', card: '#ffffff', border: '#e2ded5', text: '#1a1a2e',
@@ -27,8 +28,6 @@ const OWNER_NAMES = [
   'LNG Dynamics', 'PipelineCo', 'RefineryCorp', 'CoalMine Holdings', 'HeavyOil Partners',
   'CarbonFirst Ltd', 'OilStream PLC', 'FossilFuel AG', 'MiningCo Global', 'FuelGroup SE',
 ];
-
-import { isIndiaMode, adaptForPhysicalRisk } from '../../../data/IndiaDataAdapter';
 
 const _DEFAULT_ASSETS = Array.from({ length: 120 }, (_, i) => {
   const typeIdx = Math.floor(sr(i * 7) * 8);

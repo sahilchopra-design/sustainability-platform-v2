@@ -4,6 +4,7 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
   Cell, ReferenceLine, RadarChart, Radar, PolarGrid, PolarAngleAxis, PolarRadiusAxis
 } from 'recharts';
+import { isIndiaMode, adaptForPhysicalRisk } from '../../../data/IndiaDataAdapter';
 
 const sr = (s) => { let x = Math.sin(s + 1) * 10000; return x - Math.floor(x); };
 const T = {
@@ -21,8 +22,6 @@ const PERILS = ['Flood', 'Wildfire', 'Heat', 'Wind', 'Drought', 'SLR'];
 const REGIONS = ['North America', 'Europe', 'Asia-Pacific', 'LatAm', 'MENA'];
 const ASSET_CLASSES = ['Residential RE', 'Commercial RE', 'Infrastructure', 'Agriculture', 'Energy'];
 const SCENARIOS_MAP = { current: 1.0, ssp1_26: 1.15, ssp2_45: 1.35, ssp5_85: 1.68, ssp5_2100: 2.42 };
-
-import { isIndiaMode, adaptForPhysicalRisk } from '../../../data/IndiaDataAdapter';
 
 const _DEFAULT_PORTFOLIO = Array.from({ length: 30 }, (_, i) => {
   const region = REGIONS[i % REGIONS.length];

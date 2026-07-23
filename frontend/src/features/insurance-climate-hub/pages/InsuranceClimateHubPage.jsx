@@ -20,6 +20,9 @@ const DATA_SOURCES = ['Internal Models','Third-Party Data','Regulator Data','Mar
 const REGULATORS = ['EIOPA','FCA','APRA','PRA','MAS','NAIC','FSB','BIS','IAIS','CFTC'];
 
 const DOMAIN_WEIGHTS_DEFAULT = [15, 15, 12, 12, 12, 12, 11, 11];
+// Object-shaped view of DOMAINS (id/name) for sections below that need per-domain
+// identity rather than a bare string — mirrors DOMAINS 1:1, not independent data.
+const ACTUARIAL_DOMAINS = DOMAINS.map((name, i) => ({ id: i, name }));
 
 const KRIS = Array.from({ length: 40 }, (_, i) => {
   const domainIdx = Math.floor(sr(i * 19 + 1) * 8);
@@ -158,6 +161,10 @@ export default function InsuranceClimateHubPage() {
     const score = Math.min(100, Math.max(0, +(100 - avgValue * 0.3).toFixed(1)));
     return { domain, breaching, total: kris.length, avgValue, score };
   }), []);
+
+  // Per-domain 0-100 scores, indexed identically to DOMAINS/ACTUARIAL_DOMAINS —
+  // reuses the same score already computed in domainCards rather than recomputing.
+  const domainScores = useMemo(() => domainCards.map(d => d.score), [domainCards]);
 
   const trajectoryData = useMemo(() => Array.from({ length: 5 }, (_, ti) => {
     const obj = { period: `Q${ti + 1}` };

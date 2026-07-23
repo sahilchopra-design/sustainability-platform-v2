@@ -1,6 +1,7 @@
-const API = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:8001';
 import React,{useState,useMemo} from 'react';
 import {BarChart,Bar,LineChart,Line,AreaChart,Area,PieChart,Pie,Cell,XAxis,YAxis,CartesianGrid,Tooltip,ResponsiveContainer,Legend,RadarChart,Radar,PolarGrid,PolarAngleAxis,PolarRadiusAxis,ScatterChart,Scatter,ZAxis} from 'recharts';
+
+const API = process.env.REACT_APP_BACKEND_URL || process.env.REACT_APP_API_URL || 'http://localhost:8001';
 
 const T={bg:'#f4f6f9',surface:'#ffffff',surfaceH:'#eef1f6',border:'#e3e8ef',borderL:'#cfd6e0',navy:'#1b3a5c',navyL:'#2c5a8c',gold:'#c5a96a',goldL:'#d4be8a',sage:'#5a8a6a',sageL:'#7ba67d',teal:'#5a8a6a',text:'#1b3a5c',textSec:'#5c6b7e',textMut:'#9aa3ae',red:'#dc2626',green:'#16a34a',amber:'#d97706',font:"'DM Sans','SF Pro Display',system-ui,-apple-system,sans-serif",mono:"'JetBrains Mono','SF Mono','Fira Code',monospace"};
 const sr=(s)=>{let x=Math.sin(s+1)*10000;return x-Math.floor(x);};
@@ -132,6 +133,8 @@ export default function SFDRArt9Page(){
   },[expanded]);
 
   const scatterData=useMemo(()=>filtered.map(f=>({name:f.name,x:parseFloat(f.carbonIntensity),y:parseFloat(f.returnYtd),z:f.aum})),[filtered]);
+  const stratDist=useMemo(()=>{const m={};STRATEGIES.forEach(s=>m[s]=0);filtered.forEach(f=>m[f.strategy]++);return Object.entries(m).map(([name,value])=>({name,value}));},[filtered]);
+  const tempBuckets=useMemo(()=>{const b={'<1.5C':0,'1.5-2.0C':0,'2.0-2.5C':0,'>2.5C':0};filtered.forEach(f=>{const t=parseFloat(f.tempAlignment);if(t<1.5)b['<1.5C']++;else if(t<2.0)b['1.5-2.0C']++;else if(t<2.5)b['2.0-2.5C']++;else b['>2.5C']++;});return Object.entries(b).map(([name,value])=>({name,value}));},[filtered]);
 
   const SortH=({col,label,w})=>(
     <th onClick={()=>doSort(col)} style={{cursor:'pointer',padding:'10px 8px',textAlign:'left',borderBottom:`2px solid ${T.border}`,fontSize:11,fontWeight:700,color:T.textSec,fontFamily:T.mono,letterSpacing:0.5,width:w,userSelect:'none',whiteSpace:'nowrap'}}>
@@ -320,10 +323,8 @@ export default function SFDRArt9Page(){
     </div>
   );
 
-  const renderMetrics=()=>{
+  const renderMetrics=(stratDist,tempBuckets)=>{
     const taxChart=TAXONOMY.map(t=>({...t,aligned:parseFloat(t.aligned),eligible:parseFloat(t.eligible),notEligible:parseFloat(t.notEligible)}));
-    const stratDist=useMemo(()=>{const m={};STRATEGIES.forEach(s=>m[s]=0);filtered.forEach(f=>m[f.strategy]++);return Object.entries(m).map(([name,value])=>({name,value}));},[filtered]);
-    const tempBuckets=useMemo(()=>{const b={'<1.5C':0,'1.5-2.0C':0,'2.0-2.5C':0,'>2.5C':0};filtered.forEach(f=>{const t=parseFloat(f.tempAlignment);if(t<1.5)b['<1.5C']++;else if(t<2.0)b['1.5-2.0C']++;else if(t<2.5)b['2.0-2.5C']++;else b['>2.5C']++;});return Object.entries(b).map(([name,value])=>({name,value}));},[filtered]);
     return(
       <div>
         <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16,marginBottom:20}}>
@@ -487,7 +488,7 @@ export default function SFDRArt9Page(){
       </div>
       {tab===0&&renderDashboard()}
       {tab===1&&renderScreener()}
-      {tab===2&&renderMetrics()}
+      {tab===2&&renderMetrics(stratDist,tempBuckets)}
       {tab===3&&renderCompliance()}
     </div>
   );

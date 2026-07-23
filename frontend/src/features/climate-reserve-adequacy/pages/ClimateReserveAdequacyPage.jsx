@@ -776,7 +776,7 @@ export default function ClimateReserveAdequacyPage() {
                 name: l.name.slice(0, 8),
                 bfIBNR: +calcBFIBNR(l, scenIdx).toFixed(0),
                 clIBNR: +calcChainLadderIBNR(l).toFixed(0),
-                discounted: +calcDiscountedReserve(l, discRate).toFixed(0),
+                discounted: +calcDiscountedReserve(l, discountSlider).toFixed(0),
                 riskMargin: +calcSolvencyRiskMargin(l).toFixed(0),
               }))} margin={{ top: 10, right: 20, left: 0, bottom: 60 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke={T.border} />
@@ -799,13 +799,13 @@ export default function ClimateReserveAdequacyPage() {
                 { label: 'Total LoB', value: LOBS.length, color: T.indigo },
                 { label: 'Avg BF IBNR $M', value: '$' + (LOBS.reduce((s, l) => s + calcBFIBNR(l, scenIdx), 0) / LOBS.length).toFixed(0) + 'M', color: T.blue },
                 { label: 'Avg CL IBNR $M', value: '$' + (LOBS.reduce((s, l) => s + calcChainLadderIBNR(l), 0) / LOBS.length).toFixed(0) + 'M', color: T.teal },
-                { label: 'Total Disc Reserve $B', value: '$' + (LOBS.reduce((s, l) => s + calcDiscountedReserve(l, discRate), 0) / 1000).toFixed(1) + 'B', color: T.green },
+                { label: 'Total Disc Reserve $B', value: '$' + (LOBS.reduce((s, l) => s + calcDiscountedReserve(l, discountSlider), 0) / 1000).toFixed(1) + 'B', color: T.green },
                 { label: 'Total Risk Margin $M', value: '$' + LOBS.reduce((s, l) => s + calcSolvencyRiskMargin(l), 0).toFixed(0) + 'M', color: T.amber },
                 { label: 'High Climate Loading', value: LOBS.filter(l => l.climateLoadingPct > 15).length + ' LoB', color: T.red },
                 { label: 'Avg Reserve Adequacy', value: (LOBS.reduce((s, l) => s + l.reserveAdequacyRatio, 0) / LOBS.length).toFixed(1) + '%', color: T.orange },
                 { label: 'Avg Reporting Lag', value: (LOBS.reduce((s, l) => s + l.reportingLag, 0) / LOBS.length).toFixed(1) + ' mo', color: T.purple },
                 { label: 'NGFS Scenarios', value: NGFS_SCENARIOS.length, color: T.navy },
-                { label: 'Discount Rate', value: (discRate * 100).toFixed(1) + '%', color: T.gold },
+                { label: 'Discount Rate', value: discountSlider.toFixed(1) + '%', color: T.gold },
                 { label: 'Active Scenario', value: NGFS_SCENARIOS[scenIdx].slice(0, 14), color: T.indigo },
                 { label: 'Solvency II CoC', value: '6% pa', color: T.teal },
               ].map(m => (
@@ -866,7 +866,7 @@ export default function ClimateReserveAdequacyPage() {
                 <YAxis dataKey="riskMargin" name="Risk Margin $M" type="number" tick={{ fontSize: 10 }} />
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(v, n) => ['$' + v.toFixed(0) + 'M', n === 'discReserve' ? 'Discounted Reserve' : 'Risk Margin']} />
                 <Scatter name="Lines of Business" data={LOBS.map(l => ({
-                  discReserve: +calcDiscountedReserve(l, discRate).toFixed(0),
+                  discReserve: +calcDiscountedReserve(l, discountSlider).toFixed(0),
                   riskMargin: +calcSolvencyRiskMargin(l).toFixed(0),
                   name: l.name,
                 }))} fill={T.teal} opacity={0.7} />

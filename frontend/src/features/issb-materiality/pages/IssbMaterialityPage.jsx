@@ -142,6 +142,41 @@ const Td = ({ children, w, bold }) => (
 );
 
 /* ══════════════════════════════════════════════════════════════
+   EXTRA: Holdings Detail Drilldown (own component so its
+   useState is legal — was previously an inline IIFE)
+   ══════════════════════════════════════════════════════════════ */
+const HoldingDrilldown = ({ sorted }) => {
+  const [drillIdx, setDrillIdx] = React.useState(null);
+  const drillH = drillIdx !== null ? sorted[drillIdx] : null;
+  return (
+    <Section title="Holding S2 Detail Drilldown" badge="click a row above to expand">
+      <div style={{ display:'flex', gap:6, marginBottom:12, flexWrap:'wrap' }}>
+        {sorted.slice(0, 15).map((h, i) => (
+          <Btn key={i} small active={drillIdx === i} onClick={() => setDrillIdx(drillIdx === i ? null : i)}>{h.company_name?.slice(0, 18)}</Btn>
+        ))}
+      </div>
+      {drillH && (
+        <div style={{ background:T.surface, borderRadius:10, border:`1px solid ${T.border}`, padding:20 }}>
+          <h4 style={{ color:T.navy, margin:'0 0 12px' }}>{drillH.company_name} &mdash; ISSB S2 Detail</h4>
+          <table style={{ width:'100%', borderCollapse:'collapse' }}>
+            <thead><tr><Th>ID</Th><Th>Pillar</Th><Th w="40%">Requirement</Th><Th>Status</Th><Th>Score</Th></tr></thead>
+            <tbody>
+              {drillH.s2Status.map((r, i) => (
+                <tr key={r.id} style={{ background: i % 2 ? T.surfaceH : T.surface }}>
+                  <Td bold>{r.id}</Td><Td>{r.pillar}</Td><Td>{r.requirement}</Td>
+                  <Td><Badge label={r.status} color={r.status === 'Met' ? 'green' : r.status === 'Partial' ? 'amber' : 'red'} /></Td>
+                  <Td><span style={{ fontWeight:700, color:r.score >= 55 ? T.green : r.score >= 25 ? T.amber : T.red }}>{r.score}</span></Td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </Section>
+  );
+};
+
+/* ══════════════════════════════════════════════════════════════
    MAIN COMPONENT
    ══════════════════════════════════════════════════════════════ */
 const IssbMaterialityPage = () => {
@@ -789,36 +824,7 @@ const IssbMaterialityPage = () => {
       {/* ═══════════════════════════════════════════════════════
          EXTRA: Holdings Detail Drilldown (per holding S2 status)
          ═══════════════════════════════════════════════════════ */}
-      {activeTab === 'holdings' && sorted.length > 0 && (() => {
-        const [drillIdx, setDrillIdx] = React.useState(null);
-        const drillH = drillIdx !== null ? sorted[drillIdx] : null;
-        return (
-          <Section title="Holding S2 Detail Drilldown" badge="click a row above to expand">
-            <div style={{ display:'flex', gap:6, marginBottom:12, flexWrap:'wrap' }}>
-              {sorted.slice(0, 15).map((h, i) => (
-                <Btn key={i} small active={drillIdx === i} onClick={() => setDrillIdx(drillIdx === i ? null : i)}>{h.company_name?.slice(0, 18)}</Btn>
-              ))}
-            </div>
-            {drillH && (
-              <div style={{ background:T.surface, borderRadius:10, border:`1px solid ${T.border}`, padding:20 }}>
-                <h4 style={{ color:T.navy, margin:'0 0 12px' }}>{drillH.company_name} &mdash; ISSB S2 Detail</h4>
-                <table style={{ width:'100%', borderCollapse:'collapse' }}>
-                  <thead><tr><Th>ID</Th><Th>Pillar</Th><Th w="40%">Requirement</Th><Th>Status</Th><Th>Score</Th></tr></thead>
-                  <tbody>
-                    {drillH.s2Status.map((r, i) => (
-                      <tr key={r.id} style={{ background: i % 2 ? T.surfaceH : T.surface }}>
-                        <Td bold>{r.id}</Td><Td>{r.pillar}</Td><Td>{r.requirement}</Td>
-                        <Td><Badge label={r.status} color={r.status === 'Met' ? 'green' : r.status === 'Partial' ? 'amber' : 'red'} /></Td>
-                        <Td><span style={{ fontWeight:700, color:r.score >= 55 ? T.green : r.score >= 25 ? T.amber : T.red }}>{r.score}</span></Td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </Section>
-        );
-      })()}
+      {activeTab === 'holdings' && sorted.length > 0 && <HoldingDrilldown sorted={sorted} />}
 
       {/* ═══════════════════════════════════════════════════════
          EXTRA: Category Distribution PieChart (Topic Frequency)

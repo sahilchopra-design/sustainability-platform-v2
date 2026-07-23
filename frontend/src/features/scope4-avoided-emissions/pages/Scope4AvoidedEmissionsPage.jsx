@@ -159,6 +159,12 @@ export default function Scope4AvoidedEmissionsPage(){
     name:c.name,issues:CRITERIA.filter((_,ci)=>c.criteriaScores[ci]===0),tier:c.tier
   })).slice(0,15),[]);
 
+  const verSortedCompanies=useMemo(()=>{
+    let sorted=[...COMPANIES];
+    if(verSortCrit!==null)sorted.sort((a,b)=>b.criteriaScores[verSortCrit]-a.criteriaScores[verSortCrit]);
+    return sorted.slice(0,40);
+  },[verSortCrit]);
+
   const runVerScan=useCallback(()=>{
     setVerScanRunning(true);
     setTimeout(()=>{setVerScanRunning(false);setVerScanDone(true);},1500);
@@ -619,11 +625,7 @@ export default function Scope4AvoidedEmissionsPage(){
                   </tr>
                 </thead>
                 <tbody>
-                  {useMemo(()=>{
-                    let sorted=[...COMPANIES];
-                    if(verSortCrit!==null)sorted.sort((a,b)=>b.criteriaScores[verSortCrit]-a.criteriaScores[verSortCrit]);
-                    return sorted.slice(0,40);
-                  },[verSortCrit]).map((c,ri)=>{
+                  {verSortedCompanies.map((c,ri)=>{
                     const total=c.criteriaScores.reduce((a,v)=>a+v,0);
                     return(
                       <tr key={c.id} style={{background:ri%2===0?T.surface:T.bg}}>

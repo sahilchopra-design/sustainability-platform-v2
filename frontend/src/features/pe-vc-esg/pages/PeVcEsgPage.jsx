@@ -264,6 +264,20 @@ export default function PeVcEsgPage() {
     return agg;
   }, [deals]);
 
+  /* — Fund performance summary (lifted out of the 'charts' tab's inline
+     IIFE so the hook always runs, regardless of which tab is active) — */
+  const fundPerf = useMemo(() => {
+    const funds = {};
+    deals.forEach(d => {
+      if (!funds[d.fund]) funds[d.fund] = { name: d.fund, deals: 0, totalValue: 0, avgESG: 0, avgIRR: 0, sectors: new Set(), geos: new Set(), totalCO2: 0, esgSum: 0, irrSum: 0 };
+      const f = funds[d.fund];
+      f.deals++; f.totalValue += d.dealSize_mn; f.esgSum += d.esgScore; f.irrSum += d.irrTarget;
+      f.sectors.add(d.sector); f.geos.add(d.geography);
+      f.totalCO2 += (d.impactMetrics.co2_avoided_t || 0);
+    });
+    return Object.values(funds).map(f => ({ ...f, avgESG: f.esgSum / f.deals, avgIRR: f.irrSum / f.deals, sectors: f.sectors.size, geos: f.geos.size }));
+  }, [deals]);
+
   /* — Export functions — */
   const exportPipeline = () => {
     downloadCSV('pe_vc_pipeline.csv', deals.map(d => ({
@@ -906,17 +920,6 @@ export default function PeVcEsgPage() {
 
       {/* ═══════════════ FUND PERFORMANCE SUMMARY ═══════════════ */}
       {activeTab === 'charts' && (() => {
-        const fundPerf = useMemo(() => {
-          const funds = {};
-          deals.forEach(d => {
-            if (!funds[d.fund]) funds[d.fund] = { name: d.fund, deals: 0, totalValue: 0, avgESG: 0, avgIRR: 0, sectors: new Set(), geos: new Set(), totalCO2: 0, esgSum: 0, irrSum: 0 };
-            const f = funds[d.fund];
-            f.deals++; f.totalValue += d.dealSize_mn; f.esgSum += d.esgScore; f.irrSum += d.irrTarget;
-            f.sectors.add(d.sector); f.geos.add(d.geography);
-            f.totalCO2 += (d.impactMetrics.co2_avoided_t || 0);
-          });
-          return Object.values(funds).map(f => ({ ...f, avgESG: f.esgSum / f.deals, avgIRR: f.irrSum / f.deals, sectors: f.sectors.size, geos: f.geos.size }));
-        }, [deals]);
         return (
           <div style={s.card}>
             <h4 style={{ margin:'0 0 12px', fontSize:14, fontWeight:700, color:T.navy }}>Fund Performance Summary</h4>

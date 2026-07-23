@@ -42,8 +42,8 @@ const COMPANIES = [
 ];
 
 const BASE_ITR = 1.5;
-const PORTFOLIO_ITR = useMemoCalc();
-function useMemoCalc() {
+const PORTFOLIO_ITR = calcBaselinePortfolioITR();
+function calcBaselinePortfolioITR() {
   return BASE_ITR + SECTORS.reduce((a, s) => a + s.itrContrib, 0);
 }
 

@@ -394,7 +394,7 @@ export default function DmeRiskEnginePage() {
     const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     return months.map((m, i) => {
       const base = portfolioStats ? portfolioStats.avgDMI : 45;
-      const drift = (sr(i * 5) * 2 - 1) * 8 + sRand(i * 137) * 12;
+      const drift = (sRand(i * 5) * 2 - 1) * 8 + sRand(i * 137) * 12;
       const val = clamp(base + drift, 10, 95);
       const z = calculateZScore(val, 45, 18);
       return { month: m, dmi: +val.toFixed(1), zScore: +z.toFixed(2) };
