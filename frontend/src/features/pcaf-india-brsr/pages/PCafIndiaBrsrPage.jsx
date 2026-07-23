@@ -1463,10 +1463,10 @@ export default function PCafIndiaBrsrPage() {
             <>
               {/* KPI strip */}
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Total Financed Emissions" value={`${(ps.total_financed_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e (Scope 1+2)" color={T.navy} />
+                <KpiCard label="Total Financed Emissions" value={`${(ps.total_financed_co2e_tonne||0).toLocaleString('en-IN')}`} sub="tCO₂e (Scope 1+2)" color={T.navy} />
                 {ps.scope3_required_count != null && <KpiCard label="Scope 3 Required / Missing" value={`${ps.scope3_required_count} / ${ps.scope3_missing_count||0}`} sub={`reported separately · reportingYear ${reportingYear}`} color={ps.scope3_missing_count > 0 ? T.red : T.teal} />}
                 <KpiCard label="WACI" value={(ps.waci_tco2e_per_inr_cr||0).toFixed(1)} sub="tCO₂e / ₹Cr revenue" color={T.indigo} />
-                <KpiCard label="Undrawn Commitments" value={`${(ps.total_undrawn_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e — reported separately, not in FE total" color={T.textMut} />
+                <KpiCard label="Undrawn Commitments" value={`${(ps.total_undrawn_co2e_tonne||0).toLocaleString('en-IN')}`} sub="tCO₂e — reported separately, not in FE total" color={T.textMut} />
                 <KpiCard label="Portfolio DQS" value={(ps.weighted_dqs||0).toFixed(2)} sub="1=best · 5=worst" color={T.amber} />
                 <KpiCard label="Holdings" value={ps.total_holdings||0} sub="companies assessed" />
                 <KpiCard label="Coverage" value={`${(ps.data_completeness_pct||0).toFixed(0)}%`} sub={ps.data_gap_count ? `${ps.data_gap_count} data gap — excluded from total` : 'by holding count'} color={ps.data_gap_count ? T.red : T.teal} />
@@ -1485,7 +1485,7 @@ export default function PCafIndiaBrsrPage() {
                     borderRadius: 8, padding: '12px 16px', fontSize: 12 }}>
                     <div style={{ fontWeight: 700, color: T.navy, marginBottom: 6 }}>📊 PCAF Output Interpretation — SEBI BRSR Core P6 Filing Guidance</div>
                     <div style={{ color: T.text, lineHeight: 1.6 }}>
-                      Portfolio financed emissions total <strong style={{ color: T.navy }}>{totalCO2e.toLocaleString()} tCO₂e</strong> (Scope 3 Cat.15 under GHG Protocol).
+                      Portfolio financed emissions total <strong style={{ color: T.navy }}>{totalCO2e.toLocaleString('en-IN')} tCO₂e</strong> (Scope 3 Cat.15 under GHG Protocol).
                       WACI is <strong style={{ color: T.indigo }}>{waci.toFixed(1)} tCO₂e/₹Cr</strong> — required disclosure under SEBI BRSR Core Principle 6.{' '}
                       Data quality (weighted DQS {dqs.toFixed(1)}) is based on {dqsLabel}. Under the PCAF standard, disclose DQS distribution alongside financed emissions in BRSR/Annual Report.{' '}
                       {ps.data_gap_count > 0 && <><strong style={{ color: T.red }}>{ps.data_gap_count} holding{ps.data_gap_count === 1 ? '' : 's'} excluded</strong> from this total — see Holdings table for the missing-data reason per position.</>}
@@ -1510,7 +1510,7 @@ export default function PCafIndiaBrsrPage() {
 
               {ps.uncertainty_band_pct > 0 && (
                 <Alert type='info'>
-                  📏 Uncertainty band: ±{ps.uncertainty_band_pct}% — Total range: {Math.round((ps.total_financed_co2e_tonne||0)*(1-ps.uncertainty_band_pct/100)).toLocaleString()} – {Math.round((ps.total_financed_co2e_tonne||0)*(1+ps.uncertainty_band_pct/100)).toLocaleString()} tCO₂e
+                  📏 Uncertainty band: ±{ps.uncertainty_band_pct}% — Total range: {Math.round((ps.total_financed_co2e_tonne||0)*(1-ps.uncertainty_band_pct/100)).toLocaleString('en-IN')} – {Math.round((ps.total_financed_co2e_tonne||0)*(1+ps.uncertainty_band_pct/100)).toLocaleString('en-IN')} tCO₂e
                 </Alert>
               )}
 
@@ -1524,7 +1524,7 @@ export default function PCafIndiaBrsrPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
                       <XAxis dataKey="name" tick={{fontSize:10}} />
                       <YAxis tick={{fontSize:10}} tickFormatter={v => v>=1e6?`${(v/1e6).toFixed(1)}M`:v>=1000?`${(v/1000).toFixed(0)}k`:v} />
-                      <Tooltip formatter={v => [v.toLocaleString(), 'tCO₂e']} />
+                      <Tooltip formatter={v => [v.toLocaleString('en-IN'), 'tCO₂e']} />
                       <Bar dataKey="tco2e" fill={T.navy} radius={[4,4,0,0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -1538,7 +1538,7 @@ export default function PCafIndiaBrsrPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
                       <XAxis dataKey="name" tick={{fontSize:10}} />
                       <YAxis tick={{fontSize:10}} tickFormatter={v => v>=1e6?`${(v/1e6).toFixed(1)}M`:v>=1000?`${(v/1000).toFixed(0)}k`:v} />
-                      <Tooltip formatter={(v,n) => [v.toLocaleString(), n]} />
+                      <Tooltip formatter={(v,n) => [v.toLocaleString('en-IN'), n]} />
                       <Legend />
                       <Bar dataKey="scope1" stackId="a" fill={T.navy} name="Scope 1" />
                       <Bar dataKey="scope2" stackId="a" fill={T.gold} name="Scope 2" radius={[4,4,0,0]} />
@@ -1555,7 +1555,7 @@ export default function PCafIndiaBrsrPage() {
                         <Pie data={sectorChart} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={45} outerRadius={75} label={({name,percent})=>`${name.split(' ')[0]} ${(percent*100).toFixed(0)}%`} labelLine={false}>
                           {sectorChart.map((e,i) => <Cell key={i} fill={e.fill} />)}
                         </Pie>
-                        <Tooltip formatter={v => [v.toLocaleString(), 'tCO₂e']} />
+                        <Tooltip formatter={v => [v.toLocaleString('en-IN'), 'tCO₂e']} />
                       </PieChart>
                     </ResponsiveContainer>
                   ) : <div style={{color:T.sub,fontSize:12,textAlign:'center',paddingTop:60}}>No data</div>}
@@ -1570,7 +1570,7 @@ export default function PCafIndiaBrsrPage() {
                         <Pie data={instrumentChart} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={45} outerRadius={75} label={({name,percent})=>`${name.split(' ')[0]} ${(percent*100).toFixed(0)}%`} labelLine={false}>
                           {instrumentChart.map((e,i) => <Cell key={i} fill={e.fill} />)}
                         </Pie>
-                        <Tooltip formatter={v => [v.toLocaleString(), 'tCO₂e']} />
+                        <Tooltip formatter={v => [v.toLocaleString('en-IN'), 'tCO₂e']} />
                       </PieChart>
                     </ResponsiveContainer>
                   ) : <div style={{color:T.sub,fontSize:12,textAlign:'center',paddingTop:60}}>Add instrument types to holdings</div>}
@@ -1603,7 +1603,7 @@ export default function PCafIndiaBrsrPage() {
                               {row.name}
                             </td>
                             <td style={{ padding:'8px 10px' }}>{rowHoldings.length}</td>
-                            <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{row.value.toLocaleString()}</td>
+                            <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{row.value.toLocaleString('en-IN')}</td>
                             <td style={{ padding:'8px 10px' }}>
                               <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                                 <div style={{ flex:1, height:6, background:'#f1f0eb', borderRadius:3 }}>
@@ -1659,12 +1659,12 @@ export default function PCafIndiaBrsrPage() {
                           <td style={{ padding:'8px 10px', fontWeight:600 }}>{h.entity_name || h.company_name}</td>
                           <td style={{ padding:'8px 10px', color:T.sub }}>{h.sector_gics}</td>
                           <td style={{ padding:'8px 10px' }}>{((h.attribution_factor||0)*100).toFixed(2)}%</td>
-                          <td style={{ padding:'8px 10px' }}>{(h.exposure_inr_cr||0).toLocaleString()}</td>
-                          <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{(h.financed_co2e_tonne||0).toLocaleString()}</td>
+                          <td style={{ padding:'8px 10px' }}>{(h.exposure_inr_cr||0).toLocaleString('en-IN')}</td>
+                          <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{(h.financed_co2e_tonne||0).toLocaleString('en-IN')}</td>
                           <td style={{ padding:'8px 10px', color: h.scope3_missing ? T.red : T.sub }}>
                             {h.scope3_missing
                               ? <span title={`Scope 3 required for reporting year ${reportingYear} (PCAF all-sector requirement from ${SCOPE3_ALL_SECTOR_YEAR}) but not provided`}>⚠ Missing</span>
-                              : h.scope3_required ? (h.financed_scope3_co2e_tonne||0).toLocaleString() : '—'}
+                              : h.scope3_required ? (h.financed_scope3_co2e_tonne||0).toLocaleString('en-IN') : '—'}
                           </td>
                           <td style={{ padding:'8px 10px' }}>{(h.waci_tco2e_per_inr_cr||0).toFixed(1)}</td>
                           <td style={{ padding:'8px 10px' }}><DqsBadge score={h.dqs} /></td>
@@ -1692,9 +1692,9 @@ export default function PCafIndiaBrsrPage() {
                   </div>
                   <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:12 }}>
                     {[
-                      ['Total Financed Emissions (Scope 3, Cat.15)', `${(brsr.total_financed_co2e_tonne||0).toLocaleString()} tCO₂e`],
+                      ['Total Financed Emissions (Scope 3, Cat.15)', `${(brsr.total_financed_co2e_tonne||0).toLocaleString('en-IN')} tCO₂e`],
                       ['WACI (Intensity)', `${(brsr.waci||0).toFixed(2)} tCO₂e/₹Cr`],
-                      ['Undrawn (separate line)', `${(ps.total_undrawn_co2e_tonne||0).toLocaleString()} tCO₂e`],
+                      ['Undrawn (separate line)', `${(ps.total_undrawn_co2e_tonne||0).toLocaleString('en-IN')} tCO₂e`],
                       ['Coverage', `${(brsr.data_completeness_pct||0).toFixed(0)}%`],
                       ['Weighted DQS', (brsr.weighted_dqs||0).toFixed(2)],
                       ['Holdings', brsr.holdings_count],
@@ -1719,7 +1719,7 @@ export default function PCafIndiaBrsrPage() {
                   )}
                   {brsr.sfdr_pai_1_tco2e && (
                     <div style={{ marginTop:12, display:'flex', gap:12 }}>
-                      <span style={{ background:'#dbeafe', color:T.blue, borderRadius:20, padding:'3px 12px', fontSize:11, fontWeight:600 }}>SFDR PAI#1: {brsr.sfdr_pai_1_tco2e?.toLocaleString()} tCO₂e</span>
+                      <span style={{ background:'#dbeafe', color:T.blue, borderRadius:20, padding:'3px 12px', fontSize:11, fontWeight:600 }}>SFDR PAI#1: {brsr.sfdr_pai_1_tco2e?.toLocaleString('en-IN')} tCO₂e</span>
                       <span style={{ background:'#f3e8ff', color:'#7c3aed', borderRadius:20, padding:'3px 12px', fontSize:11, fontWeight:600 }}>PAI#3 WACI: {(brsr.sfdr_pai_3_waci||0).toFixed(2)} tCO₂e/₹Cr</span>
                     </div>
                   )}
@@ -1762,7 +1762,7 @@ export default function PCafIndiaBrsrPage() {
                     {Object.entries(rbi).filter(([k]) => !['reporting_year','framework'].includes(k)).slice(0,8).map(([k,v]) => (
                       <div key={k} style={{ display:'flex', justifyContent:'space-between', padding:'6px 0', borderBottom:`1px solid ${T.border}` }}>
                         <span style={{ color:T.sub }}>{k.replace(/_/g,' ')}</span>
-                        <span style={{ fontWeight:600, color:T.navy }}>{typeof v==='number' ? v.toLocaleString() : String(v)}</span>
+                        <span style={{ fontWeight:600, color:T.navy }}>{typeof v==='number' ? v.toLocaleString('en-IN') : String(v)}</span>
                       </div>
                     ))}
                   </div>
@@ -1894,16 +1894,16 @@ export default function PCafIndiaBrsrPage() {
             return (
             <>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Total Insured Emissions (PCAF-scoped)" value={insTotal.toLocaleString()} sub="tCO₂e" color={T.navy} />
+                <KpiCard label="Total Insured Emissions (PCAF-scoped)" value={insTotal.toLocaleString('en-IN')} sub="tCO₂e" color={T.navy} />
                 <KpiCard label="Avg PCAF DQS" value={insDqs.toFixed(2)} sub="1=best · 5=worst" color={T.amber} />
                 <KpiCard label="Policies" value={insurancePolicies.length} sub="assessed" />
                 {insExtended > 0 && (
-                  <KpiCard label="Life/Health (extended, non-PCAF)" value={insExtended.toLocaleString()} sub="tCO₂e — excluded from PCAF total" color={T.sub} />
+                  <KpiCard label="Life/Health (extended, non-PCAF)" value={insExtended.toLocaleString('en-IN')} sub="tCO₂e — excluded from PCAF total" color={T.sub} />
                 )}
               </div>
               {insExtended > 0 && (
                 <Alert type='info'>
-                  ℹ️ {insuranceResult.results.filter(r => r.out_of_pcaf_scope).length} Life/Health polic{insuranceResult.results.filter(r => r.out_of_pcaf_scope).length === 1 ? 'y' : 'ies'} ({insExtended.toLocaleString()} tCO₂e) are out of scope of the PCAF Insurance-Associated Emissions standard (Nov 2022) — commercial lines and personal motor only. Shown separately above, not included in the PCAF-labeled total.
+                  ℹ️ {insuranceResult.results.filter(r => r.out_of_pcaf_scope).length} Life/Health polic{insuranceResult.results.filter(r => r.out_of_pcaf_scope).length === 1 ? 'y' : 'ies'} ({insExtended.toLocaleString('en-IN')} tCO₂e) are out of scope of the PCAF Insurance-Associated Emissions standard (Nov 2022) — commercial lines and personal motor only. Shown separately above, not included in the PCAF-labeled total.
                 </Alert>
               )}
 
@@ -1915,7 +1915,7 @@ export default function PCafIndiaBrsrPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
                       <XAxis dataKey="name" tick={{fontSize:10}} />
                       <YAxis tick={{fontSize:10}} tickFormatter={v => v>=1e6?`${(v/1e6).toFixed(1)}M`:v>=1000?`${(v/1000).toFixed(0)}k`:v} />
-                      <Tooltip formatter={(v,n) => [v.toLocaleString(), n]} />
+                      <Tooltip formatter={(v,n) => [v.toLocaleString('en-IN'), n]} />
                       <Bar dataKey="tco2e" fill={T.indigo} radius={[4,4,0,0]} name="Insured tCO₂e" />
                     </BarChart>
                   </ResponsiveContainer>
@@ -1928,7 +1928,7 @@ export default function PCafIndiaBrsrPage() {
                         <span style={{ margin:'0 6px', color:T.sub }}>·</span>
                         <DqsBadge score={r.pcaf_dqs} />
                         <span style={{ margin:'0 6px', color:T.sub }}>·</span>
-                        <span style={{ color:T.navy, fontWeight:700 }}>{(r.insured_total_tco2e||0).toLocaleString()} tCO₂e</span>
+                        <span style={{ color:T.navy, fontWeight:700 }}>{(r.insured_total_tco2e||0).toLocaleString('en-IN')} tCO₂e</span>
                       </div>
                     ))}
                   </div>
@@ -1960,7 +1960,7 @@ export default function PCafIndiaBrsrPage() {
                             )}
                           </td>
                           <td style={{ padding:'8px 10px' }}>{((r.gross_premium_musd||0) / 0.12).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
-                          <td style={{ padding:'8px 10px', fontWeight:700, color: r.out_of_pcaf_scope ? T.sub : T.navy }}>{(r.insured_total_tco2e||0).toLocaleString()}</td>
+                          <td style={{ padding:'8px 10px', fontWeight:700, color: r.out_of_pcaf_scope ? T.sub : T.navy }}>{(r.insured_total_tco2e||0).toLocaleString('en-IN')}</td>
                           <td style={{ padding:'8px 10px' }}><DqsBadge score={r.pcaf_dqs || r.dqs} /></td>
                         </tr>
                       ))}
@@ -2097,7 +2097,7 @@ export default function PCafIndiaBrsrPage() {
           {facilitatedResult && (
             <>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Total Facilitated Emissions" value={(facilitatedResult.summary?.total_facilitated_tco2e||0).toLocaleString()} sub="tCO₂e" color={T.navy} />
+                <KpiCard label="Total Facilitated Emissions" value={(facilitatedResult.summary?.total_facilitated_tco2e||0).toLocaleString('en-IN')} sub="tCO₂e" color={T.navy} />
                 <KpiCard label="Deal Count" value={facilitatedResult.summary?.deal_count || facilitatedDeals.length} sub="deals assessed" />
                 <KpiCard label="Green Deals" value={facilitatedResult.summary?.green_bond_count ?? facilitatedDeals.filter(d=>d.green_bond).length} sub="green bond / ESG" color={T.green} />
               </div>
@@ -2110,7 +2110,7 @@ export default function PCafIndiaBrsrPage() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#f0ede8" />
                       <XAxis dataKey="name" tick={{fontSize:11}} />
                       <YAxis tick={{fontSize:11}} tickFormatter={v => v>=1000000 ? `${(v/1000000).toFixed(1)}M` : v>=1000 ? `${(v/1000).toFixed(0)}k` : v} />
-                      <Tooltip formatter={(v) => [v.toLocaleString(), 'tCO₂e']} />
+                      <Tooltip formatter={(v) => [v.toLocaleString('en-IN'), 'tCO₂e']} />
                       <Bar dataKey="tco2e" fill={T.indigo} radius={[4,4,0,0]} />
                     </BarChart>
                   </ResponsiveContainer>
@@ -2134,7 +2134,7 @@ export default function PCafIndiaBrsrPage() {
                           <td style={{ padding:'8px 10px', fontWeight:600 }}>{r.issuer_name}</td>
                           <td style={{ padding:'8px 10px', color:T.sub }}>{r.deal_type}</td>
                           <td style={{ padding:'8px 10px' }}>{((r.bank_participation_musd||0) / 0.12).toLocaleString(undefined, {maximumFractionDigits:0})}</td>
-                          <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{(r.facilitated_total_tco2e||0).toLocaleString()}</td>
+                          <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{(r.facilitated_total_tco2e||0).toLocaleString('en-IN')}</td>
                           <td style={{ padding:'8px 10px' }}><DqsBadge score={r.pcaf_dqs || r.dqs} /></td>
                           <td style={{ padding:'8px 10px' }}>
                             {r.green_classification === 'green'
@@ -2190,8 +2190,8 @@ export default function PCafIndiaBrsrPage() {
             <div style={{ display:'flex', flexDirection:'column', gap:16 }}>
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
                 <KpiCard label="Company" value={companyResult.company_name || cin} sub={companyResult.sector_gics} wide />
-                <KpiCard label="EVIC (₹ Crore)" value={(companyResult.evic_inr_cr||0).toLocaleString()} sub="Market cap + Debt + Minority" color={T.indigo} />
-                <KpiCard label="Revenue (₹ Crore)" value={(companyResult.revenue_inr_cr||0).toLocaleString()} sub="Annual revenue" />
+                <KpiCard label="EVIC (₹ Crore)" value={(companyResult.evic_inr_cr||0).toLocaleString('en-IN')} sub="Market cap + Debt + Minority" color={T.indigo} />
+                <KpiCard label="Revenue (₹ Crore)" value={(companyResult.revenue_inr_cr||0).toLocaleString('en-IN')} sub="Annual revenue" />
                 <KpiCard label="Sector Intensity" value={(companyResult.sector_intensity_tco2e_per_inr_cr||0).toFixed(3)} sub="tCO₂e per ₹Cr" color={T.amber} />
               </div>
 
@@ -2203,12 +2203,12 @@ export default function PCafIndiaBrsrPage() {
                     ['Ticker', companyResult.ticker || '—'],
                     ['Exchange', companyResult.exchange || '—'],
                     ['GICS Sector', companyResult.sector_gics || '—'],
-                    ['Market Cap (₹Cr)', (companyResult.market_cap_inr_cr||0).toLocaleString()],
-                    ['Total Debt (₹Cr)', (companyResult.total_debt_inr_cr||0).toLocaleString()],
-                    ['EVIC (₹Cr)', (companyResult.evic_inr_cr||0).toLocaleString()],
-                    ['Revenue (₹Cr)', (companyResult.revenue_inr_cr||0).toLocaleString()],
-                    ['Scope 1 tCO₂e', companyResult.scope1_co2e?.toLocaleString() || 'Not reported'],
-                    ['Scope 2 tCO₂e', companyResult.scope2_co2e?.toLocaleString() || 'Not reported'],
+                    ['Market Cap (₹Cr)', (companyResult.market_cap_inr_cr||0).toLocaleString('en-IN')],
+                    ['Total Debt (₹Cr)', (companyResult.total_debt_inr_cr||0).toLocaleString('en-IN')],
+                    ['EVIC (₹Cr)', (companyResult.evic_inr_cr||0).toLocaleString('en-IN')],
+                    ['Revenue (₹Cr)', (companyResult.revenue_inr_cr||0).toLocaleString('en-IN')],
+                    ['Scope 1 tCO₂e', companyResult.scope1_co2e?.toLocaleString('en-IN') || 'Not reported'],
+                    ['Scope 2 tCO₂e', companyResult.scope2_co2e?.toLocaleString('en-IN') || 'Not reported'],
                     ['Sector EF (tCO₂e/₹Cr)', companyResult.sector_intensity_tco2e_per_inr_cr?.toFixed(3) || '—'],
                     ['Data Source', companyResult.data_source || '—'],
                   ].map(([l,v]) => (
