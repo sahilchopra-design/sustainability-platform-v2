@@ -21,6 +21,7 @@ import { getEVIC } from '../../../data/evicService';
 import { getReferenceEvicBn, getReferenceRevenueM, getReferenceEntry } from '../../../data/evicReference';
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
 import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from '../../../data/pcafStandards';
+import { LOB_FIELDS, calcPolicyEmissions } from '../../../data/pcafInsuranceEngine';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
@@ -308,24 +309,35 @@ const _INDIA_PCAF = isIndiaMode() ? adaptForPCAF().slice(0, 30).map((c, i) => ({
 if (_INDIA_PCAF) BASE_POSITIONS.splice(0, 20, ..._INDIA_PCAF);
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   INSURANCE PORTFOLIO — Part B (Chapter 5)
+   INSURANCE PORTFOLIO — Part C (PCAF IAE Standard, Nov 2022, updated Dec 2025)
    8 Lines of Business with full sector emission factor references
    ═══════════════════════════════════════════════════════════════════════════════ */
+// R3 gap B-3: motor, property, commercial, reinsurance, and project
+// insurance now carry the physical/financial inputs the shared PCAF IAE
+// calculator (data/pcafInsuranceEngine.js \u2014 ported verbatim from the India
+// BRSR module, confirmed by the R3 review as the best methodology on the
+// platform) needs to compute real PCAF-attributed emissions, replacing the
+// GWP x flat-sector-EF formula that produced totals 3-4 orders of magnitude
+// too low. `efPerPremium`/`efSource` are kept only for Life/Health/Marine,
+// none of which the shared engine (or PCAF's IAE Standard) covers \u2014 Marine
+// has no documented PCAF methodology at all (unlike Life/Health, which the
+// Standard explicitly excludes), so it stays on the old non-PCAF proxy,
+// clearly labeled, rather than inventing an unverified formula for it.
 const INSURANCE_LOB=[
   {id:1,lob:'Motor',subLob:'Private & Commercial Motor',premiumM:1420,claimsM:980,exposureM:8400,
-   efPerPremium:0.42,efSource:'Platform methodology (not PCAF-defined) \u2014 fleet-premium proxy',dqs:3,
-   notes:'Direct auto insurance; fleet avg 165 gCO2/km \u00d7 15k km; DQS 3 via fleet-level data',
-   methodology:'Attribution = GWP proportion. EF derived from UK motor fleet avg emissions per unit premium (DEFRA 2023 + Lloyd\'s analysis).',
+   dqs:3,vehicle_count:900000,fuel_type:'petrol',annual_km_per_vehicle:14000,
+   notes:'Direct auto insurance; PCAF IAE vehicle-count x fuel-type EF x annual km methodology (ported from the India BRSR module)',
+   methodology:'PCAF IAE Standard: FE = vehicle_count x annual_km x fuel-type emission factor (kgCO2/km) / 1000.',
    riskFactors:'Physical risk: flood/hail damage increasing claims frequency. Transition risk: ICE fleet depreciation as EV adoption accelerates.'},
   {id:2,lob:'Property',subLob:'Residential & SME Property',premiumM:2100,claimsM:1340,exposureM:14200,
-   efPerPremium:0.28,efSource:'Platform methodology (not PCAF-defined) \u2014 residential buildings avg',dqs:4,
-   notes:'Home & commercial property; EPC-based proxy for building emissions per premium unit',
-   methodology:'Attribution = GWP proportion. EF from UK building stock energy intensity (BRE/DEFRA) mapped to premium volume.',
+   dqs:4,insured_property_area_m2:210000000,epc_rating:'C',
+   notes:'Home & commercial property; PCAF IAE building-area x EPC-band emission factor methodology (ported from the India BRSR module)',
+   methodology:'PCAF IAE Standard: FE = insured floor area (m2) x EPC-band emission factor.',
    riskFactors:'Physical risk: increasing flood, windstorm, wildfire losses. Transition risk: EPC min standards may reduce insurable stock.'},
   {id:3,lob:'Commercial',subLob:'General Liability & PI',premiumM:3400,claimsM:1820,exposureM:22000,
-   efPerPremium:0.61,efSource:'Platform methodology (not PCAF-defined) \u2014 commercial multi-sector avg',dqs:4,
-   notes:'General liability, workers comp, professional indemnity across multiple sectors',
-   methodology:'Attribution = GWP proportion. Weighted sector EF based on insured industry mix.',
+   dqs:4,insured_revenue_musd:170000,
+   notes:'General liability, workers comp, professional indemnity across multiple sectors; PCAF IAE revenue-based sector EF methodology (ported from the India BRSR module)',
+   methodology:'PCAF IAE Standard: FE = insured revenue x sector emission factor.',
    riskFactors:'Liability risk: increasing climate litigation. D&O exposure for greenwashing and climate disclosure failures.'},
   {id:4,lob:'Life',subLob:'Term & Whole Life',premiumM:4800,claimsM:2100,exposureM:42000,
    efPerPremium:0.08,efSource:'Out of PCAF IAE scope \u2014 illustrative proxy only',dqs:5,
@@ -338,17 +350,17 @@ const INSURANCE_LOB=[
    methodology:'EF from healthcare sector energy intensity. Primarily Scope 2 (hospital electricity).',
    riskFactors:'Climate-driven health impacts: heat stress, vector-borne diseases, air quality.'},
   {id:6,lob:'Reinsurance',subLob:'Property Cat & Specialty',premiumM:1800,claimsM:1200,exposureM:18000,
-   efPerPremium:0.35,efSource:'Platform methodology (not PCAF-defined) \u2014 reinsurance composite',dqs:4,
-   notes:'Property cat & specialty reinsurance; composite EF weighted by underlying LoB mix',
-   methodology:'Attribution follows ceded premium. EF is composite of underlying primary insurance mix, weighted by reinsured exposure.',
+   dqs:4,ceded_premium_musd:1800,cedent_total_gwp_musd:18000,cedent_reported_tco2e:3000000,
+   notes:'Property cat & specialty treaty reinsurance; PCAF IAE ceded-premium share of cedent-reported emissions methodology (ported from the India BRSR module; Dec 2025 update)',
+   methodology:'PCAF IAE Standard (Dec 2025 update): FE = (ceded premium / cedent total GWP) x cedent-reported tCO2e.',
    riskFactors:'Nat cat severity increasing: Swiss Re estimates 5-7% annual loss trend increase from climate change.'},
   {id:7,lob:'Project Insurance',subLob:'Construction All-Risk & DSU',premiumM:680,claimsM:340,exposureM:6200,
-   efPerPremium:0.74,efSource:'Platform methodology (not PCAF-defined) \u2014 construction/infrastructure',dqs:4,
-   notes:'Construction all-risk, delay in start-up, PI for infrastructure and energy projects',
-   methodology:'High EF reflects construction sector emission intensity. Project-level monitoring where available.',
+   dqs:4,sum_insured_musd:5440,total_project_cost_musd:7600,project_scope1_tco2e:850000,
+   notes:'Construction all-risk, delay in start-up, PI for infrastructure and energy projects; PCAF IAE sum-insured share of project Scope 1 methodology (ported from the India BRSR module; Dec 2025 update)',
+   methodology:'PCAF IAE Standard (Dec 2025 update): FE = (sum insured / total project cost) x project Scope 1 emissions.',
    riskFactors:'Physical risk during construction: extreme weather delays. Stranded asset risk for fossil fuel projects.'},
   {id:8,lob:'Marine',subLob:'Hull, Cargo & P&I',premiumM:920,claimsM:580,exposureM:8400,
-   efPerPremium:0.89,efSource:'Platform methodology (not PCAF-defined) \u2014 IMO shipping avg',dqs:3,
+   efPerPremium:0.89,efSource:'Platform methodology (not PCAF-defined) \u2014 IMO shipping avg; PCAF has no documented IAE methodology for marine lines',dqs:3,
    notes:'Hull & cargo; IMO MEPC.352(78) CII reference; highest EF of all LOBs',
    methodology:'EF derived from IMO Fourth GHG Study (2020). Marine sector avg tCO2e per premium dollar based on global fleet fuel consumption.',
    riskFactors:'Regulatory risk: IMO decarbonisation targets (50% by 2050). Fuel transition costs: LNG/methanol/ammonia.'},
@@ -1013,7 +1025,7 @@ function PartATab({positions,setPositions}){
 }
 
 /* ═══════════════════════════════════════════════════════════════════════════════
-   TAB 2: PART B — INSURANCE-ASSOCIATED EMISSIONS (Chapter 5)
+   TAB 2: PART C — INSURANCE-ASSOCIATED EMISSIONS (PCAF IAE Standard)
    8 Lines of Business with full methodology
    ═══════════════════════════════════════════════════════════════════════════════ */
 function PartBTab(){
@@ -1022,43 +1034,69 @@ function PartBTab(){
   const[editForm,setEditForm]=useState({});
   const[showDetails,setShowDetails]=useState(null);
 
-  // Life and Health are explicitly out of scope of the PCAF Insurance-
-  // Associated Emissions standard (Nov 2022) — commercial lines and personal
-  // motor only — but were previously summed straight into the headline
-  // "Insurance FE" total with no ring-fencing (GAP-012). Exclude them from
-  // the PCAF-labeled total and report as a separate, clearly-labeled metric.
-  const inScopeLob=useMemo(()=>lobData.filter(l=>l.lob!=='Life'&&l.lob!=='Health'),[lobData]);
-  const outOfScopeLob=useMemo(()=>lobData.filter(l=>l.lob==='Life'||l.lob==='Health'),[lobData]);
-  const totalPremium=useMemo(()=>lobData.reduce((s,l)=>s+l.premiumM,0),[lobData]);
-  const totalFE=useMemo(()=>inScopeLob.reduce((s,l)=>s+Math.round(l.premiumM*l.efPerPremium),0),[inScopeLob]);
-  const totalExtendedFE=useMemo(()=>outOfScopeLob.reduce((s,l)=>s+Math.round(l.premiumM*l.efPerPremium),0),[outOfScopeLob]);
-  const totalClaims=useMemo(()=>lobData.reduce((s,l)=>s+l.claimsM,0),[lobData]);
-  const totalExposure=useMemo(()=>lobData.reduce((s,l)=>s+l.exposureM,0),[lobData]);
-  const avgDqs=useMemo(()=>lobData.length?(lobData.reduce((s,l)=>s+l.dqs,0)/lobData.length).toFixed(1):'—',[lobData]);
-  const lobFE=useMemo(()=>lobData.map(l=>({lob:l.lob,fe:Math.round(l.premiumM*l.efPerPremium),premium:l.premiumM,intensity:(l.efPerPremium).toFixed(2),outOfScope:l.lob==='Life'||l.lob==='Health'})),[lobData]);
+  // R3 gap B-3: Motor/Property/Commercial/Reinsurance/Project Insurance now
+  // run through the shared PCAF IAE calculator (data/pcafInsuranceEngine.js,
+  // ported verbatim from the India BRSR module — confirmed by the R3 review
+  // as the best PCAF methodology on the platform) instead of a flat
+  // GWP x sector-EF proxy that produced totals 3-4 orders of magnitude too
+  // low (~5,236 tCO2e on $17.3Bn GWP where PCAF's own attribution method
+  // lands in the 10^5-10^7 range). Life, Health, and Marine have no
+  // documented PCAF IAE methodology at all (Marine has none; Life/Health are
+  // explicitly excluded by the Standard) and stay on the old premium x EF
+  // proxy, clearly labeled non-PCAF — previously Marine was silently folded
+  // into the "PCAF-scoped" total despite its efSource already saying
+  // "not PCAF-defined"; it's now ring-fenced alongside Life/Health.
+  const lobResults=useMemo(()=>lobData.map(l=>{
+    const lobValue=LOB_FIELDS[l.lob]?.lobValues?.[0];
+    if(!lobValue){
+      const tco2e=Math.round(l.premiumM*l.efPerPremium);
+      return{...l,tco2e,outOfPcafScope:true,
+        dataGapReason:`${l.lob} has no documented PCAF IAE methodology — illustrative proxy only, excluded from the PCAF-labeled total`,
+        engineComputed:false};
+    }
+    const{tco2e,outOfPcafScope,dataGapReason}=calcPolicyEmissions({
+      line_of_business:lobValue,gross_written_premium_musd:l.premiumM,
+      vehicle_count:l.vehicle_count,fuel_type:l.fuel_type,annual_km_per_vehicle:l.annual_km_per_vehicle,
+      insured_property_area_m2:l.insured_property_area_m2,epc_rating:l.epc_rating,
+      insured_revenue_musd:l.insured_revenue_musd,
+      ceded_premium_musd:l.ceded_premium_musd,cedent_total_gwp_musd:l.cedent_total_gwp_musd,cedent_reported_tco2e:l.cedent_reported_tco2e,
+      sum_insured_musd:l.sum_insured_musd,total_project_cost_musd:l.total_project_cost_musd,project_scope1_tco2e:l.project_scope1_tco2e,
+    });
+    return{...l,tco2e:Math.round(tco2e),outOfPcafScope,dataGapReason,engineComputed:true};
+  }),[lobData]);
+
+  const inScopeLob=useMemo(()=>lobResults.filter(l=>!l.outOfPcafScope),[lobResults]);
+  const outOfScopeLob=useMemo(()=>lobResults.filter(l=>l.outOfPcafScope),[lobResults]);
+  const totalPremium=useMemo(()=>lobResults.reduce((s,l)=>s+l.premiumM,0),[lobResults]);
+  const totalFE=useMemo(()=>inScopeLob.reduce((s,l)=>s+l.tco2e,0),[inScopeLob]);
+  const totalExtendedFE=useMemo(()=>outOfScopeLob.reduce((s,l)=>s+l.tco2e,0),[outOfScopeLob]);
+  const totalClaims=useMemo(()=>lobResults.reduce((s,l)=>s+l.claimsM,0),[lobResults]);
+  const totalExposure=useMemo(()=>lobResults.reduce((s,l)=>s+l.exposureM,0),[lobResults]);
+  const avgDqs=useMemo(()=>lobResults.length?(lobResults.reduce((s,l)=>s+l.dqs,0)/lobResults.length).toFixed(1):'—',[lobResults]);
+  const lobFE=useMemo(()=>lobResults.map(l=>({lob:l.lob,fe:l.tco2e,premium:l.premiumM,intensity:l.premiumM>0?(l.tco2e/l.premiumM).toFixed(2):'0.00',outOfScope:l.outOfPcafScope})),[lobResults]);
   const lossRatio=useMemo(()=>(totalPremium ? totalClaims/totalPremium*100 : 0).toFixed(1),[totalClaims,totalPremium]);
 
-  function startLobEdit(l){setEditId(l.id);setEditForm({premiumM:l.premiumM,claimsM:l.claimsM,exposureM:l.exposureM,efPerPremium:l.efPerPremium,dqs:l.dqs});}
-  function applyLobEdit(id){setLobData(prev=>prev.map(l=>l.id===id?{...l,premiumM:+editForm.premiumM,claimsM:+editForm.claimsM,exposureM:+editForm.exposureM,efPerPremium:+editForm.efPerPremium,dqs:+editForm.dqs}:l));setEditId(null);}
+  function startLobEdit(l){setEditId(l.id);setEditForm({premiumM:l.premiumM,claimsM:l.claimsM,exposureM:l.exposureM,dqs:l.dqs});}
+  function applyLobEdit(id){setLobData(prev=>prev.map(l=>l.id===id?{...l,premiumM:+editForm.premiumM,claimsM:+editForm.claimsM,exposureM:+editForm.exposureM,dqs:+editForm.dqs}:l));setEditId(null);}
 
   return(<div>
-    <SectionHeader title="Part C: Insurance-Associated Emissions" citation="PCAF Insurance-Associated Emissions Standard (Nov 2022, updated Dec 2025)" description={`${lobData.length} lines of business (${inScopeLob.length} in PCAF IAE scope, ${outOfScopeLob.length} extended/out-of-scope). Formula: FE = Gross Written Premium x Sector Emission Factor per Premium unit. Attribution based on premium volume (not claims). Total GWP: $${fmt(totalPremium*1e6)}.`}/>
-    {totalExtendedFE>0&&<InfoBox type="info">ℹ️ Life and Health lines ({fmt(totalExtendedFE)} tCO2e) are out of scope of the PCAF IAE standard — commercial lines and personal motor only. Shown separately below, excluded from the PCAF-labeled total.</InfoBox>}
+    <SectionHeader title="Part C: Insurance-Associated Emissions" citation={PCAF_PART_C} description={`${lobResults.length} lines of business (${inScopeLob.length} in PCAF IAE scope, ${outOfScopeLob.length} extended/out-of-scope). Motor/Property/Commercial/Reinsurance/Project Insurance use PCAF's real per-LOB attribution methodology (ported from the India BRSR module); Life/Health/Marine have no PCAF IAE methodology and are excluded from the PCAF-labeled total. Total GWP: $${fmt(totalPremium*1e6)}.`}/>
+    {totalExtendedFE>0&&<InfoBox type="info">ℹ️ {outOfScopeLob.map(l=>l.lob).join(', ')} ({fmt(totalExtendedFE)} tCO2e) have no documented PCAF IAE methodology — shown separately below, excluded from the PCAF-labeled total.</InfoBox>}
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
       <KPICard label="Total GWP" value={'$'+fmt(totalPremium)+'M'} sub="Gross written premium" color={T.navy}/>
       <KPICard label="Insurance FE (PCAF-scoped)" value={fmt(totalFE)+' tCO2e'} sub={`${inScopeLob.length} in-scope LOBs`} color={T.red}/>
-      {totalExtendedFE>0&&<KPICard label="Life/Health (extended, non-PCAF)" value={fmt(totalExtendedFE)+' tCO2e'} sub="Excluded from PCAF total" color={T.textMut}/>}
+      {totalExtendedFE>0&&<KPICard label="Extended, non-PCAF" value={fmt(totalExtendedFE)+' tCO2e'} sub="Life/Health/Marine — excluded from PCAF total" color={T.textMut}/>}
       <KPICard label="Total Exposure" value={'$'+fmt(totalExposure)+'M'} sub="Sum insured" color={T.gold}/>
       <KPICard label="Loss Ratio" value={lossRatio+'%'} sub="Claims / Premium" color={+lossRatio>70?T.red:T.green}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="LOB weighted" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
       <KPICard label="Avg Intensity" value={(totalPremium ? totalFE/totalPremium : 0).toFixed(3)} sub="tCO2e per $M GWP (PCAF-scoped)" color={T.sage}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
-      <Card title="FE by Line of Business" citation="PCAF IAE Standard (Nov 2022)">
+      <Card title="FE by Line of Business" citation={PCAF_PART_C}>
         <ResponsiveContainer width="100%" height={250}><BarChart data={lobFE}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="lob" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><Tooltip {...tip}/><Bar dataKey="fe" name="FE tCO2e" radius={[4,4,0,0]}>{lobFE.map((d,i)=><Cell key={i} fill={PIE_COLORS[i]}/>)}</Bar></BarChart></ResponsiveContainer>
       </Card>
       <Card title="Premium vs Claims by LOB">
-        <ResponsiveContainer width="100%" height={250}><BarChart data={lobData}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="lob" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Legend wrapperStyle={{fontSize:10}}/><Bar dataKey="premiumM" name="Premium $M" fill={T.navy}/><Bar dataKey="claimsM" name="Claims $M" fill={T.gold}/></BarChart></ResponsiveContainer>
+        <ResponsiveContainer width="100%" height={250}><BarChart data={lobResults}><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis dataKey="lob" tick={{fontSize:9,fill:T.textSec}}/><YAxis tick={{fontSize:9,fill:T.textSec}}/><Tooltip {...tip}/><Legend wrapperStyle={{fontSize:10}}/><Bar dataKey="premiumM" name="Premium $M" fill={T.navy}/><Bar dataKey="claimsM" name="Claims $M" fill={T.gold}/></BarChart></ResponsiveContainer>
       </Card>
     </div>
 
@@ -1066,22 +1104,22 @@ function PartBTab(){
     <div style={{overflowX:'auto',borderRadius:8,border:`1px solid ${T.border}`}}>
       <table style={{width:'100%',borderCollapse:'collapse',fontSize:11,fontFamily:T.font}}>
         <thead style={{background:T.bg}}><tr>
-          {['LOB','Sub-LOB','Premium $M','Claims $M','Exposure $M','EF (tCO2e/$M)','Financed Em.','DQS','Actions'].map(h=><th key={h} style={{padding:'7px 8px',textAlign:'left',fontSize:10,fontWeight:700,color:T.textSec,borderBottom:`1px solid ${T.border}`,fontFamily:T.mono}}>{h}</th>)}
+          {['LOB','Sub-LOB','Premium $M','Claims $M','Exposure $M','Implied Intensity (tCO2e/$M)','Financed Em.','DQS','Actions'].map(h=><th key={h} style={{padding:'7px 8px',textAlign:'left',fontSize:10,fontWeight:700,color:T.textSec,borderBottom:`1px solid ${T.border}`,fontFamily:T.mono}}>{h}</th>)}
         </tr></thead>
-        <tbody>{lobData.map((l,ri)=>(
+        <tbody>{lobResults.map((l,ri)=>(
           <React.Fragment key={l.id}>
             <tr style={{background:ri%2===0?T.surface:T.bg,borderBottom:`1px solid ${T.border}`}}>
-              <td style={{padding:'6px 8px',fontWeight:600,color:T.navy}}>{l.lob}{(l.lob==='Life'||l.lob==='Health')&&<span style={{marginLeft:6,background:'#fef2f2',color:'#b91c1c',border:'1px solid #fca5a5',borderRadius:10,padding:'1px 6px',fontSize:9,fontWeight:700}}>extended, non-PCAF</span>}</td>
+              <td style={{padding:'6px 8px',fontWeight:600,color:T.navy}}>{l.lob}{l.outOfPcafScope&&<span style={{marginLeft:6,background:'#fef2f2',color:'#b91c1c',border:'1px solid #fca5a5',borderRadius:10,padding:'1px 6px',fontSize:9,fontWeight:700}}>extended, non-PCAF</span>}{l.engineComputed&&<span style={{marginLeft:6,background:'#f0fdf4',color:'#15803d',border:'1px solid #86efac',borderRadius:10,padding:'1px 6px',fontSize:9,fontWeight:700}}>PCAF IAE</span>}</td>
               <td style={{padding:'6px 8px',fontSize:10,color:T.textSec}}>{l.subLob}</td>
               <td style={{padding:'6px 8px',textAlign:'right'}}>{editId===l.id?<input type="number" value={editForm.premiumM} onChange={e=>setEditForm(f=>({...f,premiumM:e.target.value}))} style={{width:80,padding:'3px 6px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:11}}/>:fmtNum(l.premiumM)}</td>
               <td style={{padding:'6px 8px',textAlign:'right'}}>{editId===l.id?<input type="number" value={editForm.claimsM} onChange={e=>setEditForm(f=>({...f,claimsM:e.target.value}))} style={{width:80,padding:'3px 6px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:11}}/>:fmtNum(l.claimsM)}</td>
               <td style={{padding:'6px 8px',textAlign:'right'}}>{fmtNum(l.exposureM)}</td>
-              <td style={{padding:'6px 8px',textAlign:'right',fontFamily:T.mono}}>{editId===l.id?<input type="number" step="0.01" value={editForm.efPerPremium} onChange={e=>setEditForm(f=>({...f,efPerPremium:e.target.value}))} style={{width:60,padding:'3px 6px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:11}}/>:l.efPerPremium.toFixed(2)}</td>
-              <td style={{padding:'6px 8px',textAlign:'right',fontWeight:600,color:l.premiumM*l.efPerPremium>500000?T.red:T.text}}>{fmt(Math.round(l.premiumM*l.efPerPremium))}</td>
+              <td style={{padding:'6px 8px',textAlign:'right',fontFamily:T.mono}} title={l.engineComputed?'Derived from the PCAF IAE per-LOB inputs, not a directly-set coefficient':'Editable flat proxy — no PCAF methodology exists for this LOB'}>{l.premiumM>0?(l.tco2e/l.premiumM).toFixed(2):'0.00'}</td>
+              <td style={{padding:'6px 8px',textAlign:'right',fontWeight:600,color:l.tco2e>500000?T.red:T.text}}>{fmt(l.tco2e)}</td>
               <td style={{padding:'6px 8px',textAlign:'center'}}><span style={{fontWeight:700,color:DQS_COLOR[l.dqs]}}>{l.dqs}</span></td>
               <td style={{padding:'6px 8px',display:'flex',gap:4}}>
                 {editId===l.id?<button onClick={()=>applyLobEdit(l.id)} style={{padding:'2px 8px',border:'none',borderRadius:3,background:T.sage,color:'#fff',fontSize:10,cursor:'pointer'}}>Save</button>:<button onClick={()=>startLobEdit(l)} style={{padding:'2px 8px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:10,cursor:'pointer'}}>Edit</button>}
-                <button onClick={()=>setShowDetails(showDetails===l.id?null:l.id)} style={{padding:'2px 8px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:10,cursor:'pointer'}}>{showDetails===l.id?'\u2013':'+'}</button>
+                <button onClick={()=>setShowDetails(showDetails===l.id?null:l.id)} style={{padding:'2px 8px',border:`1px solid ${T.border}`,borderRadius:3,fontSize:10,cursor:'pointer'}}>{showDetails===l.id?'–':'+'}</button>
               </td>
             </tr>
             {showDetails===l.id&&<tr style={{background:'#f8fafc'}}><td colSpan={9} style={{padding:'10px 16px',fontSize:11,lineHeight:1.6}}>
@@ -1090,14 +1128,16 @@ function PartBTab(){
                 <div><strong style={{color:T.navy}}>Risk Factors:</strong><br/>{l.riskFactors}</div>
               </div>
               <div style={{marginTop:8,padding:8,background:T.bg,borderRadius:4,fontFamily:T.mono,fontSize:10}}>
-                Calculation: FE = ${fmtNum(l.premiumM)}M \u00d7 {l.efPerPremium} tCO2e/$M = {fmt(Math.round(l.premiumM*l.efPerPremium))} tCO2e | Source: {l.efSource}
+                {l.engineComputed
+                  ? <>PCAF IAE calculation (see Methodology above) = {fmt(l.tco2e)} tCO2e | Premium ${fmtNum(l.premiumM)}M shown for context only — not the attribution driver</>
+                  : <>Calculation: FE = ${fmtNum(l.premiumM)}M × {l.efPerPremium} tCO2e/$M = {fmt(l.tco2e)} tCO2e | Source: {l.efSource}</>}
               </div>
             </td></tr>}
           </React.Fragment>
         ))}</tbody>
       </table>
     </div>
-    <InfoBox type="info"><strong>Platform methodology (not the PCAF IAE formula):</strong> this tab attributes insurance-associated emissions proportionally to gross written premium x a sector emission factor. The PCAF IAE Standard (Nov 2022) instead attributes via premium \u00f7 customer revenue \u00d7 customer emissions, for commercial lines and personal motor only \u2014 not yet implemented here. This methodology captures the insurer&apos;s role in enabling economic activities that generate emissions. For investment-side emissions, see Part A (financed emissions).</InfoBox>
+    <InfoBox type="info"><strong>{PCAF_PART_C}:</strong> Motor, Property, Commercial, Reinsurance, and Project Insurance are computed via PCAF's real IAE attribution methodology per line of business (vehicle-count x fuel EF for motor; area x EPC-band EF for property; insured revenue x sector EF for commercial; ceded-premium share of cedent emissions for treaty reinsurance; sum-insured share of project Scope 1 for project insurance) — the same calculators used by the India BRSR module. Life, Health, and Marine have no documented PCAF IAE methodology and are excluded from the PCAF-labeled total above. For investment-side emissions, see Part A (financed emissions).</InfoBox>
   </div>);
 }
 

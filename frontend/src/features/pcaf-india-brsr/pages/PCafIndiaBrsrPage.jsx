@@ -2,6 +2,7 @@ import React, { useState, useCallback, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { requestWithTimeout } from '../../../lib/http';
 import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from '../../../data/pcafStandards';
+import { LOB_FIELDS, LOB_CATEGORIES, getLobCategory, calcPolicyEmissions, INR_CR_TO_USD_M } from '../../../data/pcafInsuranceEngine';
 import { COMPANY_MASTER, searchCompanies } from '../../../data/companyMaster';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
@@ -266,79 +267,41 @@ const DEFAULT_HOLDINGS = [
 ];
 
 // ── LOB config map ─────────────────────────────────────────────────────────
-const LOB_FIELDS = {
-  'Motor': {
-    color: '#1b3a5c', lobValues: ['motor_personal', 'motor_commercial'],
-    reference: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) · Premium-weighted vehicle emissions',
-    fields: [
-      { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['motor_personal', 'motor_commercial'] },
-      { key: 'vehicle_count', label: 'Vehicle Count', type: 'number' },
-      { key: 'fuel_type', label: 'Fuel Type', type: 'select', options: ['petrol','diesel','cng','hybrid','bev','lpg'] },
-      { key: 'annual_km_per_vehicle', label: 'Annual km/veh', type: 'number', help: 'Default 12,000' },
-      { key: 'avg_engine_cc', label: 'Engine CC', type: 'number' },
-    ],
-  },
-  'Property': {
-    color: '#d97706', lobValues: ['property_residential', 'property_commercial'],
-    reference: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) · Building area × EPC emission factor',
-    fields: [
-      { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['property_residential', 'property_commercial'] },
-      { key: 'insured_property_area_m2', label: 'Area (m²)', type: 'number' },
-      { key: 'epc_rating', label: 'EPC', type: 'select', options: ['A+','A','B','C','D','E','F','G'] },
-      { key: 'building_type', label: 'Building', type: 'select', options: ['residential','commercial','industrial'] },
-      { key: 'building_year', label: 'Year Built', type: 'number' },
-    ],
-  },
-  'Commercial': {
-    color: '#0d9488', lobValues: ['commercial_marine', 'commercial_energy', 'commercial_liability', 'commercial_other'],
-    reference: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) · Revenue-based sector emission factor',
-    fields: [
-      { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['commercial_marine','commercial_energy','commercial_liability','commercial_other'] },
-      { key: 'insured_revenue_inr_cr', label: 'Insured Rev (₹Cr)', type: 'number' },
-      { key: 'nace_sector', label: 'NACE Sector', type: 'text', help: 'e.g. C24.10, B06' },
-    ],
-  },
-  'Life': {
-    color: '#4f46e5', lobValues: ['life'],
-    reference: 'Out of scope of the PCAF IAE Standard (Nov 2022) — illustrative proxy only, excluded from the PCAF-labeled total',
-    fields: [],
-  },
-  'Health': {
-    color: '#5a8a6a', lobValues: ['health'],
-    reference: 'Out of scope of the PCAF IAE Standard (Nov 2022) — illustrative proxy only, excluded from the PCAF-labeled total',
-    fields: [],
-  },
-  'Reinsurance': {
-    // PCAF Insurance-Associated Emissions Standard, Dec 2025 update — treaty
-    // reinsurance is now a documented IAE methodology, not a platform extension.
-    color: '#be185d', // rose
-    lobValues: ['treaty_reinsurance'],
-    reference: 'PCAF IAE Standard (Nov 2022, updated Dec 2025) — treaty reinsurance methodology',
-    fields: [
-      { key: 'line_of_business', label: 'Type', type: 'select', options: ['treaty_reinsurance'] },
-      { key: 'ceded_premium_inr_cr', label: 'Ceded Premium (₹Cr)', type: 'number' },
-      { key: 'cedent_name', label: 'Cedent Insurer', type: 'text', help: 'Primary insurer ceding risk' },
-      { key: 'cedent_total_gwp_inr_cr', label: 'Cedent Total GWP (₹Cr)', type: 'number' },
-      { key: 'cedent_reported_tco2e', label: 'Cedent Reported tCO₂e', type: 'number', help: 'From cedent ESG filing' },
-    ],
-  },
-  'Project Insurance': {
-    // PCAF Insurance-Associated Emissions Standard, Dec 2025 update — project
-    // insurance is now a documented IAE methodology, not a platform extension.
-    color: '#7c3aed', // violet
-    lobValues: ['project_insurance'],
-    reference: 'PCAF IAE Standard (Nov 2022, updated Dec 2025) — project insurance methodology',
-    fields: [
-      { key: 'line_of_business', label: 'Type', type: 'select', options: ['project_insurance'] },
-      { key: 'sum_insured_inr_cr', label: 'Sum Insured (₹Cr)', type: 'number' },
-      { key: 'total_project_cost_inr_cr', label: 'Project Cost (₹Cr)', type: 'number' },
-      { key: 'project_sector', label: 'Project Sector', type: 'select', options: ['energy','infrastructure','mining','manufacturing','real_estate','transport'] },
-      { key: 'project_scope1_tco2e', label: 'Project Scope 1', type: 'number' },
-    ],
-  },
+// R3 gap B-3: LOB_FIELDS, LOB_CATEGORIES, getLobCategory, and the per-LOB
+// calculator itself now live in the shared data/pcafInsuranceEngine.js (this
+// module's original implementation was ported there verbatim, since the R3
+// review confirmed it's the best PCAF methodology on the platform) so the
+// global PCAF Financed Emissions module's Insurance tab can share it instead
+// of maintaining a second, divergent GWP×flat-EF formula. Field names here
+// use INR Cr (this module's native unit); the engine works in USD millions
+// — insurance-field values are converted at the runInsurance() boundary via
+// INR_CR_TO_USD_M, and the two Insured-Rev / Ceded-Premium / etc. field
+// labels below still say "₹Cr" for this module's own form UI even though
+// the shared LOB_FIELDS module-level field metadata (imported above) is
+// USD-labeled — this page keeps its own field list only where the label
+// needs to say ₹Cr; the calculation itself is 100% shared.
+const LOB_FIELDS_INR = {
+  ...LOB_FIELDS,
+  Commercial: { ...LOB_FIELDS.Commercial, fields: [
+    { key: 'line_of_business', label: 'Sub-LOB', type: 'select', options: ['commercial_marine','commercial_energy','commercial_liability','commercial_other'] },
+    { key: 'insured_revenue_inr_cr', label: 'Insured Rev (₹Cr)', type: 'number' },
+    { key: 'nace_sector', label: 'NACE Sector', type: 'text', help: 'e.g. C24.10, B06' },
+  ] },
+  Reinsurance: { ...LOB_FIELDS.Reinsurance, fields: [
+    { key: 'line_of_business', label: 'Type', type: 'select', options: ['treaty_reinsurance'] },
+    { key: 'ceded_premium_inr_cr', label: 'Ceded Premium (₹Cr)', type: 'number' },
+    { key: 'cedent_name', label: 'Cedent Insurer', type: 'text', help: 'Primary insurer ceding risk' },
+    { key: 'cedent_total_gwp_inr_cr', label: 'Cedent Total GWP (₹Cr)', type: 'number' },
+    { key: 'cedent_reported_tco2e', label: 'Cedent Reported tCO₂e', type: 'number', help: 'From cedent ESG filing' },
+  ] },
+  'Project Insurance': { ...LOB_FIELDS['Project Insurance'], fields: [
+    { key: 'line_of_business', label: 'Type', type: 'select', options: ['project_insurance'] },
+    { key: 'sum_insured_inr_cr', label: 'Sum Insured (₹Cr)', type: 'number' },
+    { key: 'total_project_cost_inr_cr', label: 'Project Cost (₹Cr)', type: 'number' },
+    { key: 'project_sector', label: 'Project Sector', type: 'select', options: ['energy','infrastructure','mining','manufacturing','real_estate','transport'] },
+    { key: 'project_scope1_tco2e', label: 'Project Scope 1', type: 'number' },
+  ] },
 };
-const LOB_CATEGORIES = Object.keys(LOB_FIELDS);
-const getLobCategory = (lob) => { for (const [cat, cfg] of Object.entries(LOB_FIELDS)) { if (cfg.lobValues.includes(lob)) return cat; } return 'Life'; };
 
 // ── Default insurance policies ─────────────────────────────────────────────
 const POLICY_TEMPLATE = {
@@ -848,46 +811,31 @@ export default function PCafIndiaBrsrPage() {
       const { data } = await requestWithTimeout(url, signal => axios.post(url, payload, { headers: authH, signal }));
       setInsuranceResult(data);
     } catch(e) {
-      // Demo fallback — estimate emissions by LOB method
+      // Demo fallback — shared engine (data/pcafInsuranceEngine.js, R3 gap
+      // B-3). The engine works in USD millions; this module's fields are
+      // INR Cr, so convert at this boundary via INR_CR_TO_USD_M — the exact
+      // same FX constant already used elsewhere in this file (e.g. the
+      // real-backend payload above), just applied to the extra IAE fields
+      // too so both code paths (live API vs demo fallback) share one
+      // conversion convention.
       const demoResults = insurancePolicies.map(p => {
-        const gwp = parseFloat(p.gross_written_premium_inr_cr) || 0;
-        const cat = getLobCategory(p.line_of_business);
-        let tco2e = 0;
-        if (cat === 'Motor') {
-          const veh = parseInt(p.vehicle_count) || 0;
-          const km  = parseFloat(p.annual_km_per_vehicle) || 12000;
-          const ef  = p.fuel_type === 'bev' ? 0.05 : p.fuel_type === 'cng' ? 0.12 : p.fuel_type === 'diesel' ? 0.21 : 0.18;
-          tco2e = veh * km * ef / 1000;
-        } else if (cat === 'Property') {
-          const area = parseFloat(p.insured_property_area_m2) || 0;
-          const epcEf = { 'A+':30,'A':50,'B':80,'C':120,'D':170,'E':230,'F':300,'G':400 };
-          tco2e = area * (epcEf[p.epc_rating] || 120) / 1e6;
-        } else if (cat === 'Commercial') {
-          const rev = parseFloat(p.insured_revenue_inr_cr) || 0;
-          tco2e = rev * 0.08;
-        } else if (cat === 'Reinsurance') {
-          const cedTot = parseFloat(p.cedent_reported_tco2e) || 0;
-          const cedGwp = parseFloat(p.cedent_total_gwp_inr_cr) || 1;
-          const cedPre = parseFloat(p.ceded_premium_inr_cr) || 0;
-          tco2e = (cedPre / cedGwp) * cedTot;
-        } else if (cat === 'Project Insurance') {
-          const si = parseFloat(p.sum_insured_inr_cr) || 0;
-          const pc = parseFloat(p.total_project_cost_inr_cr) || 1;
-          const ps1 = parseFloat(p.project_scope1_tco2e) || 0;
-          tco2e = (si / pc) * ps1;
-        }
-        // Life & Health are explicitly out of scope of the PCAF
-        // Insurance-Associated Emissions standard (Nov 2022) — commercial
-        // lines and personal motor only. They previously fell through to a
-        // generic "gwp × 0.001" proxy and were silently summed into the
-        // PCAF-labeled total; ring-fence them as a separate, clearly-labeled
-        // extended metric instead.
-        const outOfPcafScope = cat === 'Life' || cat === 'Health';
-        if (outOfPcafScope) tco2e = gwp * 0.001; // rough, non-PCAF illustrative proxy only
+        const toM = v => (parseFloat(v) || 0) * INR_CR_TO_USD_M;
+        const { category, tco2e, outOfPcafScope, dataGapReason } = calcPolicyEmissions({
+          line_of_business: p.line_of_business,
+          gross_written_premium_musd: toM(p.gross_written_premium_inr_cr),
+          vehicle_count: p.vehicle_count, fuel_type: p.fuel_type, annual_km_per_vehicle: p.annual_km_per_vehicle,
+          insured_property_area_m2: p.insured_property_area_m2, epc_rating: p.epc_rating,
+          insured_revenue_musd: toM(p.insured_revenue_inr_cr),
+          ceded_premium_musd: toM(p.ceded_premium_inr_cr),
+          cedent_total_gwp_musd: toM(p.cedent_total_gwp_inr_cr),
+          cedent_reported_tco2e: p.cedent_reported_tco2e,
+          sum_insured_musd: toM(p.sum_insured_inr_cr),
+          total_project_cost_musd: toM(p.total_project_cost_inr_cr),
+          project_scope1_tco2e: p.project_scope1_tco2e,
+        });
         return { policy_id: p.policy_id, line_of_business: p.line_of_business,
           policyholder_name: p.policyholder_name, insured_total_tco2e: tco2e, _demo: true,
-          out_of_pcaf_scope: outOfPcafScope,
-          data_gap_reason: outOfPcafScope ? `${cat} is out of scope of the PCAF IAE standard — excluded from the PCAF-labeled total` : null };
+          out_of_pcaf_scope: outOfPcafScope, data_gap_reason: dataGapReason, category };
       });
       const inScope = demoResults.filter(r => !r.out_of_pcaf_scope);
       const outOfScope = demoResults.filter(r => r.out_of_pcaf_scope);
@@ -1042,7 +990,7 @@ export default function PCafIndiaBrsrPage() {
 
   // ── Insurance policy helpers ───────────────────────────────────────────
   const addPolicyForCategory = (cat) => {
-    const cfg = LOB_FIELDS[cat];
+    const cfg = LOB_FIELDS_INR[cat];
     const defaultLob = cfg ? cfg.lobValues[0] : 'life';
     setInsurancePolicies(p => [...p, {
       ...POLICY_TEMPLATE, id: Date.now(), policy_id:`POL-${Date.now()}`,
@@ -1787,7 +1735,7 @@ export default function PCafIndiaBrsrPage() {
 
           {/* Grouped LOB sections */}
           {LOB_CATEGORIES.map(cat => {
-            const cfg = LOB_FIELDS[cat];
+            const cfg = LOB_FIELDS_INR[cat];
             const catPolicies = insurancePolicies.filter(p => getLobCategory(p.line_of_business) === cat);
             if (catPolicies.length === 0) return null;
             return (
@@ -1865,7 +1813,7 @@ export default function PCafIndiaBrsrPage() {
                 {LOB_CATEGORIES.filter(cat => !insurancePolicies.some(p => getLobCategory(p.line_of_business) === cat)).map(cat => (
                   <button key={cat} onClick={() => addPolicyForCategory(cat)} style={{
                     border:`1px dashed ${T.border}`, borderRadius:6, padding:'8px 16px', fontSize:12,
-                    fontWeight:600, color: LOB_FIELDS[cat].color, background:'#fff', cursor:'pointer', fontFamily:T.font,
+                    fontWeight:600, color: LOB_FIELDS_INR[cat].color, background:'#fff', cursor:'pointer', fontFamily:T.font,
                   }}>+ {cat}</button>
                 ))}
               </div>
