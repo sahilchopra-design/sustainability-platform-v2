@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useRef, useEffect } from 'react';
 import axios from 'axios';
 import { requestWithTimeout } from '../../../lib/http';
-import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C } from '../../../data/pcafStandards';
+import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from '../../../data/pcafStandards';
 import { COMPANY_MASTER, searchCompanies } from '../../../data/companyMaster';
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
@@ -721,16 +721,23 @@ export default function PCafIndiaBrsrPage() {
       const dqs  = h.dqs_override ? parseInt(h.dqs_override) : (!computable ? 5 : (s1 + s2 > 0 ? 3 : 4));
       const waci = computable && rev > 0 ? (financed / rev) : 0;
       const unc  = dqs === 1 ? 5 : dqs === 2 ? 10 : dqs === 3 ? 20 : dqs === 4 ? 40 : 60;
+      // R3 gap B-2: scope-3 phase-in is complete for reports from 2025
+      // onward (all sectors) — flag holdings that need it but don't have it,
+      // rather than silently reporting scope 1+2 only with no indication
+      // scope 3 was ever required.
+      const scope3Required = isScope3Required(h.sector_gics, reportingYear);
       return {
         entity_name: h.company_name, company_name: h.company_name,
         cin: h.cin, sector_gics: h.sector_gics,
         instrument_type: h.instrument_type || 'Listed Equity',
         attribution_factor: af, exposure_inr_cr: exp,
         financed_co2e_tonne: financed, waci_tco2e_per_inr_cr: waci,
+        scope3_co2e: s3, financed_scope3_co2e_tonne: computable ? af * s3 : 0,
         total_company_co2e_tonne: s1 + s2 + s3, dqs,
         uncertainty_band_pct: unc, scope1_co2e: s1, scope2_co2e: s2,
         computable, data_gap_reason: computable ? null : reason,
         undrawn_commitment: !!undrawn,
+        scope3_required: scope3Required, scope3_missing: scope3Required && s3 === 0,
       };
     });
     // Undrawn commitments are reported separately from financed emissions
@@ -742,6 +749,9 @@ export default function PCafIndiaBrsrPage() {
     const dataGapHoldings    = resultHoldings.filter(h => !h.computable);
 
     const totalFinanced = computableFinanced.reduce((s, h) => s + h.financed_co2e_tonne, 0);
+    const totalFinancedScope3 = computableFinanced.reduce((s, h) => s + (h.financed_scope3_co2e_tonne || 0), 0);
+    const scope3RequiredCount = resultHoldings.filter(h => h.scope3_required).length;
+    const scope3MissingCount = resultHoldings.filter(h => h.scope3_missing).length;
     const totalUndrawn   = undrawnFinanced.reduce((s, h) => s + h.financed_co2e_tonne, 0);
     const totalRev      = holdings.reduce((s, h) => s + (parseFloat(h.revenue_inr_cr) || 0), 0);
     const waciPortfolio = totalRev > 0 ? totalFinanced / totalRev : 0;
@@ -756,6 +766,11 @@ export default function PCafIndiaBrsrPage() {
       data_gap_count: dataGapHoldings.length,
       portfolio_analytics: {
         total_financed_co2e_tonne: totalFinanced,
+        // R3 gap B-2: Scope 3 is always reported separately from the Scope
+        // 1+2 headline above, never blended into one figure.
+        total_financed_scope3_co2e_tonne: totalFinancedScope3,
+        scope3_required_count: scope3RequiredCount,
+        scope3_missing_count: scope3MissingCount,
         total_undrawn_co2e_tonne: totalUndrawn,
         waci_tco2e_per_inr_cr: waciPortfolio,
         portfolio_dqs_weighted_avg: avgDqs,
@@ -768,7 +783,7 @@ export default function PCafIndiaBrsrPage() {
       rbi_climate_pilot: {},
       sfdr_pai: {},
     };
-  }, [holdings]);
+  }, [holdings, reportingYear]);
 
   // ── Run portfolio ──────────────────────────────────────────────────────
   const runPortfolio = useCallback(async () => {
@@ -1103,6 +1118,9 @@ export default function PCafIndiaBrsrPage() {
 
   const ps = {
     total_financed_co2e_tonne: _pa.total_financed_co2e_tonne,
+    total_financed_scope3_co2e_tonne: _pa.total_financed_scope3_co2e_tonne,
+    scope3_required_count: _pa.scope3_required_count,
+    scope3_missing_count: _pa.scope3_missing_count,
     total_undrawn_co2e_tonne: _pa.total_undrawn_co2e_tonne,
     waci_tco2e_per_inr_cr: _pa.waci_tco2e_per_inr_cr,
     weighted_dqs: _pa.portfolio_dqs_weighted_avg,
@@ -1492,7 +1510,8 @@ export default function PCafIndiaBrsrPage() {
             <>
               {/* KPI strip */}
               <div style={{ display:'flex', gap:12, flexWrap:'wrap' }}>
-                <KpiCard label="Total Financed Emissions" value={`${(ps.total_financed_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e" color={T.navy} />
+                <KpiCard label="Total Financed Emissions" value={`${(ps.total_financed_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e (Scope 1+2)" color={T.navy} />
+                {ps.scope3_required_count != null && <KpiCard label="Scope 3 Required / Missing" value={`${ps.scope3_required_count} / ${ps.scope3_missing_count||0}`} sub={`reported separately · reportingYear ${reportingYear}`} color={ps.scope3_missing_count > 0 ? T.red : T.teal} />}
                 <KpiCard label="WACI" value={(ps.waci_tco2e_per_inr_cr||0).toFixed(1)} sub="tCO₂e / ₹Cr revenue" color={T.indigo} />
                 <KpiCard label="Undrawn Commitments" value={`${(ps.total_undrawn_co2e_tonne||0).toLocaleString()}`} sub="tCO₂e — reported separately, not in FE total" color={T.textMut} />
                 <KpiCard label="Portfolio DQS" value={(ps.weighted_dqs||0).toFixed(2)} sub="1=best · 5=worst" color={T.amber} />
@@ -1676,7 +1695,7 @@ export default function PCafIndiaBrsrPage() {
                   <table style={{ width:'100%', borderCollapse:'collapse', fontSize:12 }}>
                     <thead>
                       <tr style={{ background:'#f1f0eb' }}>
-                        {['Company','Sector','Attr. Factor','Exp. ₹Cr','Financed tCO₂e','WACI','DQS','Uncertainty'].map(h => (
+                        {['Company','Sector','Attr. Factor','Exp. ₹Cr','Financed tCO₂e (S1+2)','Scope 3 tCO₂e','WACI','DQS','Uncertainty'].map(h => (
                           <th key={h} style={{ padding:'8px 10px', textAlign:'left', fontWeight:600, color:T.sub, whiteSpace:'nowrap' }}>{h}</th>
                         ))}
                       </tr>
@@ -1689,6 +1708,11 @@ export default function PCafIndiaBrsrPage() {
                           <td style={{ padding:'8px 10px' }}>{((h.attribution_factor||0)*100).toFixed(2)}%</td>
                           <td style={{ padding:'8px 10px' }}>{(h.exposure_inr_cr||0).toLocaleString()}</td>
                           <td style={{ padding:'8px 10px', fontWeight:700, color:T.navy }}>{(h.financed_co2e_tonne||0).toLocaleString()}</td>
+                          <td style={{ padding:'8px 10px', color: h.scope3_missing ? T.red : T.sub }}>
+                            {h.scope3_missing
+                              ? <span title={`Scope 3 required for reporting year ${reportingYear} (PCAF all-sector requirement from ${SCOPE3_ALL_SECTOR_YEAR}) but not provided`}>⚠ Missing</span>
+                              : h.scope3_required ? (h.financed_scope3_co2e_tonne||0).toLocaleString() : '—'}
+                          </td>
                           <td style={{ padding:'8px 10px' }}>{(h.waci_tco2e_per_inr_cr||0).toFixed(1)}</td>
                           <td style={{ padding:'8px 10px' }}><DqsBadge score={h.dqs} /></td>
                           <td style={{ padding:'8px 10px', color:T.sub }}>±{h.uncertainty_band_pct}%</td>

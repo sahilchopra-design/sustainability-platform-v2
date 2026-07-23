@@ -38,3 +38,28 @@ export const PCAF_PART_C_NEW_METHODOLOGIES = [
 
 export const PCAF_STANDARDS_FOOTER =
   `${PCAF_PART_A} · ${PCAF_PART_B} · ${PCAF_PART_C}`;
+
+/**
+ * R3 gap B-2: PCAF's scope-3 phase-in schedule. Per Anthesis's PCAF reporting
+ * guidance, the phase-in is complete for reports covering 2025 onward — every
+ * sector, every asset class must report scope 3 alongside scope 1+2 (reported
+ * separately, never blended into one headline number). Earlier reporting
+ * years keep the historical sector-tiered phase-in so a report for, say,
+ * FY2022 doesn't retroactively claim scope-3 was required for a sector before
+ * it actually was.
+ */
+export const SCOPE3_ALL_SECTOR_YEAR = 2025;
+export const SCOPE3_PHASE_IN_2021_SECTORS = ['Energy', 'Oil & Gas', 'Mining'];
+export const SCOPE3_PHASE_IN_2024_SECTORS = [
+  'Transport', 'Automotive', 'Aviation', 'Shipping', 'Construction',
+  'Real Estate', 'Cement', 'Steel', 'Chemicals', 'Industrials', 'Materials',
+];
+
+export function isScope3Required(sector, reportingYear) {
+  const s = sector || '';
+  const year = reportingYear != null ? +reportingYear : SCOPE3_ALL_SECTOR_YEAR;
+  if (year >= SCOPE3_ALL_SECTOR_YEAR) return true;
+  if (year >= 2024 && SCOPE3_PHASE_IN_2024_SECTORS.some(x => s.includes(x))) return true;
+  if (year >= 2021 && SCOPE3_PHASE_IN_2021_SECTORS.some(x => s.includes(x))) return true;
+  return false;
+}
