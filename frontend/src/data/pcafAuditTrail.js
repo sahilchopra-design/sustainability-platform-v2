@@ -9,6 +9,7 @@
  *   GHG Protocol Corporate Value Chain (Scope 3) Standard
  *   TCFD Guidance on Metrics, Targets and Transition Plans (2021)
  */
+import { getReferenceEntry, getReferenceRevenueM } from './evicReference';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 1. METHODOLOGY REFERENCES
@@ -180,7 +181,17 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
   // wrong key silently produced NaN -> 0 for every position, zeroing every
   // audit-trail attribution ratio and financed-emissions figure regardless
   // of whether real EVIC data existed (GAP-002).
-  const evicMn = (parseFloat(pos.evic) || 0) * 1000;
+  //
+  // R3 gap A-4: prefer a genuinely analyst-verified entry in
+  // evic_reference.json (source no longer says TODO/"existing platform
+  // estimate") over the position's own hardcoded (unverified) EVIC — this is
+  // the same resolution order used by computeAttrFactor in
+  // PcafFinancedEmissionsPage.jsx, so the audit trail and the main
+  // calculation no longer disagree on which EVIC value is authoritative.
+  const _evicRef = getReferenceEntry(pos.ticker);
+  const _evicRefVerified = !!(_evicRef && typeof _evicRef.evic_usd_bn === 'number' && !/^(TODO|Existing platform estimate)/i.test(_evicRef.source || ''));
+  const resolvedEvicBn = _evicRefVerified ? _evicRef.evic_usd_bn : (parseFloat(pos.evic) || (_evicRef && typeof _evicRef.evic_usd_bn === 'number' ? _evicRef.evic_usd_bn : 0));
+  const evicMn = resolvedEvicBn * 1000;
   const outstandingMn = parseFloat(pos.outstanding) || 0;
   const scope1 = parseFloat(pos.scope1) || 0;
   const scope2 = parseFloat(pos.scope2) || 0;
@@ -188,10 +199,11 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
   const totalEmissions = scope1 + scope2 + scope3;
   const attributionRatio = evicMn > 0 ? Math.min(outstandingMn / evicMn, 1) : 0;
   const financedEmissions = attributionRatio * totalEmissions;
-  const revenueMn = (parseFloat(pos.revenueBn) || 0) * 1000 || evicMn * 0.15;
+  const referenceRevenueMn = getReferenceRevenueM(pos.ticker);
+  const revenueMn = referenceRevenueMn != null ? referenceRevenueMn : ((parseFloat(pos.revenueBn) || 0) * 1000 || evicMn * 0.15);
   const portfolioWeight = totalOutstandingMn > 0 ? outstandingMn / totalOutstandingMn : 0;
   const waciComponent = revenueMn > 0 ? portfolioWeight * (totalEmissions / revenueMn) : 0;
-  const evicDqs = (pos.source === 'EODHD' || pos.source === 'EODHD live') ? 1 : 4;
+  const evicDqs = _evicRefVerified ? 1 : (pos.source === 'EODHD' || pos.source === 'EODHD live') ? 1 : 4;
   const emissionsDqs = parseInt(pos.dqs) || 3;
   const compositeDqs = Math.max(evicDqs, emissionsDqs);
 
