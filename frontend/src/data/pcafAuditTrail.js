@@ -310,15 +310,15 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
     {
       ...STEP_DEFS[3],
       inputs: {
-        scope1_tCO2e: `${scope1.toLocaleString()} tCO2e`,
-        scope2_tCO2e: `${scope2.toLocaleString()} tCO2e`,
-        scope3_tCO2e: scope3 > 0 ? `${scope3.toLocaleString()} tCO2e` : 'Not provided',
+        scope1_tCO2e: `${scope1.toLocaleString('en-US')} tCO2e`,
+        scope2_tCO2e: `${scope2.toLocaleString('en-US')} tCO2e`,
+        scope3_tCO2e: scope3 > 0 ? `${scope3.toLocaleString('en-US')} tCO2e` : 'Not provided',
         emissionsDqs,
         dataSource: pos.source || 'Manual entry',
         gwpVersion: 'AR5 100-year (IPCC Fifth Assessment Report)',
       },
       outputs: {
-        totalEmissions_tCO2e: `${totalEmissions.toLocaleString()} tCO2e`,
+        totalEmissions_tCO2e: `${totalEmissions.toLocaleString('en-US')} tCO2e`,
         scope1_share: totalEmissions > 0 ? `${(scope1 / totalEmissions * 100).toFixed(1)}%` : '—',
         scope2_share: totalEmissions > 0 ? `${(scope2 / totalEmissions * 100).toFixed(1)}%` : '—',
         scope3_share: totalEmissions > 0 && scope3 > 0 ? `${(scope3 / totalEmissions * 100).toFixed(1)}%` : 'Not included',
@@ -333,7 +333,7 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
       ...STEP_DEFS[4],
       inputs: {
         attributionRatio: attributionRatio.toFixed(6),
-        totalEmissions_tCO2e: `${totalEmissions.toLocaleString()} tCO2e`,
+        totalEmissions_tCO2e: `${totalEmissions.toLocaleString('en-US')} tCO2e`,
       },
       outputs: {
         // R3 gap B-2: the headline figure is Scope 1+2 only — Scope 3 is
@@ -344,7 +344,7 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
         scope1Financed: `${(attributionRatio * scope1).toFixed(2)} tCO2e`,
         scope2Financed: `${(attributionRatio * scope2).toFixed(2)} tCO2e`,
         scope3Financed: scope3 > 0 ? `${financedEmissionsS3.toFixed(2)} tCO2e` : 'N/A',
-        calculation: `${attributionRatio.toFixed(6)} × ${totalEmissionsS12.toLocaleString()} (S1+2) = ${financedEmissions.toFixed(2)} tCO2e; S3 reported separately`,
+        calculation: `${attributionRatio.toFixed(6)} × ${totalEmissionsS12.toLocaleString('en-US')} (S1+2) = ${financedEmissions.toFixed(2)} tCO2e; S3 reported separately`,
         // Every position in this dataset is a Part A (Financed Emissions)
         // holding; PCAF Part B is deal-based (facilitated emissions, see the
         // Facilitated tab) and does not apply per-position here. A prior
@@ -358,8 +358,8 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
       ...STEP_DEFS[5],
       inputs: {
         portfolioWeight_pct: `${(portfolioWeight * 100).toFixed(4)}%`,
-        totalEmissions_S12_tCO2e: `${totalEmissionsS12.toLocaleString()} tCO2e`,
-        totalEmissions_S123_tCO2e: `${totalEmissions.toLocaleString()} tCO2e`,
+        totalEmissions_S12_tCO2e: `${totalEmissionsS12.toLocaleString('en-US')} tCO2e`,
+        totalEmissions_S123_tCO2e: `${totalEmissions.toLocaleString('en-US')} tCO2e`,
         revenue_USD_M: `$${revenueMn.toFixed(2)}M`,
         revenueSource: referenceRevenueMn != null ? 'Analyst-verified reference table'
           : (parseFloat(pos.revenueBn) || 0) > 0 ? 'Financial data'

@@ -1180,10 +1180,10 @@ function PartBTab(){
     <SectionHeader title="Part C: Insurance-Associated Emissions" citation={PCAF_PART_C} description={`${lobResults.length} lines of business (${inScopeLob.length} in PCAF IAE scope, ${outOfScopeLob.length} extended/out-of-scope). Motor/Property/Commercial/Reinsurance/Project Insurance use PCAF's real per-LOB attribution methodology (ported from the India BRSR module); Life/Health/Marine have no PCAF IAE methodology and are excluded from the PCAF-labeled total. Total GWP: $${fmt(totalPremium*1e6)}.`}/>
     {totalExtendedFE>0&&<InfoBox type="info">ℹ️ {outOfScopeLob.map(l=>l.lob).join(', ')} ({fmt(totalExtendedFE)} tCO2e) have no documented PCAF IAE methodology — shown separately below, excluded from the PCAF-labeled total.</InfoBox>}
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
-      <KPICard label="Total GWP" value={'$'+fmt(totalPremium)+'M'} sub="Gross written premium" color={T.navy}/>
+      <KPICard label="Total GWP" value={'$'+fmt(totalPremium*1e6)} sub="Gross written premium" color={T.navy}/>
       <KPICard label="Insurance FE (PCAF-scoped)" value={fmt(totalFE)+' tCO2e'} sub={`${inScopeLob.length} in-scope LOBs`} color={T.red}/>
       {totalExtendedFE>0&&<KPICard label="Extended, non-PCAF" value={fmt(totalExtendedFE)+' tCO2e'} sub="Life/Health/Marine — excluded from PCAF total" color={T.textMut}/>}
-      <KPICard label="Total Exposure" value={'$'+fmt(totalExposure)+'M'} sub="Sum insured" color={T.gold}/>
+      <KPICard label="Total Exposure" value={'$'+fmt(totalExposure*1e6)} sub="Sum insured" color={T.gold}/>
       <KPICard label="Loss Ratio" value={lossRatio+'%'} sub="Claims / Premium" color={+lossRatio>70?T.red:T.green}/>
       <KPICard label="Avg DQS" value={avgDqs} sub="LOB weighted" color={DQS_COLOR[Math.round(+avgDqs)]||T.amber}/>
       <KPICard label="Avg Intensity" value={(totalPremium ? totalFE/totalPremium : 0).toFixed(3)} sub="tCO2e per $M GWP (PCAF-scoped)" color={T.sage}/>
@@ -1311,8 +1311,8 @@ function PartCTab(){
       <KPICard label="Total Facilitated Em. (PCAF-scoped, 33% wtd.)" value={fmt(totalFac)+' tCO2e'} sub={`${deals.length} transactions`} color={T.navy}/>
       <KPICard label="Facilitated @100% (unweighted, per PCAF option)" value={fmt(totalFacUnweighted)+' tCO2e'} sub="= PCAF-scoped total ÷ 0.33, reported separately per Part B" color={T.navyL}/>
       {totalExtended>0&&<KPICard label="Advisory/M&A (extended, non-PCAF)" value={fmt(totalExtended)+' tCO2e'} sub="= advisory-fee-share × client emissions, capped at 10% — out of PCAF Part B scope" color={T.textMut}/>}
-      <KPICard label="Deal Volume" value={'$'+fmt(totalDeals)+'M'} sub="Total deal size" color={T.gold}/>
-      <KPICard label="Underwritten" value={'$'+fmt(totalUW)+'M'} sub="Bank committed" color={T.sage}/>
+      <KPICard label="Deal Volume" value={'$'+fmt(totalDeals*1e6)} sub="Total deal size" color={T.gold}/>
+      <KPICard label="Underwritten" value={'$'+fmt(totalUW*1e6)} sub="Bank committed" color={T.sage}/>
       <KPICard label="Avg Attribution" value={totalDeals>0?fmtPct(totalUW/totalDeals):'\u2014'} sub="UW / Deal (unweighted, informational)" color={T.navyL}/>
     </div>
     <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:14,marginBottom:20}}>
