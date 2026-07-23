@@ -10,7 +10,7 @@
  *   TCFD Guidance on Metrics, Targets and Transition Plans (2021)
  */
 import { getReferenceEntry, getReferenceRevenueM } from './evicReference';
-import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from './pcafStandards';
+import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR, sectorRevenueProxyM } from './pcafStandards';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 1. METHODOLOGY REFERENCES
@@ -141,13 +141,13 @@ export const STEP_DEFS = [
     id: 'S6',
     label: 'WACI Component',
     desc: 'Calculate this holding\'s contribution to portfolio Weighted Average Carbon Intensity',
-    citation: 'TCFD Guidance on Metrics, Targets & Transition Plans (2021) / PCAF Standard, Chapter 5',
+    citation: `TCFD Guidance on Metrics, Targets & Transition Plans (2021) / ${PCAF_PART_A}`,
     formula: 'waci_contribution = portfolio_weight × (total_emissions / revenue_$M)',
     checks: [
       'Revenue in $M (same currency as outstanding)',
       'Portfolio weight = outstanding_i / Σ all outstanding',
       'Intensity units: tCO2e per $M revenue',
-      'Flag if revenue is estimated (revenue proxy = 15% × EVIC)',
+      'Flag if revenue is estimated (sector revenue-intensity proxy, not 15% of EVIC)',
       'WACI excludes sovereign debt (no revenue denominator)',
     ],
   },
@@ -213,13 +213,27 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
   const attributionRatio = evicMn > 0 ? Math.min(outstandingMn / evicMn, 1) : 0;
   const financedEmissions = attributionRatio * totalEmissionsS12;
   const financedEmissionsS3 = attributionRatio * scope3;
+  // R3 gap B-4: this fallback previously used a flat 15%-of-EVIC assumption
+  // even after the Part A engine (PcafFinancedEmissionsPage.jsx) had already
+  // moved to a sector revenue-intensity proxy for the same GAP-020 WACI
+  // inflation bug — the two engines' revenue-proxy logic had silently
+  // drifted apart. Both now call the same shared helper (pcafStandards.js).
   const referenceRevenueMn = getReferenceRevenueM(pos.ticker);
-  const revenueMn = referenceRevenueMn != null ? referenceRevenueMn : ((parseFloat(pos.revenueBn) || 0) * 1000 || evicMn * 0.15);
+  const revenueProxy = referenceRevenueMn == null;
+  const revenueMn = referenceRevenueMn != null ? referenceRevenueMn
+    : (parseFloat(pos.revenueBn) || 0) * 1000 || sectorRevenueProxyM(pos.sector, resolvedEvicBn);
   const portfolioWeight = totalOutstandingMn > 0 ? outstandingMn / totalOutstandingMn : 0;
-  const waciComponent = revenueMn > 0 ? portfolioWeight * (totalEmissions / revenueMn) : 0;
+  // WACI is reported on Scope 1+2 (waciComponent, unchanged field name);
+  // waciComponentS123 is the explicit, separately-labeled all-scope variant
+  // — same separate-scope-reporting principle as financedEmissions /
+  // financedEmissionsS3 above (R3 gap B-2).
+  const waciComponent = revenueMn > 0 ? portfolioWeight * (totalEmissionsS12 / revenueMn) : 0;
+  const waciComponentS123 = revenueMn > 0 ? portfolioWeight * (totalEmissions / revenueMn) : 0;
   const evicDqs = _evicRefVerified ? 1 : (pos.source === 'EODHD' || pos.source === 'EODHD live') ? 1 : 4;
   const emissionsDqs = parseInt(pos.dqs) || 3;
-  const compositeDqs = Math.max(evicDqs, emissionsDqs);
+  // R3 gap B-4: a revenue proxy caps DQS at 4, same treatment as an EVIC
+  // proxy — never claim DQS 1-3 confidence off an estimated denominator.
+  const compositeDqs = revenueProxy ? Math.max(evicDqs, emissionsDqs, 4) : Math.max(evicDqs, emissionsDqs);
 
   // Build flags
   const flags = [];
@@ -344,15 +358,21 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
       ...STEP_DEFS[5],
       inputs: {
         portfolioWeight_pct: `${(portfolioWeight * 100).toFixed(4)}%`,
-        totalEmissions_tCO2e: `${totalEmissions.toLocaleString()} tCO2e`,
+        totalEmissions_S12_tCO2e: `${totalEmissionsS12.toLocaleString()} tCO2e`,
+        totalEmissions_S123_tCO2e: `${totalEmissions.toLocaleString()} tCO2e`,
         revenue_USD_M: `$${revenueMn.toFixed(2)}M`,
-        revenueSource: (parseFloat(pos.revenueBn) || 0) > 0 ? 'Financial data' : 'Revenue proxy: 15% × EVIC',
-        carbonIntensity: revenueMn > 0 ? `${(totalEmissions / revenueMn).toFixed(4)} tCO2e/$M rev` : '—',
+        revenueSource: referenceRevenueMn != null ? 'Analyst-verified reference table'
+          : (parseFloat(pos.revenueBn) || 0) > 0 ? 'Financial data'
+          : 'Sector revenue-intensity proxy (not 15% of EVIC)',
       },
       outputs: {
-        waciComponent: `${waciComponent.toFixed(6)} tCO2e/$M (portfolio-weighted)`,
-        calculation: `${(portfolioWeight * 100).toFixed(4)}% × ${revenueMn > 0 ? (totalEmissions / revenueMn).toFixed(4) : 0} = ${waciComponent.toFixed(6)}`,
-        note: (parseFloat(pos.revenueBn) || 0) === 0 ? '⚠ Revenue estimated — improve: obtain company revenue from annual report' : '✓ Revenue from financial data',
+        // WACI is reported on Scope 1+2 (waciComponent); the all-scope
+        // variant is a separate, explicitly labeled figure — never blended
+        // (R3 gap B-4, same separate-reporting principle as B-2).
+        waciComponent_S12: `${waciComponent.toFixed(6)} tCO2e/$M (portfolio-weighted)`,
+        waciComponent_S123: `${waciComponentS123.toFixed(6)} tCO2e/$M (portfolio-weighted)`,
+        calculation: `${(portfolioWeight * 100).toFixed(4)}% × ${revenueMn > 0 ? (totalEmissionsS12 / revenueMn).toFixed(4) : 0} = ${waciComponent.toFixed(6)}`,
+        note: revenueProxy ? '⚠ Revenue estimated via sector proxy — improve: obtain company revenue from annual report' : '✓ Revenue from financial data',
       },
       status: 'PASS',
     },
@@ -404,7 +424,12 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, repor
       totalEmissionsS12,
       totalEmissions,
       scope3Required,
+      // waciComponent is Scope 1+2 (headline); waciComponentS123 is the
+      // separately-labeled all-scope variant (R3 gap B-4) — same
+      // never-blend principle as the financedEmissions fields above.
       waciComponent,
+      waciComponentS123,
+      revenueProxy,
       portfolioWeight,
       compositeDqs,
       passCount: steps.filter(s => s.status === 'PASS').length,
@@ -436,7 +461,13 @@ export function generatePortfolioAuditTrail(positions, reportingYear = new Date(
   const totalFinancedEmissionsS3 = trails.reduce((s, t) => s + t.summary.financedEmissionsS3, 0);
   const scope3RequiredCount = trails.filter(t => t.summary.scope3Required).length;
   const scope3MissingCount = trails.filter(t => t.flags.some(f => f.code === 'F04')).length;
+  // R3 gap B-4: portfolioWaci is Scope 1+2; portfolioWaciS123 is the
+  // separately-labeled all-scope variant. revenueProxyCount surfaces how
+  // much of the book's WACI denominator is a sector proxy rather than
+  // reported revenue.
   const portfolioWaci = trails.reduce((s, t) => s + t.summary.waciComponent, 0);
+  const portfolioWaciS123 = trails.reduce((s, t) => s + t.summary.waciComponentS123, 0);
+  const revenueProxyCount = trails.filter(t => t.summary.revenueProxy).length;
   const avgDqs = trails.length > 0
     ? trails.reduce((s, t) => s + t.summary.compositeDqs, 0) / trails.length
     : 0;
@@ -485,6 +516,8 @@ export function generatePortfolioAuditTrail(positions, reportingYear = new Date(
       scope3RequiredCount,
       scope3MissingCount,
       portfolioWaci,
+      portfolioWaciS123,
+      revenueProxyCount,
       avgDqs: parseFloat(avgDqs.toFixed(2)),
       dqsMeetsTarget: avgDqs <= 3,
       dqsDistribution,
