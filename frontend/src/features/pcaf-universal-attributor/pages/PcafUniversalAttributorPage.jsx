@@ -16,27 +16,30 @@ const T = {
   mono: "'JetBrains Mono','SF Mono','Fira Code',monospace"
 };
 
-// PCAF's Global GHG Accounting & Reporting Standard for the Financial Industry,
-// Part A (2nd Edition, Dec 2022) defines 6 core on-balance-sheet asset classes
-// (Classes 1-6 below). Sovereign Debt (Class 7) is a real PCAF asset class but
-// comes from a separate PCAF publication (the Sovereign Debt standard), not
-// the same 2nd Edition document. "Other" (Class 8) has no published PCAF
-// asset class or formula behind it at all — it's a platform-only catch-all,
-// not a PCAF standard chapter. The "8/8" framing in this module's UI/nav
-// badge previously presented all 8 as equally PCAF-standard; each entry is
-// now labeled with its real provenance instead.
+// PCAF's Financed Emissions Standard, Part A, was updated to a 3rd Edition
+// (Dec 2025) that expands coverage from these 6 core on-balance-sheet
+// classes to 10, adding Use-of-Proceeds, Securitisations, Sub-Sovereign
+// Debt, and an optional Undrawn Commitments line (see
+// PcafFinancedEmissionsPage.jsx / PCafIndiaBrsrPage.jsx, which implement
+// those 4). This module (EP-CI6) has NOT been extended to cover them yet —
+// it still only models Classes 1-6 (core, unchanged by the 3rd Edition) +
+// Sovereign Debt (Class 7, a real PCAF asset class from a separate
+// publication) + "Other" (Class 8, a platform-only catch-all with no
+// published PCAF formula). The "8/8" framing in this module's UI/nav badge
+// should not be read as "all of PCAF Part A" — it predates the 3rd Edition
+// and is missing 3 of its real asset classes.
 const PCAF_CLASSES = [
-  { cls: 1, name: 'Listed Equity & Corporate Bonds', standard: 'PCAF Standard, 2nd Ed. (Dec 2022), Part A', formula: 'Attr = (Outstanding_i / EVIC_i) x Emissions_i', exposure: 4200, emissions: 185000, dq: 2.1,
+  { cls: 1, name: 'Listed Equity & Corporate Bonds', standard: 'PCAF Financed Emissions Standard, 3rd Ed. (Dec 2025), Part A', formula: 'Attr = (Outstanding_i / EVIC_i) x Emissions_i', exposure: 4200, emissions: 185000, dq: 2.1,
     dqDesc: 'Reported Scope 1+2 verified by third party', example: 'Illustrative corporate bond: ($50M / $2.1T EVIC) x 12.1M tCO2 = 288 tCO2' },
-  { cls: 2, name: 'Business Loans & Unlisted Equity', standard: 'PCAF Standard, 2nd Ed. (Dec 2022), Part A', formula: 'Attr = (Outstanding_i / (EVIC_i or Total_Equity+Debt_i)) x Emissions_i', exposure: 3800, emissions: 245000, dq: 3.2,
+  { cls: 2, name: 'Business Loans & Unlisted Equity', standard: 'PCAF Financed Emissions Standard, 3rd Ed. (Dec 2025), Part A', formula: 'Attr = (Outstanding_i / (EVIC_i or Total_Equity+Debt_i)) x Emissions_i', exposure: 3800, emissions: 245000, dq: 3.2,
     dqDesc: 'Company-reported unverified, or emissions estimated from revenue (data-quality fallback — not the attribution denominator)', example: 'SME loan $2M to unlisted manufacturer (total equity+debt $20M): ($2M/$20M) x 5000 tCO2 = 500 tCO2' },
-  { cls: 3, name: 'Project Finance', standard: 'PCAF Standard, 2nd Ed. (Dec 2022), Part A', formula: 'Attr = (Outstanding_i / Total_Equity_and_Debt_i) x Emissions_project', exposure: 1200, emissions: 82000, dq: 2.8,
+  { cls: 3, name: 'Project Finance', standard: 'PCAF Financed Emissions Standard, 3rd Ed. (Dec 2025), Part A', formula: 'Attr = (Outstanding_i / Total_Equity_and_Debt_i) x Emissions_project', exposure: 1200, emissions: 82000, dq: 2.8,
     dqDesc: 'Project-level data from EIA or monitoring', example: 'Wind farm 20% financed: 0.20 x 1200 tCO2/yr = 240 tCO2' },
-  { cls: 4, name: 'Commercial Real Estate', standard: 'PCAF Standard, 2nd Ed. (Dec 2022), Part A', formula: 'Attr = (Outstanding_i / Property_Value_at_origination_i) x Emissions_building', exposure: 2100, emissions: 125000, dq: 3.5,
+  { cls: 4, name: 'Commercial Real Estate', standard: 'PCAF Financed Emissions Standard, 3rd Ed. (Dec 2025), Part A', formula: 'Attr = (Outstanding_i / Property_Value_at_origination_i) x Emissions_building', exposure: 2100, emissions: 125000, dq: 3.5,
     dqDesc: 'EPC-based or floor area estimate', example: 'Office bldg: ($15M / $40M) x 2800 tCO2 = 1050 tCO2' },
-  { cls: 5, name: 'Mortgages', standard: 'PCAF Standard, 2nd Ed. (Dec 2022), Part A', formula: 'Attr = (Outstanding_i / Property_Value_at_origination_i) x Emissions_building', exposure: 5600, emissions: 310000, dq: 3.8,
+  { cls: 5, name: 'Mortgages', standard: 'PCAF Financed Emissions Standard, 3rd Ed. (Dec 2025), Part A', formula: 'Attr = (Outstanding_i / Property_Value_at_origination_i) x Emissions_building', exposure: 5600, emissions: 310000, dq: 3.8,
     dqDesc: 'EPC rating or national avg per floor area', example: 'Mortgage $300K / home $500K value x 8 tCO2/yr = 4.8 tCO2' },
-  { cls: 6, name: 'Motor Vehicle Loans', standard: 'PCAF Standard, 2nd Ed. (Dec 2022), Part A', formula: 'Attr = (Outstanding_i / Vehicle_Value_at_origination_i) x Emissions_vehicle', exposure: 1800, emissions: 95000, dq: 2.5,
+  { cls: 6, name: 'Motor Vehicle Loans', standard: 'PCAF Financed Emissions Standard, 3rd Ed. (Dec 2025), Part A', formula: 'Attr = (Outstanding_i / Vehicle_Value_at_origination_i) x Emissions_vehicle', exposure: 1800, emissions: 95000, dq: 2.5,
     dqDesc: 'Vehicle make/model emission factors', example: 'Auto loan $25K / $35K car x 4.2 tCO2/yr = 3.0 tCO2' },
   { cls: 7, name: 'Sovereign Debt', standard: 'PCAF Sovereign Debt Standard (separate publication)', formula: 'Attr = (Outstanding_i / PPP_GDP_i) x Emissions_country', exposure: 6200, emissions: 420000, dq: 1.8,
     dqDesc: 'National GHG inventory (UNFCCC)', example: 'Illustrative sovereign bond: $100M / $25.5T PPP-GDP x 5.2Gt CO2 = 20,392 tCO2' },
@@ -119,7 +122,7 @@ export default function PcafUniversalAttributorPage() {
               7 PCAF Standard Asset Classes + 1 Platform Extension . Attribution Formulas . Data Quality Heatmap . WACI . SBTi Target Tracking . Gap Analysis
             </p>
             <p style={{ color: '#d97706', fontSize: 11, margin: '4px 0 0' }}>
-              ⚠ Illustrative demo portfolio — not connected to a live data source. Class 7 (Sovereign Debt) is from a separate PCAF publication; Class 8 ("Other") is a platform extension, not a PCAF-defined asset class.
+              ⚠ Illustrative demo portfolio — not connected to a live data source. Class 7 (Sovereign Debt) is from a separate PCAF publication; Class 8 ("Other") is a platform extension, not a PCAF-defined asset class. PCAF Part A is now on its 3rd Edition (Dec 2025, 10 asset classes) — this module still only covers the original 6 core classes and has not yet been extended with the 4 new ones (see PCAF Financed Emissions and PCAF India BRSR for those).
             </p>
           </div>
           <select value={dqFilter} onChange={e => setDqFilter(e.target.value)} style={{ padding: '6px 10px', borderRadius: 6, border: `1px solid ${T.border}`, fontSize: 12 }}>
@@ -277,7 +280,7 @@ export default function PcafUniversalAttributorPage() {
               </div>
             ))}
             <div style={{ padding: 12, background: '#eff6ff', borderRadius: 8, fontSize: 12, marginTop: 12 }}>
-              <strong>Key References:</strong> PCAF Standard, 2nd Edition (Dec 2022), Part A | PCAF Sovereign Debt Standard (Class 7) | GHG Protocol Scope 3 Category 15 | SBTi Financial Sector Science-Based Target Setting
+              <strong>Key References:</strong> PCAF Financed Emissions Standard, 3rd Edition (Dec 2025), Part A (Classes 1-6 shown; the 3rd Edition also adds Use-of-Proceeds, Securitisations, Sub-Sovereign Debt, and Undrawn Commitments — not yet modeled in this module) | PCAF Sovereign Debt Standard (Class 7) | GHG Protocol Scope 3 Category 15 | SBTi Financial Sector Science-Based Target Setting
             </div>
           </div>
         )}
@@ -385,7 +388,7 @@ export default function PcafUniversalAttributorPage() {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 8 }}>
           <div style={card}>
             <h4 style={{ fontSize: 13, fontWeight: 700, color: T.navy, marginBottom: 8 }}>Reference Data</h4>
-            {['PCAF Standard, 2nd Edition (Dec 2022), Part A', 'GHG Protocol Scope 3 Category 15', 'SBTi Financial Sector Framework', 'TCFD Recommendations', 'SFDR PAI Indicators', 'CDP Financial Sector Questionnaire'].map(r => (
+            {['PCAF Financed Emissions Standard, 3rd Edition (Dec 2025), Part A', 'GHG Protocol Scope 3 Category 15', 'SBTi Financial Sector Framework', 'TCFD Recommendations', 'SFDR PAI Indicators', 'CDP Financial Sector Questionnaire'].map(r => (
               <div key={r} style={{ fontSize: 11, color: T.textSec, padding: '3px 0', borderBottom: `1px solid ${T.border}` }}>{r}</div>
             ))}
           </div>
