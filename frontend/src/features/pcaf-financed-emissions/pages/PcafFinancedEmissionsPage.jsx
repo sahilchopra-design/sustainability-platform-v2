@@ -22,6 +22,7 @@ import { getReferenceEvicBn, getReferenceRevenueM, getReferenceEntry } from '../
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
 import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR, sectorRevenueProxyM } from '../../../data/pcafStandards';
 import { LOB_FIELDS, calcPolicyEmissions } from '../../../data/pcafInsuranceEngine';
+import { loadPortfolio, savePortfolio } from '../../../data/portfolioPersistence';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
 import ReportExporter from '../../../components/ReportExporter';
@@ -741,6 +742,16 @@ function computeRow(p){
 
 const INITIAL_POSITIONS=BASE_POSITIONS.map(computeRow);
 
+// R3 gap F-13: the single source of truth for "what FE does this position
+// show under the current scope toggle" — every consumer (table cell,
+// footer, asset-class/geo/sector aggregates, top-10 chart) calls this same
+// function instead of each re-deriving its own scopeView ternary, which is
+// exactly how the table/footer and the charts/pills drifted out of sync
+// with each other in the first place.
+function scopedFE(p,scopeView){
+  return scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions;
+}
+
 /* ═══════════════════════════════════════════════════════════════════════════════
    REUSABLE UI COMPONENTS
    ═══════════════════════════════════════════════════════════════════════════════ */
@@ -789,17 +800,42 @@ function InfoBox({type,children}){
 /* ═══════════════════════════════════════════════════════════════════════════════
    ADD POSITION MODAL — Full form with validation
    ═══════════════════════════════════════════════════════════════════════════════ */
+// R3 gap F-19: shared by both the per-field live validator and the
+// on-submit validator, so "does this field pass" is answered the same way
+// in both places — the field-level errors used to only clear on the next
+// full Save attempt, so a message could sit there stale after the user had
+// already fixed that exact field.
+function validateFields(form){
+  const e={};
+  if(!form.name.trim())e.name='Company/instrument name is required';
+  if(!form.outstanding||+form.outstanding<=0)e.outstanding='Outstanding exposure must be > 0';
+  if((!form.scope1||+form.scope1===0)&&(!form.scope2||+form.scope2===0))e.scope1='At least Scope 1 or Scope 2 emissions required';
+  if(['Listed Equity','Corporate Bonds','Business Loans'].includes(form.assetClass)&&form.evic&&+form.evic<=0)e.evic='EVIC must be > 0 if provided';
+  return e;
+}
+
 function AddPositionModal({onAdd,onClose}){
   const[form,setForm]=useState({name:'',country:'US',geo:'Americas',assetClass:'Listed Equity',sector:'Technology',evic:'',outstanding:'',scope1:'',scope2:'',scope3:'',dqs:'3',source:'Manual entry',currency:'USD',projectCost:'',propertyValue:''});
-  const set=k=>e=>setForm(f=>({...f,[k]:e.target.value}));
   const[errors,setErrors]=useState({});
+  // R3 gap F-19: clear (or update) each field's error the moment its value
+  // changes, using the same validateFields check the Save button runs —
+  // previously errors state only updated on the next full Save attempt, so
+  // a field the user had already fixed kept showing its old error message.
+  const set=k=>e=>{
+    const value=e.target.value;
+    setForm(f=>{
+      const next={...f,[k]:value};
+      setErrors(prevErrors=>{
+        const fresh=validateFields(next);
+        const{[k]:_omit,...rest}=prevErrors;
+        return fresh[k]?{...rest,[k]:fresh[k]}:rest;
+      });
+      return next;
+    });
+  };
 
   function validate(){
-    const e={};
-    if(!form.name.trim())e.name='Company/instrument name is required';
-    if(!form.outstanding||+form.outstanding<=0)e.outstanding='Outstanding exposure must be > 0';
-    if((!form.scope1||+form.scope1===0)&&(!form.scope2||+form.scope2===0))e.scope1='At least Scope 1 or Scope 2 emissions required';
-    if(['Listed Equity','Corporate Bonds','Business Loans'].includes(form.assetClass)&&form.evic&&+form.evic<=0)e.evic='EVIC must be > 0 if provided';
+    const e=validateFields(form);
     setErrors(e);return Object.keys(e).length===0;
   }
 
@@ -921,16 +957,42 @@ function PartATab({positions,setPositions}){
   const revenueProxyCount=useMemo(()=>positions.filter(p=>p.revenueProxy).length,[positions]);
   const carbonCostM=useMemo(()=>(totalFE*carbonPrice/1e6).toFixed(1),[totalFE,carbonPrice]);
 
-  const byAC=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,count:0,fe:0,out:0,avgDqs:0,totalDqs:0};const e=m[p.assetClass];e.count++;e.fe+=p.financedEmissions;e.out+=p.outstanding;e.totalDqs+=p.dqs;});Object.values(m).forEach(v=>v.avgDqs=+(v.totalDqs/v.count).toFixed(1));return Object.values(m).sort((a,b)=>b.fe-a.fe);},[computablePositions]);
-  const byGeo=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.geo])m[p.geo]={geo:p.geo,fe:0,count:0,out:0};m[p.geo].fe+=p.financedEmissions;m[p.geo].count++;m[p.geo].out+=p.outstanding;});return Object.values(m);},[computablePositions]);
-  const bySector=useMemo(()=>{const m={};computablePositions.forEach(p=>{if(!m[p.sector])m[p.sector]={sector:p.sector,fe:0,count:0};m[p.sector].fe+=p.financedEmissions;m[p.sector].count++;});return Object.values(m).sort((a,b)=>b.fe-a.fe).slice(0,15);},[computablePositions]);
-  const top10=useMemo(()=>[...computablePositions].sort((a,b)=>b.financedEmissions-a.financedEmissions).slice(0,10),[computablePositions]);
+  // R3 gap F-13: the scope selector (Scope 1+2 / 1+2+3) previously
+  // re-rendered the table's FE cell and footer (each with its own inline
+  // scopeView ternary) but not the asset-class pills, geography/sector
+  // charts, or the top-10 contributors chart — those four all summed
+  // p.financedEmissions (S1+2) unconditionally. Toggling to 1+2+3 therefore
+  // changed the table and footer but left every chart/pill showing a
+  // stale, inconsistent total. Fixed by deriving a single scopedFE value
+  // per position ONCE here, and having every aggregate (and the table
+  // cell/footer below) read from it — no component computes its own
+  // scope-dependent total anymore.
+  const scopedPositions=useMemo(()=>computablePositions.map(p=>({...p,scopedFE:scopedFE(p,scopeView)})),[computablePositions,scopeView]);
+  const byAC=useMemo(()=>{const m={};scopedPositions.forEach(p=>{if(!m[p.assetClass])m[p.assetClass]={ac:p.assetClass,count:0,fe:0,out:0,avgDqs:0,totalDqs:0};const e=m[p.assetClass];e.count++;e.fe+=p.scopedFE;e.out+=p.outstanding;e.totalDqs+=p.dqs;});Object.values(m).forEach(v=>v.avgDqs=+(v.totalDqs/v.count).toFixed(1));return Object.values(m).sort((a,b)=>b.fe-a.fe);},[scopedPositions]);
+  const byGeo=useMemo(()=>{const m={};scopedPositions.forEach(p=>{if(!m[p.geo])m[p.geo]={geo:p.geo,fe:0,count:0,out:0};m[p.geo].fe+=p.scopedFE;m[p.geo].count++;m[p.geo].out+=p.outstanding;});return Object.values(m);},[scopedPositions]);
+  const bySector=useMemo(()=>{const m={};scopedPositions.forEach(p=>{if(!m[p.sector])m[p.sector]={sector:p.sector,fe:0,count:0};m[p.sector].fe+=p.scopedFE;m[p.sector].count++;});return Object.values(m).sort((a,b)=>b.fe-a.fe).slice(0,15);},[scopedPositions]);
+  const top10=useMemo(()=>[...scopedPositions].sort((a,b)=>b.scopedFE-a.scopedFE).slice(0,10),[scopedPositions]);
 
   function handleSort(key){if(sortKey===key)setSortDir(d=>-d);else{setSortKey(key);setSortDir(-1);}}
   function startEdit(p){setExpandedId(p.id);setEditDraft({outstanding:p.outstanding,evicOverride:p.evic,scope1:p.scope1,scope2:p.scope2,scope3:p.scope3,dqs:p.dqs});}
-  function applyEdit(p){
+  // R3 gap F-16: explicit Save/Cancel (previously one "Recalculate" button
+  // that both applied and closed the row, with no way to back out of an
+  // in-progress edit without committing it).
+  function saveEdit(p){
     const updated={...p,outstanding:+editDraft.outstanding,evic:editDraft.evicOverride?+editDraft.evicOverride:null,scope1:+editDraft.scope1,scope2:+(editDraft.scope2||0),scope3:+(editDraft.scope3||0),dqs:+editDraft.dqs};
-    setPositions(prev=>prev.map(x=>x.id===p.id?computeRow(updated):x));setExpandedId(null);
+    setPositions(prev=>prev.map(x=>x.id===p.id?computeRow(updated):x));setExpandedId(null);setEditDraft({});
+  }
+  function cancelEdit(){setExpandedId(null);setEditDraft({});}
+  // R3 gap F-16: the formula preview previously read the position's
+  // already-committed fields (p.attrFactor/p.totalEmissions/p.financedEmissions)
+  // even while the user was actively typing new values into the edit form,
+  // so it stayed frozen on the pre-edit numbers until Save closed the row
+  // (e.g. "× 22.6K = 0" staying stale). Recomputed live from the draft via
+  // the same computeRow the Save button commits through — one calculation
+  // path, not a second divergent one.
+  function previewRow(p){
+    const draftInput={...p,outstanding:+editDraft.outstanding||0,evic:editDraft.evicOverride?+editDraft.evicOverride:null,scope1:+editDraft.scope1||0,scope2:+(editDraft.scope2||0),scope3:+(editDraft.scope3||0),dqs:+editDraft.dqs||p.dqs};
+    return computeRow(draftInput);
   }
   function removeSelected(){setPositions(prev=>prev.filter(p=>!selected.has(p.id)));setSelected(new Set());}
   function toggleSelect(id){setSelected(prev=>{const n=new Set(prev);n.has(id)?n.delete(id):n.add(id);return n;});}
@@ -992,7 +1054,7 @@ function PartATab({positions,setPositions}){
       </Card>
       <Card title="Top 10 Contributors">
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={top10} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><YAxis type="category" dataKey="name" tick={{fontSize:7,fill:T.textSec}} width={110}/><Tooltip {...tip}/><Bar dataKey="financedEmissions" fill={T.navy} radius={[0,4,4,0]} name="FE tCO2e"/></BarChart>
+          <BarChart data={top10} layout="vertical"><CartesianGrid strokeDasharray="3 3" stroke={T.border}/><XAxis type="number" tick={{fontSize:9,fill:T.textSec}} tickFormatter={v=>fmt(v)}/><YAxis type="category" dataKey="name" tick={{fontSize:7,fill:T.textSec}} width={110}/><Tooltip {...tip}/><Bar dataKey="scopedFE" fill={T.navy} radius={[0,4,4,0]} name="FE tCO2e"/></BarChart>
         </ResponsiveContainer>
       </Card>
     </div>
@@ -1080,7 +1142,7 @@ function PartATab({positions,setPositions}){
                 <td style={{padding:'5px 8px',textAlign:'right',fontWeight:600,color:p.dataGap?T.red:p.financedEmissions>1e6?T.red:p.financedEmissions>1e5?T.amber:T.text,fontFamily:T.mono,fontSize:10}}>
                   {p.dataGap
                     ? <span title={p.dataGapReason}>⚠ Data gap</span>
-                    : fmt(scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions)}
+                    : fmt(scopedFE(p,scopeView))}
                 </td>
                 <td style={{padding:'5px 8px',textAlign:'right',fontFamily:T.mono,fontSize:10}}>{p.carbonIntensity.toFixed(0)}</td>
                 <td style={{padding:'5px 8px',textAlign:'center'}}><span style={{fontWeight:700,color:DQS_COLOR[p.dqs]||T.text,fontSize:12}}>{p.dqs}</span></td>
@@ -1098,13 +1160,15 @@ function PartATab({positions,setPositions}){
                       <div><label style={{fontSize:10,color:T.textSec,display:'block',marginBottom:2}}>Scope 2</label><input style={{...inp,width:100}} type="number" value={editDraft.scope2} onChange={e=>setEditDraft(d=>({...d,scope2:e.target.value}))}/></div>
                       <div><label style={{fontSize:10,color:T.textSec,display:'block',marginBottom:2}}>Scope 3</label><input style={{...inp,width:100}} type="number" value={editDraft.scope3} onChange={e=>setEditDraft(d=>({...d,scope3:e.target.value}))}/></div>
                       <div><label style={{fontSize:10,color:T.textSec,display:'block',marginBottom:2}}>DQS</label><select style={{...inp,width:50}} value={editDraft.dqs} onChange={e=>setEditDraft(d=>({...d,dqs:e.target.value}))}>{[1,2,3,4,5].map(d=><option key={d}>{d}</option>)}</select></div>
-                      <button onClick={()=>applyEdit(p)} style={{padding:'5px 14px',border:'none',borderRadius:4,background:T.sage,color:'#fff',fontSize:11,fontWeight:600,cursor:'pointer'}}>Recalculate</button>
+                      <button onClick={()=>saveEdit(p)} style={{padding:'5px 14px',border:'none',borderRadius:4,background:T.sage,color:'#fff',fontSize:11,fontWeight:600,cursor:'pointer'}}>Save</button>
+                      <button onClick={cancelEdit} style={{padding:'5px 14px',border:`1px solid ${T.border}`,borderRadius:4,background:T.surface,color:T.text,fontSize:11,fontWeight:600,cursor:'pointer'}}>Cancel</button>
                     </div>
+                    {(()=>{const preview=previewRow(p);return(
                     <div style={{marginTop:6,fontSize:10,color:T.textMut,fontFamily:T.mono}}>
-                      {p.dataGap
-                        ? <span style={{color:T.red}}>⚠ {p.dataGapReason}</span>
-                        : <>{(()=>{const _ch=ASSET_CLASS_DEFS.find(d=>d.ac===p.assetClass)?.ch;return _ch==='3rdEd'?'PCAF 3rd Ed. (Dec 2025)':`PCAF Ch.${_ch||'5'}`;})()}: FE = ({fmtPct(p.attrFactor)}) \u00d7 {fmt(p.totalEmissions)} = {fmt(p.financedEmissions)} tCO2e | Carbon cost: ${(p.financedEmissions*carbonPrice/1e6).toFixed(3)}M @ ${carbonPrice}/t | Source: {p.source}</>}
-                    </div>
+                      {preview.dataGap
+                        ? <span style={{color:T.red}}>⚠ {preview.dataGapReason}</span>
+                        : <>{(()=>{const _ch=ASSET_CLASS_DEFS.find(d=>d.ac===p.assetClass)?.ch;return _ch==='3rdEd'?'PCAF 3rd Ed. (Dec 2025)':`PCAF Ch.${_ch||'5'}`;})()}: FE = ({fmtPct(preview.attrFactor)}) \u00d7 {fmt(preview.totalEmissions)} = {fmt(preview.financedEmissions)} tCO2e | Carbon cost: ${(preview.financedEmissions*carbonPrice/1e6).toFixed(3)}M @ ${carbonPrice}/t | Source: {p.source} <span style={{color:T.amber}}>(live preview — click Save to commit)</span></>}
+                    </div>);})()}
                   </td>
                 </tr>
               )}
@@ -1114,7 +1178,7 @@ function PartATab({positions,setPositions}){
       </table>
     </div>
     <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:8}}>
-      <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Showing {filtered.length} of {positions.length} positions | Scope: {scopeView} | Filtered FE: {fmt(filtered.filter(p=>!p.dataGap).reduce((s,p)=>s+(scopeView==='1+2+3'?p.financedEmissions+p.financedScope3:p.financedEmissions),0))} tCO2e{filtered.some(p=>p.dataGap)?` (${filtered.filter(p=>p.dataGap).length} data gap${filtered.filter(p=>p.dataGap).length===1?'':'s'} excluded)`:''}</div>
+      <div style={{fontSize:11,color:T.textMut,fontFamily:T.mono}}>Showing {filtered.length} of {positions.length} positions | Scope: {scopeView} | Filtered FE: {fmt(filtered.filter(p=>!p.dataGap).reduce((s,p)=>s+scopedFE(p,scopeView),0))} tCO2e{filtered.some(p=>p.dataGap)?` (${filtered.filter(p=>p.dataGap).length} data gap${filtered.filter(p=>p.dataGap).length===1?'':'s'} excluded)`:''}</div>
       <div style={{fontSize:10,color:T.textMut}}>Total exposure: ${fmt(totalOut*1e6)} | Positions with EVIC warning: {positions.filter(p=>p.evicWarning).length}</div>
     </div>
     {showAdd&&<AddPositionModal onAdd={p=>setPositions(prev=>[p,...prev])} onClose={()=>setShowAdd(false)}/>}
@@ -1762,9 +1826,24 @@ function AuditTrailTab({positions}){
 // not a functional issue, but flagged here to avoid confusing a future reader.
 const TABS=['Part A: Financed','Part C: Insurance','Part B: Facilitated','Data Quality','Reference Data','Formula Engine','Downstream','Audit Trail'];
 
+// R3 gaps F-16/F-19: writes (inline edits, add/remove position) previously
+// lived only in React state — a reload silently reverted to the 60-holding
+// demo seed with no indication anything had been lost. Persisted via
+// data/portfolioPersistence.js (localStorage today, designed so a backend
+// store can replace it later without touching call sites).
+const PORTFOLIO_STORAGE_ID='global-demo-portfolio';
+
 export default function PcafFinancedEmissionsPage(){
   const[activeTab,setActiveTab]=useState(TABS[0]);
-  const[positions,setPositions]=useState(INITIAL_POSITIONS);
+  const[positions,setPositions]=useState(()=>{
+    const saved=loadPortfolio(PORTFOLIO_STORAGE_ID);
+    // Re-run computeRow on load rather than trusting the persisted derived
+    // fields as-is — safe because computeRow is idempotent over the same
+    // raw inputs, and it guards against this session's calculation logic
+    // having changed since the positions were last saved.
+    return saved&&saved.length?saved.map(computeRow):INITIAL_POSITIONS;
+  });
+  useEffect(()=>{savePortfolio(PORTFOLIO_STORAGE_ID,positions);},[positions]);
   const[showUploader,setShowUploader]=useState(false);
 
   return(
