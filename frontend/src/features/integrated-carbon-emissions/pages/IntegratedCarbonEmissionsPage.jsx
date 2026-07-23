@@ -2336,7 +2336,10 @@ export default function IntegratedCarbonEmissionsPage(){
                 <div style={{fontSize:9,color:T.textMut}}>{data.source.substring(0,35)}</div>
               </div>
               <div style={{textAlign:'right'}}>
-                <div style={{fontFamily:T.mono,fontSize:16,fontWeight:700,color:T.navy}}>{data.currency==='EUR'?'\u20AC':data.currency==='GBP'?'\u00A3':data.currency==='NZD'?'NZ$':'$'}{data.price}</div>
+                {/* R3 gap C-2: honest null for markets with no established
+                    clearing price yet (e.g. India CCTS) \u2014 never render a
+                    bare currency symbol with no number, and never guess one. */}
+                <div style={{fontFamily:T.mono,fontSize:16,fontWeight:700,color:data.price==null?T.textMut:T.navy}}>{data.price==null?'N/A':`${data.currency==='EUR'?'\u20AC':data.currency==='GBP'?'\u00A3':data.currency==='NZD'?'NZ$':data.currency==='INR'?'\u20B9':'$'}${data.price}`}</div>
                 <div style={{fontSize:8,fontFamily:T.mono,color:T.textMut}}>/tCO2e ({data.year})</div>
               </div>
             </div>

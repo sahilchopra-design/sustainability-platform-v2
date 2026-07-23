@@ -113,8 +113,11 @@ export const EMISSION_FACTORS = {
     cat7_commuting:        { factor: 0.15, unit: 'kgCO2e/$', source: 'USEEIO v2.0', note: 'Mixed mode avg' },
     cat8_upstream_leased:  { factor: 0.25, unit: 'kgCO2e/$', source: 'EXIOBASE 3.8.2', note: 'Commercial RE' },
     cat9_downstream_transport:{ factor: 0.48, unit: 'kgCO2e/$', source: 'EXIOBASE 3.8.2' },
+    cat10_processing_of_sold_products: { factor: 0.40, unit: 'kgCO2e/$', source: 'Platform estimate — pending EXIOBASE verification', note: 'Downstream processing of intermediate goods (R3 gap C-1: previously missing from this table entirely)' },
     cat11_use_of_product:  { factor: 0.35, unit: 'kgCO2e/$', source: 'EXIOBASE 3.8.2', note: 'Electronics avg' },
     cat12_end_of_life:     { factor: 0.12, unit: 'kgCO2e/$', source: 'EXIOBASE 3.8.2' },
+    cat13_downstream_leased_assets: { factor: 0.25, unit: 'kgCO2e/$', source: 'Platform estimate — pending EXIOBASE verification', note: 'Mirrors cat8 (upstream leased) methodology; previously missing (R3 gap C-1)' },
+    cat14_franchises: { factor: 0.22, unit: 'kgCO2e/$', source: 'Platform estimate — pending EXIOBASE verification', note: 'Franchise-operated site emissions; previously missing (R3 gap C-1)' },
     cat15_investments:     { factor: 0.20, unit: 'kgCO2e/$', source: 'PCAF / EXIOBASE', note: 'Financial services' },
   },
 };
@@ -135,6 +138,13 @@ export const CARBON_PRICES = {
     NZ_ETS:     { price: 49.0,  currency: 'NZD', year: 2025, source: 'NZX Carbon Q1 2025 avg' },
     Mexico_ETS: { price: 3.50,  currency: 'USD', year: 2025, source: 'SEMARNAT pilot 2025' },
     Japan_GX:   { price: 5.0,   currency: 'USD', year: 2025, source: 'GX-ETS Phase 1 (voluntary)' },
+    // R3 gap C-2: India's Carbon Credit Trading Scheme (CCTS, notified under
+    // the Energy Conservation (Amendment) Act 2022) is a real, live
+    // compliance scheme — but a mature market clearing price is not yet
+    // publicly established while compliance obligations are still phasing
+    // in. Honest null rather than a fabricated price (platform convention:
+    // missing data -> null + a clear reason, never a guessed number).
+    India_CCTS: { price: null, currency: 'INR', year: 2025, source: 'India Carbon Credit Trading Scheme (CCTS) — compliance obligations phasing in, no established clearing price yet published', dataAvailability: 'insufficient_data' },
   },
 
   // NGFS scenario shadow carbon prices (USD/tCO2e) [7]
@@ -481,45 +491,45 @@ export const NGFS_SCENARIOS = [
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const SECTOR_BENCHMARKS = [
-  { gics: '1010', sector: 'Energy',                    medianIntensity: 350, parisTarget2030: 195, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '1510', sector: 'Materials',                 medianIntensity: 620, parisTarget2030: 340, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '2010', sector: 'Capital Goods',             medianIntensity: 45,  parisTarget2030: 25,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '2020', sector: 'Commercial Services',       medianIntensity: 18,  parisTarget2030: 10,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '2030', sector: 'Transportation',            medianIntensity: 280, parisTarget2030: 155, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '2510', sector: 'Automobiles & Components',  medianIntensity: 55,  parisTarget2030: 30,  sbtiMethod: 'SDA', decarbRate: 7.0 },
-  { gics: '2520', sector: 'Consumer Durables',         medianIntensity: 35,  parisTarget2030: 19,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '2530', sector: 'Consumer Services',         medianIntensity: 28,  parisTarget2030: 15,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '2550', sector: 'Consumer Discretionary Distribution & Retail', medianIntensity: 22,  parisTarget2030: 12,  sbtiMethod: 'ACA', decarbRate: 4.2 },
+  { gics: '1010', sector: 'Energy',                    medianIntensity: 350, parisTarget2030: 195, sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '1510', sector: 'Materials',                 medianIntensity: 620, parisTarget2030: 340, sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2010', sector: 'Capital Goods',             medianIntensity: 45,  parisTarget2030: 25,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2020', sector: 'Commercial Services',       medianIntensity: 18,  parisTarget2030: 10,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2030', sector: 'Transportation',            medianIntensity: 280, parisTarget2030: 155, sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2510', sector: 'Automobiles & Components',  medianIntensity: 55,  parisTarget2030: 30,  sbtiMethod: 'SDA', decarbRate: 7.0 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2520', sector: 'Consumer Durables',         medianIntensity: 35,  parisTarget2030: 19,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2530', sector: 'Consumer Services',         medianIntensity: 28,  parisTarget2030: 15,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2550', sector: 'Consumer Discretionary Distribution & Retail', medianIntensity: 22,  parisTarget2030: 12,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
   // "Food & Staples Retailing" was renamed "Consumer Staples Distribution &
   // Retail" in the March 2023 GICS structure revision; code 3010 unchanged.
-  { gics: '3010', sector: 'Consumer Staples Distribution & Retail', medianIntensity: 30,  parisTarget2030: 17,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '3020', sector: 'Food Beverage & Tobacco',   medianIntensity: 65,  parisTarget2030: 36,  sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '3030', sector: 'Household & Personal',      medianIntensity: 25,  parisTarget2030: 14,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '3510', sector: 'Health Care Equipment',     medianIntensity: 12,  parisTarget2030: 7,   sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '3520', sector: 'Pharmaceuticals & Biotech', medianIntensity: 15,  parisTarget2030: 8,   sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '4010', sector: 'Banks',                     medianIntensity: 4,   parisTarget2030: 2,   sbtiMethod: 'SDA', decarbRate: 4.2, note: 'Own ops only; excludes financed' },
-  { gics: '4020', sector: 'Financial Services',        medianIntensity: 5,   parisTarget2030: 3,   sbtiMethod: 'SDA', decarbRate: 4.2, note: 'Own ops only' },
-  { gics: '4030', sector: 'Insurance',                 medianIntensity: 6,   parisTarget2030: 3,   sbtiMethod: 'SDA', decarbRate: 4.2, note: 'Own ops only' },
-  { gics: '4510', sector: 'Software & Services',       medianIntensity: 8,   parisTarget2030: 4,   sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '4520', sector: 'Technology Hardware',       medianIntensity: 18,  parisTarget2030: 10,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '4530', sector: 'Semiconductors',            medianIntensity: 22,  parisTarget2030: 12,  sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '5010', sector: 'Telecommunication Services',medianIntensity: 20,  parisTarget2030: 11,  sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '5020', sector: 'Media & Entertainment',     medianIntensity: 10,  parisTarget2030: 6,   sbtiMethod: 'ACA', decarbRate: 4.2 },
-  { gics: '5510', sector: 'Utilities',                 medianIntensity: 980, parisTarget2030: 540, sbtiMethod: 'SDA', decarbRate: 7.0 },
-  { gics: '6010', sector: 'Equity REITs',              medianIntensity: 32,  parisTarget2030: 18,  sbtiMethod: 'SDA', decarbRate: 4.2, note: 'kgCO2e/m2 basis often used' },
+  { gics: '3010', sector: 'Consumer Staples Distribution & Retail', medianIntensity: 30,  parisTarget2030: 17,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '3020', sector: 'Food Beverage & Tobacco',   medianIntensity: 65,  parisTarget2030: 36,  sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '3030', sector: 'Household & Personal',      medianIntensity: 25,  parisTarget2030: 14,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '3510', sector: 'Health Care Equipment',     medianIntensity: 12,  parisTarget2030: 7,   sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '3520', sector: 'Pharmaceuticals & Biotech', medianIntensity: 15,  parisTarget2030: 8,   sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '4010', sector: 'Banks',                     medianIntensity: 4,   parisTarget2030: 2,   sbtiMethod: 'SDA', decarbRate: 4.2, note: 'Own ops only; excludes financed' , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '4020', sector: 'Financial Services',        medianIntensity: 5,   parisTarget2030: 3,   sbtiMethod: 'SDA', decarbRate: 4.2, note: 'Own ops only' , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '4030', sector: 'Insurance',                 medianIntensity: 6,   parisTarget2030: 3,   sbtiMethod: 'SDA', decarbRate: 4.2, note: 'Own ops only' , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '4510', sector: 'Software & Services',       medianIntensity: 8,   parisTarget2030: 4,   sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '4520', sector: 'Technology Hardware',       medianIntensity: 18,  parisTarget2030: 10,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '4530', sector: 'Semiconductors',            medianIntensity: 22,  parisTarget2030: 12,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '5010', sector: 'Telecommunication Services',medianIntensity: 20,  parisTarget2030: 11,  sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '5020', sector: 'Media & Entertainment',     medianIntensity: 10,  parisTarget2030: 6,   sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '5510', sector: 'Utilities',                 medianIntensity: 980, parisTarget2030: 540, sbtiMethod: 'SDA', decarbRate: 7.0 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '6010', sector: 'Equity REITs',              medianIntensity: 32,  parisTarget2030: 18,  sbtiMethod: 'SDA', decarbRate: 4.2, note: 'kgCO2e/m2 basis often used' , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
   // NOTE (GAP-026): 2540/2560 below are not confirmed against the current
   // GICS structure — flagged for verification, not fabricated as authoritative.
-  { gics: '2540', sector: 'Consumer Discretionary Dist — UNVERIFIED CODE',medianIntensity: 15, parisTarget2030: 8,   sbtiMethod: 'ACA', decarbRate: 4.2 },
+  { gics: '2540', sector: 'Consumer Discretionary Dist — UNVERIFIED CODE',medianIntensity: 15, parisTarget2030: 8,   sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
   // 1520/1530/1540/1550 previously presented as GICS Industry Groups, which
   // is wrong: under GICS, Materials (sector 15) has exactly one Industry
   // Group, 1510, and Chemicals/Construction Materials/Containers & Packaging/
   // Metals & Mining are 6-digit Industries beneath it. Corrected to the real
   // 6-digit Industry codes below.
-  { gics: '151010', sector: 'Chemicals',                 medianIntensity: 480, parisTarget2030: 265, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '151020', sector: 'Construction Materials',    medianIntensity: 720, parisTarget2030: 396, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '151030', sector: 'Containers & Packaging',    medianIntensity: 180, parisTarget2030: 99,  sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '151040', sector: 'Metals & Mining',           medianIntensity: 550, parisTarget2030: 303, sbtiMethod: 'SDA', decarbRate: 4.2 },
-  { gics: '2560', sector: 'Hotels Restaurants Leisure — UNVERIFIED CODE', medianIntensity: 40,  parisTarget2030: 22,  sbtiMethod: 'ACA', decarbRate: 4.2 },
+  { gics: '151010', sector: 'Chemicals',                 medianIntensity: 480, parisTarget2030: 265, sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '151020', sector: 'Construction Materials',    medianIntensity: 720, parisTarget2030: 396, sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '151030', sector: 'Containers & Packaging',    medianIntensity: 180, parisTarget2030: 99,  sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '151040', sector: 'Metals & Mining',           medianIntensity: 550, parisTarget2030: 303, sbtiMethod: 'SDA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
+  { gics: '2560', sector: 'Hotels Restaurants Leisure — UNVERIFIED CODE', medianIntensity: 40,  parisTarget2030: 22,  sbtiMethod: 'ACA', decarbRate: 4.2 , unit: 'tCO2e/$M rev', source: 'Platform sector-median estimate (not licensed vendor data)' },
 ];
 
 // ═══════════════════════════════════════════════════════════════════════════════
