@@ -2,14 +2,15 @@
  * pcafAuditTrail.js — ENH-017
  * Step-by-step PCAF calculation audit trail engine
  *
- * Reference:
- *   PCAF Standard, 2nd Edition (December 2022), Part A (financed emissions)
- *   PCAF Insurance-Associated Emissions Standard (Nov 2022, separate publication)
- *   PCAF Standard, Part B — Facilitated Emissions (Dec 2023, separate publication)
+ * Reference (see data/pcafStandards.js — single source of truth, R3 gap B-1):
+ *   PCAF Financed Emissions, 3rd Edition (Dec 2025), Part A
+ *   PCAF Insurance-Associated Emissions (Nov 2022, updated Dec 2025), Part C
+ *   PCAF Facilitated Emissions (Dec 2023), Part B
  *   GHG Protocol Corporate Value Chain (Scope 3) Standard
  *   TCFD Guidance on Metrics, Targets and Transition Plans (2021)
  */
 import { getReferenceEntry, getReferenceRevenueM } from './evicReference';
+import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from './pcafStandards';
 
 // ═══════════════════════════════════════════════════════════════════════════════
 // 1. METHODOLOGY REFERENCES
@@ -17,27 +18,27 @@ import { getReferenceEntry, getReferenceRevenueM } from './evicReference';
 
 export const PCAF_CITATIONS = {
   attribution: {
-    ref: 'PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
+    ref: PCAF_PART_A,
     formula: 'Attribution ratio = Outstanding amount ($M) / EVIC ($M)',
     notes: 'Outstanding = carrying value of loan/bond/equity at reporting date; EVIC = MarketCap + TotalDebt + Preferred + MinorityInterest',
     validRange: [0, 1],
   },
   financedEmissions: {
-    ref: 'PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
-    formula: 'Financed Emissions (tCO2e) = Attribution ratio × Total GHG emissions',
-    scopes: 'Scope 1 + Scope 2 mandatory; Scope 3 encouraged for energy, materials, agriculture sectors',
+    ref: PCAF_PART_A,
+    formula: 'Financed Emissions (tCO2e) = Attribution ratio × Scope 1+2 emissions (reported separately from Scope 3, never blended)',
+    scopes: `Scope 1 + Scope 2 mandatory; Scope 3 phase-in complete for all sectors from reporting year ${SCOPE3_ALL_SECTOR_YEAR} onward (historical tiers: energy/mining 2021+, transport/construction/buildings/materials/industrial 2024+)`,
   },
   waci: {
-    ref: 'TCFD Guidance on Metrics, Targets & Transition Plans (2021) / PCAF Standard, Chapter 5',
+    ref: `TCFD Guidance on Metrics, Targets & Transition Plans (2021) / ${PCAF_PART_A}`,
     formula: 'WACI = Σ(portfolio_weight × emissions / revenue) across all holdings',
     unit: 'tCO2e per $M revenue (revenue-denominated per TCFD 2021 standard)',
     note: 'Portfolio weight = outstanding_i / Σ outstanding',
   },
   evic: {
-    ref: 'PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
+    ref: PCAF_PART_A,
     formula: 'EVIC = Market Cap + Total Debt + Preferred Stock + Minority Interest',
     currency: 'USD millions at reporting year-end exchange rates (ECB reference)',
-    sources: { 1: 'EODHD live data', 2: 'Bloomberg/Refinitiv', 3: 'Company filing', 4: 'Sector-median estimate' },
+    sources: { 1: 'Analyst-verified reference table / live feed', 2: 'Bloomberg/Refinitiv', 3: 'Company filing', 4: 'Sector-median proxy (plausibility-banded)' },
   },
   dqs: {
     ref: 'PCAF Standard — Data Quality Annex',
@@ -50,15 +51,18 @@ export const PCAF_CITATIONS = {
     },
     target: 'Target portfolio average DQS ≤ 3 for PCAF disclosure',
   },
+  // Key names (partB/partC) are historical/internal and don't correspond 1:1
+  // to the PCAF Part lettering — insurance is genuinely PCAF Part C, and
+  // facilitated is genuinely PCAF Part B (see pcafStandards.js, R3 gap B-1).
   partB: {
-    ref: 'PCAF Insurance-Associated Emissions Standard (Nov 2022) — a separate standard, not "Part B" of the core PCAF Standard',
+    ref: PCAF_PART_C,
     formula: 'Insured emissions = attribution_ratio × policyholder_GHG',
-    note: 'Attribution for P&C: insured_value / asset_value; Life: exposure_value / EVIC',
+    note: 'Attribution for P&C: insured_value / asset_value; Life & Health remain out of scope. Dec 2025 update adds treaty reinsurance and project insurance methodologies.',
   },
   partC: {
-    ref: 'PCAF Standard, Part B — Facilitated Emissions (Dec 2023) — called "Part C" in this app\'s UI for historical reasons; the official PCAF designation is Part B',
+    ref: PCAF_PART_B,
     formula: 'Facilitated emissions = underwriting_share × issuer_GHG × 33% weighting factor',
-    note: 'Capital markets (bonds, equity) — one-year recognition in year of transaction; M&A/advisory mandates are out of scope',
+    note: 'Capital markets (bonds, equity) — one-year recognition in year of transaction; M&A/advisory mandates are out of scope. An additional 100%-unweighted disclosure is permitted if reported separately with rationale.',
   },
 };
 
@@ -74,7 +78,7 @@ export const STEP_DEFS = [
     citation: 'PCAF Standard, Chapter 2 — Scope & Applicability',
     checks: [
       'outstanding_amount > 0',
-      'asset_class ∈ PCAF taxonomy (7 core classes + platform extensions)',
+      `asset_class ∈ PCAF Part A taxonomy (${PCAF_PART_A} — 10 asset classes)`,
       'currency is ISO 4217',
       'sector classified (GICS / NACE)',
       'country/geography provided',
@@ -175,7 +179,7 @@ export const STEP_DEFS = [
  * @param {number} posIdx - Position index (deterministic seeding)
  * @returns {object} Full audit trail with 7 steps, flags, and summary
  */
-export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
+export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0, reportingYear = SCOPE3_ALL_SECTOR_YEAR) {
   // Position objects (see BASE_POSITIONS in PcafFinancedEmissionsPage.jsx)
   // carry EVIC as `evic` in $Bn — there is no `evicBn` field. Reading the
   // wrong key silently produced NaN -> 0 for every position, zeroing every
@@ -196,9 +200,19 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
   const scope1 = parseFloat(pos.scope1) || 0;
   const scope2 = parseFloat(pos.scope2) || 0;
   const scope3 = parseFloat(pos.scope3) || 0;
-  const totalEmissions = scope1 + scope2 + scope3;
+  // R3 gap B-2: PCAF requires scope 1+2 and scope 3 to be reported
+  // separately, never blended into a single headline metric — this is what
+  // previously made the audit-trail's per-position and portfolio headline
+  // (all-scope) disagree with the Part A tab's headline (scope 1+2 only) by
+  // orders of magnitude for scope-3-heavy sectors (oil majors, mining) even
+  // though both were internally correct on their own terms (ex A-3/B-2
+  // finding: "audit engine 1.45M" vs UI "3.79M" for the same portfolio).
+  const totalEmissionsS12 = scope1 + scope2;
+  const totalEmissions = totalEmissionsS12 + scope3;
+  const scope3Required = isScope3Required(pos.sector, reportingYear);
   const attributionRatio = evicMn > 0 ? Math.min(outstandingMn / evicMn, 1) : 0;
-  const financedEmissions = attributionRatio * totalEmissions;
+  const financedEmissions = attributionRatio * totalEmissionsS12;
+  const financedEmissionsS3 = attributionRatio * scope3;
   const referenceRevenueMn = getReferenceRevenueM(pos.ticker);
   const revenueMn = referenceRevenueMn != null ? referenceRevenueMn : ((parseFloat(pos.revenueBn) || 0) * 1000 || evicMn * 0.15);
   const portfolioWeight = totalOutstandingMn > 0 ? outstandingMn / totalOutstandingMn : 0;
@@ -213,7 +227,11 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
   if (evicMn <= 0 && outstandingMn > 0) flags.push({ severity: 'error', code: 'F00', msg: 'EVIC = $0 — attribution ratio and financed emissions cannot be computed; this is a blocking data error, not a proxy estimate' });
   if (evicMn < outstandingMn && evicMn > 0) flags.push({ severity: 'error', code: 'F02', msg: `EVIC ($${evicMn.toFixed(0)}M) < outstanding ($${outstandingMn.toFixed(0)}M) — data integrity issue` });
   if (attributionRatio > 0.25) flags.push({ severity: 'warn', code: 'F03', msg: `High attribution ratio ${(attributionRatio * 100).toFixed(1)}% — concentrated exposure; verify position size` });
-  if (scope3 === 0 && ['Energy', 'Materials', 'Utilities', 'Consumer Staples'].some(s => (pos.sector || '').includes(s))) flags.push({ severity: 'warn', code: 'F04', msg: 'Scope 3 missing for material sector — PCAF recommends inclusion for energy/materials' });
+  // R3 gap B-2: scope-3 phase-in is complete for reports from 2025 onward
+  // (all sectors) — this is no longer a soft "recommended for a few sectors"
+  // note but a standard requirement once the reporting year crosses that
+  // threshold. Escalated to 'error' (not 'warn') once required and missing.
+  if (scope3 === 0 && scope3Required) flags.push({ severity: 'error', code: 'F04', msg: `Scope 3 missing — required for reporting year ${reportingYear} (PCAF scope-3 phase-in; all-sector requirement from ${SCOPE3_ALL_SECTOR_YEAR})` });
   if (compositeDqs >= 4) flags.push({ severity: 'warn', code: 'F05', msg: `DQS=${compositeDqs} (low confidence) — obtain audited EVIC and company-disclosed emissions` });
   if (totalEmissions === 0) flags.push({ severity: 'warn', code: 'F06', msg: 'Zero total emissions — verify data entry or apply sector-average estimate' });
 
@@ -290,7 +308,10 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
         scope1_share: totalEmissions > 0 ? `${(scope1 / totalEmissions * 100).toFixed(1)}%` : '—',
         scope2_share: totalEmissions > 0 ? `${(scope2 / totalEmissions * 100).toFixed(1)}%` : '—',
         scope3_share: totalEmissions > 0 && scope3 > 0 ? `${(scope3 / totalEmissions * 100).toFixed(1)}%` : 'Not included',
-        scope3Required: ['Energy', 'Materials', 'Utilities'].some(s => (pos.sector || '').includes(s)),
+        scope3Required,
+        scope3ComplianceNote: scope3Required && scope3 === 0
+          ? `⚠ Scope 3 required for reporting year ${reportingYear} but not provided`
+          : scope3Required ? '✓ Scope 3 provided as required' : `Not yet required for reporting year ${reportingYear} for this sector`,
       },
       status: totalEmissions > 0 ? 'PASS' : 'WARN',
     },
@@ -301,12 +322,21 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
         totalEmissions_tCO2e: `${totalEmissions.toLocaleString()} tCO2e`,
       },
       outputs: {
-        financedEmissions_tCO2e: `${financedEmissions.toFixed(2)} tCO2e`,
+        // R3 gap B-2: the headline figure is Scope 1+2 only — Scope 3 is
+        // always reported as a separate line (financedEmissionsS3 below),
+        // never blended in, per PCAF's separate-reporting requirement.
+        financedEmissions_tCO2e_S12: `${financedEmissions.toFixed(2)} tCO2e`,
+        financedEmissions_tCO2e_S3: scope3 > 0 ? `${financedEmissionsS3.toFixed(2)} tCO2e` : 'N/A',
         scope1Financed: `${(attributionRatio * scope1).toFixed(2)} tCO2e`,
         scope2Financed: `${(attributionRatio * scope2).toFixed(2)} tCO2e`,
-        scope3Financed: scope3 > 0 ? `${(attributionRatio * scope3).toFixed(2)} tCO2e` : 'N/A',
-        calculation: `${attributionRatio.toFixed(6)} × ${totalEmissions.toLocaleString()} = ${financedEmissions.toFixed(2)} tCO2e`,
-        partAorB: pos.assetClass?.toLowerCase().includes('mortgage') || pos.assetClass?.toLowerCase().includes('insurance') ? 'Part B' : 'Part A',
+        scope3Financed: scope3 > 0 ? `${financedEmissionsS3.toFixed(2)} tCO2e` : 'N/A',
+        calculation: `${attributionRatio.toFixed(6)} × ${totalEmissionsS12.toLocaleString()} (S1+2) = ${financedEmissions.toFixed(2)} tCO2e; S3 reported separately`,
+        // Every position in this dataset is a Part A (Financed Emissions)
+        // holding; PCAF Part B is deal-based (facilitated emissions, see the
+        // Facilitated tab) and does not apply per-position here. A prior
+        // version of this field mislabeled mortgages as "Part B", which is
+        // simply wrong — mortgages are a Part A asset class.
+        pcafPart: pos.assetClass?.toLowerCase().includes('insurance') ? PCAF_PART_C : PCAF_PART_A,
       },
       status: 'PASS',
     },
@@ -355,14 +385,25 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
     assetClass: pos.assetClass || '—',
     sector: pos.sector || '—',
     trailDate: new Date().toISOString().slice(0, 10),
-    standard: 'PCAF Global GHG Accounting & Reporting Standard v2 (3rd Edition, 2022)',
+    standard: PCAF_PART_A,
+    reportingYear,
     steps,
     summary: {
       outstandingMn,
       evicMn,
       attributionRatio,
+      // financedEmissions is the Scope 1+2 headline (never blended with
+      // Scope 3 — R3 gap B-2); financedEmissionsS3 is the always-separate
+      // Scope 3 line; financedEmissionsAllScopes exists only as an explicit,
+      // clearly-labeled secondary figure for callers that need an all-scope
+      // total (e.g. an "including Scope 3" KPI card) — never render it under
+      // a plain "Financed Emissions" label.
       financedEmissions,
+      financedEmissionsS3,
+      financedEmissionsAllScopes: financedEmissions + financedEmissionsS3,
+      totalEmissionsS12,
       totalEmissions,
+      scope3Required,
       waciComponent,
       portfolioWeight,
       compositeDqs,
@@ -381,13 +422,20 @@ export function generatePositionTrail(pos, totalOutstandingMn, posIdx = 0) {
 /**
  * Generate audit trails for all positions plus portfolio-level aggregation.
  * @param {Array} positions - Array of PCAF position objects
+ * @param {number} [reportingYear] - defaults to the most recently completed
+ *   calendar year, which is >= the 2025 all-sector scope-3 threshold today
  * @returns {object} { trailId, positions (trails), portfolio, methodologyNotes }
  */
-export function generatePortfolioAuditTrail(positions) {
+export function generatePortfolioAuditTrail(positions, reportingYear = new Date().getFullYear() - 1) {
   const totalOutstandingMn = positions.reduce((s, p) => s + (parseFloat(p.outstanding) || 0), 0);
-  const trails = positions.map((p, i) => generatePositionTrail(p, totalOutstandingMn, i));
+  const trails = positions.map((p, i) => generatePositionTrail(p, totalOutstandingMn, i, reportingYear));
 
+  // Scope 1+2 headline; Scope 3 always summed and surfaced separately (R3 gap
+  // B-2) — never folded into one blended "total financed emissions" figure.
   const totalFinancedEmissions = trails.reduce((s, t) => s + t.summary.financedEmissions, 0);
+  const totalFinancedEmissionsS3 = trails.reduce((s, t) => s + t.summary.financedEmissionsS3, 0);
+  const scope3RequiredCount = trails.filter(t => t.summary.scope3Required).length;
+  const scope3MissingCount = trails.filter(t => t.flags.some(f => f.code === 'F04')).length;
   const portfolioWaci = trails.reduce((s, t) => s + t.summary.waciComponent, 0);
   const avgDqs = trails.length > 0
     ? trails.reduce((s, t) => s + t.summary.compositeDqs, 0) / trails.length
@@ -424,13 +472,18 @@ export function generatePortfolioAuditTrail(positions) {
   return {
     trailId: `PCAF-AT-${new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19)}`,
     generatedAt: new Date().toISOString(),
-    standard: 'PCAF Standard, 2nd Edition (Dec 2022) + TCFD Guidance on Metrics (2021)',
-    reportingYear: new Date().getFullYear() - 1,
+    standard: `${PCAF_PART_A} + TCFD Guidance on Metrics (2021)`,
+    reportingYear,
     positions: trails,
     portfolio: {
       totalPositions: positions.length,
       totalOutstandingMn,
+      // Scope 1+2 headline (never blended with Scope 3 — R3 gap B-2).
       totalFinancedEmissions,
+      totalFinancedEmissionsS3,
+      totalFinancedEmissionsAllScopes: totalFinancedEmissions + totalFinancedEmissionsS3,
+      scope3RequiredCount,
+      scope3MissingCount,
       portfolioWaci,
       avgDqs: parseFloat(avgDqs.toFixed(2)),
       dqsMeetsTarget: avgDqs <= 3,
@@ -452,9 +505,10 @@ export function generatePortfolioAuditTrail(positions) {
         : 'Poor — majority of positions using proxies; data improvement plan required',
     },
     methodologyNotes: [
-      'Attribution ratio: outstanding ($M) / EVIC ($M) per PCAF Standard, 2nd Ed. (Dec 2022), Chapter 5',
-      'EVIC: EODHD live data where available (DQS=1); sector-median ratio × market cap otherwise (DQS=4)',
-      'WACI denominator: revenue (not EVIC) per TCFD 2021 standard; revenue estimated at 15% × EVIC when not available',
+      `Attribution ratio: outstanding ($M) / EVIC ($M) per ${PCAF_PART_A}`,
+      'EVIC: analyst-verified reference table where available (DQS=1); sector-median proxy within a plausibility band otherwise (DQS=4); unresolvable positions are reported as a data gap, not a zero',
+      `Scope 1+2 and Scope 3 are reported separately, never blended (PCAF requirement); scope 3 required for all sectors from reporting year ${SCOPE3_ALL_SECTOR_YEAR} onward`,
+      'WACI denominator: reported revenue where available per TCFD 2021 standard; sector revenue-intensity proxy otherwise (flagged, DQS capped)',
       'Scope 3 Category 15 (investments) excluded at portfolio level to prevent double-counting',
       'GHG values in tCO2e using IPCC AR5 100-year GWP values (CO2=1, CH4=28, N2O=265)',
       'All monetary values in USD millions at reporting year-end FX rates (ECB reference)',

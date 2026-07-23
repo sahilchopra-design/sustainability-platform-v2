@@ -20,7 +20,7 @@ import { SECURITY_UNIVERSE, MOCK_PORTFOLIO } from '../../../data/securityUnivers
 import { getEVIC } from '../../../data/evicService';
 import { getReferenceEvicBn, getReferenceRevenueM, getReferenceEntry } from '../../../data/evicReference';
 import { generatePortfolioAuditTrail, downloadTrail, stepStatusColor, flagSeverityColor, dqsColor, PCAF_CITATIONS } from '../../../data/pcafAuditTrail';
-import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C } from '../../../data/pcafStandards';
+import { PCAF_PART_A, PCAF_PART_B, PCAF_PART_C, isScope3Required, SCOPE3_ALL_SECTOR_YEAR } from '../../../data/pcafStandards';
 import { useCarbonCredit } from '../../../context/CarbonCreditContext';
 import { isIndiaMode, adaptForPCAF } from '../../../data/IndiaDataAdapter';
 import PortfolioUploader from '../../../components/PortfolioUploader';
@@ -792,6 +792,10 @@ function PartATab({positions,setPositions}){
   const[dqsFilter,setDqsFilter]=useState('All');
   const[carbonPrice,setCarbonPrice]=useState(80);
   const[showYoY,setShowYoY]=useState(false);
+  // R3 gap B-2: scope-3 phase-in is complete for all sectors from reporting
+  // year 2025 onward. Default to the most recently completed calendar year
+  // rather than hardcoding a value that would go stale.
+  const[reportingYear,setReportingYear]=useState(()=>new Date().getFullYear()-1);
 
   const filtered=useMemo(()=>{
     let ps=positions;
@@ -813,6 +817,11 @@ function PartATab({positions,setPositions}){
   // unresolvable EVIC as a computed zero (R3 gap A-4).
   const computablePositions=useMemo(()=>positions.filter(p=>!p.dataGap&&p.assetClass!=='Undrawn Commitments'),[positions]);
   const dataGapPositions=useMemo(()=>positions.filter(p=>p.dataGap),[positions]);
+  // R3 gap B-2: scope-3 is a real reporting requirement once the reporting
+  // year crosses PCAF's phase-in thresholds — not a soft recommendation for a
+  // couple of sectors. Flag positions that need it but don't have it.
+  const scope3RequiredPositions=useMemo(()=>positions.filter(p=>isScope3Required(p.sector,reportingYear)),[positions,reportingYear]);
+  const scope3MissingPositions=useMemo(()=>scope3RequiredPositions.filter(p=>!p.scope3),[scope3RequiredPositions]);
   const totalFE=useMemo(()=>computablePositions.reduce((s,p)=>s+p.financedEmissions,0),[computablePositions]);
   const totalUndrawnFE=useMemo(()=>positions.filter(p=>p.assetClass==='Undrawn Commitments'&&!p.dataGap).reduce((s,p)=>s+p.financedEmissions,0),[positions]);
   const totalFEScope3=useMemo(()=>computablePositions.reduce((s,p)=>s+p.financedScope3,0),[computablePositions]);
@@ -851,7 +860,8 @@ function PartATab({positions,setPositions}){
     {/* KPI Row */}
     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:16}}>
       <KPICard label="Total Financed Emissions" value={fmt(totalFE)+' tCO2e'} sub={`${computablePositions.length} computable | Scope 1+2 | excl. undrawn/gaps`} color={T.navy}/>
-      <KPICard label="Including Scope 3" value={fmt(totalFE+totalFEScope3)+' tCO2e'} sub="All scopes attributed" color={T.navyL}/>
+      <KPICard label="Including Scope 3" value={fmt(totalFE+totalFEScope3)+' tCO2e'} sub="Reported separately per PCAF, shown here as a labeled secondary figure" color={T.navyL}/>
+      <KPICard label="Scope 3 Required / Missing" value={`${scope3RequiredPositions.length} / ${scope3MissingPositions.length}`} sub={`reporting year ${reportingYear} | all-sector since ${SCOPE3_ALL_SECTOR_YEAR}`} color={scope3MissingPositions.length>0?T.red:T.green}/>
       <KPICard label="Undrawn Commitments" value={fmt(totalUndrawnFE)+' tCO2e'} sub="Reported separately per PCAF" color={T.purple||'#7c3aed'}/>
       {dataGapPositions.length>0&&<KPICard label="Data Gaps" value={`${dataGapPositions.length} position${dataGapPositions.length===1?'':'s'}`} sub="No plausible EVIC — excluded, not zeroed" color={T.red}/>}
       <KPICard label="Carbon Footprint" value={carbonFootprint.toFixed(0)+' tCO2e/$Bn'} sub="Total FE / AUM" color={T.gold}/>
@@ -911,6 +921,7 @@ function PartATab({positions,setPositions}){
       <select value={scopeView} onChange={e=>setScopeView(e.target.value)} style={{padding:'6px 8px',border:`1px solid ${T.border}`,borderRadius:6,fontSize:11,fontFamily:T.font}}>
         <option value="1+2">Scope 1+2</option><option value="1+2+3">Scope 1+2+3</option>
       </select>
+      <div style={{display:'flex',alignItems:'center',gap:4}}><span style={{fontSize:10,color:T.textMut}}>Reporting Year:</span><input type="number" value={reportingYear} onChange={e=>setReportingYear(+e.target.value)} style={{width:64,padding:'4px 6px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11}}/></div>
       <div style={{display:'flex',alignItems:'center',gap:4}}><span style={{fontSize:10,color:T.textMut}}>CO2 Price:</span><input type="number" value={carbonPrice} onChange={e=>setCarbonPrice(+e.target.value)} style={{width:60,padding:'4px 6px',border:`1px solid ${T.border}`,borderRadius:4,fontSize:11}} min={0}/><span style={{fontSize:10,color:T.textMut}}>$/t</span></div>
       <div style={{marginLeft:'auto',display:'flex',gap:6}}>
         {selected.size>0&&<button onClick={removeSelected} style={{padding:'5px 12px',border:`1px solid ${T.red}`,borderRadius:6,background:'#fee2e2',color:T.red,fontSize:11,fontWeight:600,cursor:'pointer'}}>Remove {selected.size}</button>}
@@ -947,6 +958,7 @@ function PartATab({positions,setPositions}){
                 <td style={{padding:'5px 8px',fontWeight:600,color:T.navy,whiteSpace:'nowrap',maxWidth:180,overflow:'hidden',textOverflow:'ellipsis'}} title={p.name}>
                   {p.name}
                   {p.evicWarning&&<span title={p.evicWarning} style={{color:T.amber,marginLeft:3,fontSize:9}}>\u26a0</span>}
+                  {isScope3Required(p.sector,reportingYear)&&!p.scope3&&<span title={`Scope 3 required for reporting year ${reportingYear} (PCAF all-sector requirement from ${SCOPE3_ALL_SECTOR_YEAR}) but not provided`} style={{color:T.red,marginLeft:3,fontSize:9}}>S3\u26a0</span>}
                 </td>
                 <td style={{padding:'5px 8px'}}><Badge color={AC_COLORS[p.assetClass]||T.navy}>{p.assetClass==='Commercial Real Estate'?'CRE':p.assetClass==='Undrawn Commitments'?'Undrawn':p.assetClass.length>16?p.assetClass.slice(0,14)+'\u2026':p.assetClass}</Badge></td>
                 <td style={{padding:'5px 8px',color:T.textSec,fontSize:10}}>{p.sector}</td>
@@ -1429,7 +1441,9 @@ function AuditTrailTab({positions}){
     <div style={{display:'flex',gap:12,flexWrap:'wrap',marginBottom:16}}>
       {[
         {label:'Total Positions',value:trail.portfolio.totalPositions,color:T.navy},
-        {label:'Total Financed Emissions',value:fmt(trail.portfolio.totalFinancedEmissions)+' tCO2e',color:T.navy},
+        {label:'Financed Emissions (S1+2)',value:fmt(trail.portfolio.totalFinancedEmissions)+' tCO2e',color:T.navy},
+        {label:'Financed Emissions (S3)',value:fmt(trail.portfolio.totalFinancedEmissionsS3)+' tCO2e',color:T.navyL,sub:'reported separately, never blended'},
+        {label:'Scope 3 Required / Missing',value:`${trail.portfolio.scope3RequiredCount} / ${trail.portfolio.scope3MissingCount}`,color:trail.portfolio.scope3MissingCount>0?T.red:T.green,sub:`for reporting year ${trail.reportingYear}`},
         {label:'Portfolio WACI',value:trail.portfolio.portfolioWaci.toFixed(3)+' tCO2e/$M',color:T.navy},
         {label:'Avg DQS',value:trail.portfolio.avgDqs,color:dqsColor(Math.round(trail.portfolio.avgDqs))},
         {label:'DQS Target Met',value:trail.portfolio.dqsMeetsTarget?'✓ Yes':'✗ No',color:trail.portfolio.dqsMeetsTarget?T.green:T.red},
@@ -1438,6 +1452,7 @@ function AuditTrailTab({positions}){
         <div key={i} style={{background:T.surface,border:`1px solid ${T.border}`,borderRadius:8,padding:'10px 16px',minWidth:140}}>
           <div style={{fontSize:10,color:T.textMut,fontFamily:T.mono}}>{k.label}</div>
           <div style={{fontSize:16,fontWeight:700,color:k.color,marginTop:2}}>{k.value}</div>
+          {k.sub&&<div style={{fontSize:9,color:T.textMut,marginTop:2}}>{k.sub}</div>}
         </div>
       ))}
     </div>
@@ -1488,7 +1503,10 @@ function AuditTrailTab({positions}){
               <span style={{flex:1,fontWeight:600,fontSize:11,color:T.navy}}>{pt.positionName}</span>
               <span style={{fontFamily:T.mono,fontSize:10,color:T.textMut,width:80}}>{pt.assetClass?.slice(0,12)}</span>
               <span style={{fontFamily:T.mono,fontSize:11,color:dqsColor(pt.summary.compositeDqs),width:50}}>DQS-{pt.summary.compositeDqs}</span>
-              <span style={{fontFamily:T.mono,fontSize:11,color:T.navy,width:100}}>{pt.summary.financedEmissions.toFixed(1)} tCO2e</span>
+              <span style={{fontFamily:T.mono,fontSize:11,color:T.navy,width:130}} title="Scope 1+2 headline — Scope 3 reported separately, never blended">
+                {pt.summary.financedEmissions.toFixed(1)} tCO2e <Badge color={T.navyL}>S1+2</Badge>
+                {pt.summary.scope3Required&&pt.summary.financedEmissionsS3===0&&<span style={{color:T.red,marginLeft:3}} title={`Scope 3 required for reporting year ${trail.reportingYear} but not provided`}>⚠S3</span>}
+              </span>
               <div style={{...FL,gap:4,width:80}}>
                 {['PASS','WARN','FAIL'].map(s=><span key={s} style={{fontSize:9,fontFamily:T.mono,color:stepStatusColor(s)}}>{s[0]}{pt.summary[s.toLowerCase()+'Count']}</span>)}
               </div>
